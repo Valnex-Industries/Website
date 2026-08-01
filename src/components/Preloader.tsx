@@ -1,14 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion";
 
 export function Preloader() {
   const [isLoading, setIsLoading] = useState(true);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     // Lock scrolling while preloader is active
     document.body.style.overflow = "hidden";
+    
+    // Animate from 0 to 100 over 1.8 seconds
+    const controls = animate(0, 100, { 
+      duration: 1.8, 
+      ease: "easeOut",
+      onUpdate: (value) => {
+        setProgress(Math.round(value));
+      }
+    });
     
     // Loading duration: 2 seconds
     const timer = setTimeout(() => {
@@ -17,6 +27,7 @@ export function Preloader() {
     }, 2000);
 
     return () => {
+      controls.stop();
       clearTimeout(timer);
       document.body.style.overflow = "";
     };
@@ -57,10 +68,10 @@ export function Preloader() {
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="mt-6 font-orbitron text-xs md:text-sm font-bold text-[color:var(--brand-blue-bright)] tracking-[0.3em] uppercase"
+            transition={{ delay: 0.2 }}
+            className="mt-6 font-orbitron text-sm md:text-base font-bold text-[color:var(--brand-blue-bright)] tracking-widest"
           >
-            System Initializing
+            {progress}%
           </motion.p>
         </motion.div>
       )}

@@ -30,7 +30,7 @@ const STEPS = [
 
 const DIRECT = [
   { label: "Email", value: "contact@valnexindustries.com" },
-  { label: "Phone", value: "+91 7574848748" },
+  { label: "Phone", value: "+91 7574848748, +91 94294 81086" },
   { label: "Address", value: "3, Maruti Industrial Park-2, Dhamatvan Bakrol Road, Dhamatvan, Ahmedabad-382435, Gujarat, INDIA." },
 ];
 
@@ -46,15 +46,15 @@ export default function InquiryPage() {
         />
 
         {/* Intro */}
-        <section className="relative mx-auto w-full max-w-[1280px] px-6 pt-36 pb-16 lg:px-10 lg:pt-44">
+        <section className="relative mx-auto w-full max-w-[1280px] px-5 pt-28 pb-12 sm:px-6 md:pt-36 md:pb-16 lg:px-10 lg:pt-44">
           <Reveal>
             <span className="eyebrow text-white/45">Inquiry</span>
-            <h1 className="mt-4 max-w-3xl text-[clamp(2.25rem,5.4vw,4.25rem)] font-black leading-[0.95] tracking-tight text-white">
+            <h1 className="mt-4 max-w-3xl text-[clamp(1.9rem,7.5vw,4.25rem)] font-black leading-[1] tracking-tight text-white sm:leading-[0.95]">
               Bring us the part
-              <br />
+              <br className="hidden sm:block" />{" "}
               that keeps failing.
             </h1>
-            <p className="mt-8 max-w-xl text-base font-light leading-relaxed text-white/60 md:text-lg">
+            <p className="mt-6 max-w-xl text-[15px] font-light leading-relaxed text-white/60 sm:mt-8 sm:text-base md:text-lg">
               Send a drawing, a duty cycle, or just the problem. The more you can
               tell us about where it runs and how it fails, the more useful the
               first reply will be.
@@ -63,10 +63,10 @@ export default function InquiryPage() {
         </section>
 
         {/* Form + sidebar */}
-        <section className="relative mx-auto w-full max-w-[1280px] px-6 pb-24 lg:px-10 md:pb-32">
-          <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
+        <section className="relative mx-auto w-full max-w-[1280px] px-5 pb-20 sm:px-6 md:pb-28 lg:px-10 lg:pb-32">
+          <div className="grid gap-10 md:gap-12 lg:grid-cols-12 lg:gap-16">
             <Reveal className="lg:col-span-7">
-              <div className="rounded-2xl border border-[color:var(--brand-blue)]/10 bg-[#f8f9fa] p-6 shadow-2xl shadow-black/10 md:p-10">
+              <div className="rounded-none border border-[color:var(--brand-blue)]/10 bg-[#f8f9fa] p-5 shadow-2xl shadow-black/10 sm:p-6 md:p-10">
                 <InquiryForm />
               </div>
             </Reveal>
@@ -97,7 +97,7 @@ export default function InquiryPage() {
               </Reveal>
 
               <Reveal delay={0.18}>
-                <div className="mt-12 rounded-2xl border border-[color:var(--brand-blue)]/10 bg-[#f8f9fa] p-6 shadow-xl shadow-black/5 md:p-8">
+                <div className="mt-10 rounded-none border border-[color:var(--brand-blue)]/10 bg-[#f8f9fa] p-5 shadow-xl shadow-black/5 sm:p-6 md:mt-12 md:p-8">
                   <span className="eyebrow text-[color:var(--brand-blue)]/70">
                     Or reach us directly
                   </span>
@@ -105,12 +105,12 @@ export default function InquiryPage() {
                     {DIRECT.map((item) => (
                       <div
                         key={item.label}
-                        className="flex items-baseline justify-between gap-4 border-b border-[color:var(--brand-blue)]/10 pb-4 last:border-b-0 last:pb-0"
+                        className="flex flex-col gap-1 border-b border-[color:var(--brand-blue)]/10 pb-4 last:border-b-0 last:pb-0 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4"
                       >
                         <dt className="text-xs font-light text-[color:var(--brand-ink)]/60">
                           {item.label}
                         </dt>
-                        <dd className="text-sm font-medium text-[color:var(--brand-blue)] text-right max-w-[240px]">
+                        <dd className="text-sm font-medium leading-relaxed text-[color:var(--brand-blue)] sm:max-w-[240px] sm:text-right">
                           {item.value}
                         </dd>
                       </div>

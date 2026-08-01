@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import {
   motion,
   useAnimationFrame,
+  useMotionTemplate,
   useMotionValue,
   useScroll,
   useTransform,
@@ -20,47 +21,33 @@ const MARQUEE_CYCLE_MS = 22000;
  *  EXPAND[1] and stays there. The short tail after that is the closing
  *  statement, then the pin releases into the sections below. */
 const EXPAND = [0.05, 0.78] as const; // video grows from card to full bleed
-const COPY_OUT = [0, 0.2] as const; // corner statements fade away
+/* The corner statements do not animate at all. They stay pinned where they are
+   and the opening video window (z-6, above their z-4) simply grows over them. */
 const PAYOFF_IN = [0.8, 0.95] as const; // closing statement fades in
-
-function useViewport() {
-  const [size, setSize] = useState({ w: 1440, h: 900 });
-
-  useEffect(() => {
-    const update = () =>
-      setSize({ w: window.innerWidth, h: window.innerHeight });
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
-  }, []);
-
-  return size;
-}
 
 export function HeroScroll() {
   const containerRef = useRef<HTMLElement>(null);
-  const { w, h } = useViewport();
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"],
   });
 
-  /* ── The resting video window: a centred portrait card, same proportions as
-        the reference design (3:4, ~26vw wide, clamped for small screens). ── */
-  const cardW = Math.min(Math.max(w * 0.26, 220), 360);
-  const cardH = Math.min(cardW * (4 / 3), h * 0.58);
-  const insetX = Math.max((w - cardW) / 2, 0);
-  const insetY = Math.max((h - cardH) / 2, 0);
+  /* 1 = resting window, 0 = full bleed. The resting shape itself lives in CSS
+     (`.hero-window` in globals.css) as a pair of inset custom properties, so it
+     is never derived from a measured viewport: measuring it in JS meant one bad
+     reading clipped the video away entirely. Scrolling only scales those insets
+     towards zero, which on phones reads as the band growing in height. */
+  const openness = useTransform(
+    scrollYProgress,
+    [EXPAND[0], EXPAND[1]],
+    [1, 0],
+    { clamp: true }
+  );
 
   /* The video layer is always full screen; only its clip changes. That is what
      keeps the outline marquee inside it locked to the filled marquee behind. */
-  const clipPath = useTransform(
-    scrollYProgress,
-    [EXPAND[0], EXPAND[1], 1],
-    [`inset(${insetY}px ${insetX}px)`, "inset(0px 0px)", "inset(0px 0px)"],
-    { clamp: true }
-  );
+  const clipPath = useMotionTemplate`inset(calc(var(--hero-inset-y) * ${openness}) calc(var(--hero-inset-x) * ${openness}))`;
 
   /* Premium background shift: brand blue → deep navy → ink. */
   const backgroundColor = useTransform(
@@ -84,9 +71,6 @@ export function HeroScroll() {
   );
 
   /* Corner copy + scroll cue retreat as the window opens. */
-  const copyOpacity = useTransform(scrollYProgress, [...COPY_OUT], [1, 0], { clamp: true });
-  const copyLeftX = useTransform(scrollYProgress, [...COPY_OUT], [0, -60], { clamp: true });
-  const copyRightX = useTransform(scrollYProgress, [...COPY_OUT], [0, 60], { clamp: true });
   const cueOpacity = useTransform(scrollYProgress, [0, 0.1], [1, 0], { clamp: true });
 
   /* Closing statement, revealed once the video owns the viewport. */
@@ -99,8 +83,11 @@ export function HeroScroll() {
     marqueeProgress.set((t % MARQUEE_CYCLE_MS) / MARQUEE_CYCLE_MS);
   });
 
+  /* Stepped rather than one clamp. Phones need roughly 24vw to read as the
+     wall of type the design is built on — a desktop-tuned rule merely clamped
+     down leaves the headline floating in empty blue. */
   const marqueeType =
-    "display-type text-[clamp(72px,16vw,240px)] items-center";
+    "display-type items-center text-[clamp(3rem,24vw,9rem)] sm:text-[clamp(6rem,18vw,11rem)] lg:text-[clamp(8rem,16vw,15rem)]";
 
   /* Fade out marquee as video expands. Reaches 0 opacity around 80% of the expansion */
   const marqueeOpacity = useTransform(
@@ -146,33 +133,28 @@ export function HeroScroll() {
           />
         </motion.div>
 
-        {/* Layer 3: corner statements */}
-        <motion.div
-          className="pointer-events-none absolute left-[clamp(24px,4vw,64px)] top-[clamp(96px,13vh,150px)] z-[4]"
-          style={{ opacity: copyOpacity, x: copyLeftX }}
-        >
-          <p className="text-[clamp(1.3rem,2.6vw,2.2rem)] font-light italic leading-tight text-white/90">
+        {/* Layer 3: corner statements. Static — the video window swallows them
+            as it opens, which is the whole point of it being the layer above. */}
+        <div className="pointer-events-none absolute left-[clamp(20px,4vw,64px)] top-[clamp(72px,10vh,150px)] z-[4] max-w-[86vw] sm:max-w-[70vw]">
+          <p className="text-[clamp(1.9rem,12vw,2.75rem)] font-light italic leading-[1.05] text-white/90 sm:text-[clamp(1.75rem,4.4vw,2.2rem)] sm:leading-tight">
             Creating new value
           </p>
-        </motion.div>
+        </div>
 
-        <motion.div
-          className="pointer-events-none absolute bottom-[clamp(72px,11vh,120px)] right-[clamp(24px,4vw,64px)] z-[4] max-w-[clamp(200px,30vw,420px)] text-right"
-          style={{ opacity: copyOpacity, x: copyRightX }}
-        >
-          <p className="text-[clamp(1rem,2vw,1.8rem)] font-light italic leading-tight text-white/90">
+        <div className="pointer-events-none absolute bottom-[clamp(56px,9vh,120px)] right-[clamp(20px,4vw,64px)] z-[4] max-w-[88vw] text-right sm:max-w-[min(60vw,420px)]">
+          <p className="text-[clamp(1.75rem,11vw,2.5rem)] font-light italic leading-[1.05] text-white/90 sm:text-[clamp(1.4rem,3.4vw,1.8rem)] sm:leading-tight">
             with the
             <br />
             &ldquo;power to respond&rdquo;
           </p>
-          <p className="mt-3 text-[clamp(0.55rem,0.78vw,0.72rem)] font-light tracking-[0.06em] text-white/50">
+          <p className="mt-3 text-[clamp(0.72rem,3.4vw,0.9rem)] font-light leading-relaxed tracking-[0.06em] text-white/50 sm:text-[clamp(0.6rem,1.7vw,0.72rem)]">
             A dependable response, your engineering solutions partner.
           </p>
-        </motion.div>
+        </div>
 
         {/* Layer 4: the video, clipped from centre card to full bleed */}
         <motion.div
-          className="absolute inset-0 z-[6] overflow-hidden"
+          className="hero-window absolute inset-0 z-[6] overflow-hidden"
           style={{ clipPath }}
         >
           <video
@@ -213,12 +195,12 @@ export function HeroScroll() {
           style={{ opacity: payoffOpacity, y: payoffY }}
         >
           <span className="eyebrow text-white/60">Valnex Industries</span>
-          <h1 className="mt-4 max-w-4xl text-[clamp(2rem,5.4vw,4.5rem)] font-black leading-[0.95] tracking-tight text-white">
+          <h1 className="mt-4 max-w-4xl text-[clamp(1.65rem,5.4vw,4.5rem)] font-black leading-[1.02] tracking-tight text-white sm:leading-[0.95]">
             Engineered for the lines
-            <br />
+            <br className="hidden sm:block" />{" "}
             that cannot stop.
           </h1>
-          <p className="mt-6 max-w-xl text-sm font-light leading-relaxed text-white/70 md:text-base">
+          <p className="mt-5 max-w-xl text-[13px] font-light leading-relaxed text-white/70 sm:mt-6 sm:text-sm md:text-base">
             Advanced chillers, flake cutters, hopper loaders, laser marking machines, volumetric feeders, mould temperature controllers, and dehumidifiers engineered for the
             world&apos;s most demanding production lines.
           </p>
@@ -226,7 +208,7 @@ export function HeroScroll() {
 
         {/* Layer 6: opening scroll cue */}
         <motion.div
-          className="pointer-events-none absolute bottom-[clamp(24px,4vh,44px)] left-[clamp(24px,4vw,64px)] z-[8] flex items-center gap-3"
+          className="pointer-events-none absolute bottom-[clamp(20px,4vh,44px)] left-[clamp(20px,4vw,64px)] z-[8] flex items-center gap-3"
           style={{ opacity: cueOpacity }}
         >
           <span className="relative block h-9 w-px overflow-hidden bg-white/25">
@@ -241,7 +223,7 @@ export function HeroScroll() {
 
         {/* Layer 7, the hand-off cue: the pin is about to release */}
         <motion.div
-          className="pointer-events-none absolute bottom-[clamp(24px,4vh,44px)] left-1/2 z-[8] flex -translate-x-1/2 flex-col items-center gap-2 whitespace-nowrap"
+          className="pointer-events-none absolute bottom-[clamp(20px,4vh,44px)] left-1/2 z-[8] flex -translate-x-1/2 flex-col items-center gap-2 whitespace-nowrap"
           style={{ opacity: payoffOpacity }}
         >
           <span className="eyebrow text-white/45">Keep scrolling</span>

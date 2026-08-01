@@ -46,6 +46,9 @@ html {
   scroll-behavior: auto;
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
+  /* Stop iOS from inflating type when a phone is turned to landscape. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
@@ -60,6 +63,16 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
+  /* No grey flash on tap, and no rubber-band bounce revealing the html bg. */
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+/* Nothing may push the page sideways on a phone. */
+img,
+video,
+svg {
+  max-width: 100%;
 }
 
 ::selection {
@@ -79,6 +92,53 @@ h1, h2, h3, h4, h5, h6, .display-type {
     linear-gradient(to bottom, rgba(255, 255, 255, 0.9) 1px, transparent 1px);
   background-size: 96px 96px;
   background-position: center center;
+}
+
+/* A 96px cell only draws two and a half columns on a phone, which reads as
+   empty panels rather than as a drawing. */
+@media (max-width: 639px) {
+  .blueprint-grid {
+    background-size: 48px 48px;
+  }
+}
+
+/* ── The resting hero video window ─────────────────────────────────────────
+   Held in CSS rather than derived from a measured viewport, so the shape can
+   never be wrong on first paint: the scroll only scales these two insets down
+   to zero, at which point the video is full bleed.
+
+   Phones and tablets get a broad landscape card sitting over the marquee. It
+   still has more inset to travel on the y axis than the x, so opening it reads
+   as the clip growing in height until it owns the screen. The half-height is
+   capped against vh as well as vw so a landscape phone cannot push the card
+   taller than the screen. Desktop keeps the portrait card of the original
+   design. */
+.hero-window {
+  /* 70vw wide at 5:4 → half its height is 70 / 1.25 / 2 = 28vw. */
+  --hero-inset-x: 15%;
+  --hero-inset-y: max(0px, calc(50% - min(28vw, 30vh)));
+}
+
+@media (min-width: 640px) {
+  /* 52vw wide at 5:4 → half its height is 20.8vw. */
+  .hero-window {
+    --hero-inset-x: 24%;
+    --hero-inset-y: max(0px, calc(50% - min(20.8vw, 30vh)));
+  }
+}
+
+/* Desktop opens out to a 16:9 window — the natural shape of the footage, and
+   the one that suits a landscape viewport. Sized to hold roughly the same area
+   as the portrait card it replaces (360 x 427 at 1536 wide), so it reads as
+   wide without giving the reveal less room to travel. The height is still
+   capped against vh so a short laptop screen cannot push the card off the top
+   and bottom. */
+@media (min-width: 1024px) {
+  .hero-window {
+    --hero-card-w: clamp(420px, 34vw, 680px);
+    --hero-inset-x: max(0px, calc(50% - var(--hero-card-w) / 2));
+    --hero-inset-y: max(0px, calc(50% - min(var(--hero-card-w) * 9 / 16, 62vh) / 2));
+  }
 }
 
 /* Display type used by the giant hero marquee */

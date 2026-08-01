@@ -13,9 +13,11 @@ import {
 } from "@/lib/inquiry";
 import { cn } from "@/utils/cn";
 
-/** The form sits on a milk white card, so everything here is ink-on-white with blue accents. */
+/** The form sits on a milk white card, so everything here is ink-on-white with
+ *  blue accents. The 16px base size is deliberate: iOS Safari zooms the whole
+ *  page when it focuses a field smaller than that. */
 const FIELD_BASE =
-  "w-full border bg-white px-4 py-3 text-sm font-medium text-[color:var(--brand-ink)] outline-none transition-colors duration-300 placeholder:text-[color:var(--brand-ink)]/30 focus:bg-white focus:ring-1 focus:ring-[color:var(--brand-blue)] focus:border-[color:var(--brand-blue)] shadow-sm";
+  "w-full border bg-white px-4 py-3 text-base font-medium text-[color:var(--brand-ink)] outline-none transition-colors duration-300 placeholder:text-[color:var(--brand-ink)]/30 focus:bg-white focus:ring-1 focus:ring-[color:var(--brand-blue)] focus:border-[color:var(--brand-blue)] shadow-sm md:text-sm";
 
 function fieldClass(hasError?: boolean) {
   return cn(
@@ -162,7 +164,7 @@ export function InquiryForm() {
         className="pointer-events-none absolute h-0 w-0 opacity-0"
       />
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-5 sm:gap-6 md:grid-cols-2">
         <div>
           <Label htmlFor={field("name")}>Full name</Label>
           <input
@@ -244,7 +246,7 @@ export function InquiryForm() {
               />
               <span
                 className={cn(
-                  "block border bg-white px-4 py-2 text-xs font-semibold tracking-wide",
+                  "flex min-h-[42px] items-center border bg-white px-4 py-2 text-xs font-semibold tracking-wide",
                   "border-[color:var(--brand-ink)]/15 text-[color:var(--brand-ink)]/65",
                   "transition-all duration-300 group-hover:border-[color:var(--brand-blue)]/40 group-hover:text-[color:var(--brand-blue)]",
                   "peer-checked:border-[color:var(--brand-blue)] peer-checked:bg-[color:var(--brand-blue)] peer-checked:text-white peer-checked:shadow-md",
@@ -273,7 +275,7 @@ export function InquiryForm() {
         />
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-5 sm:gap-6 md:grid-cols-2">
         <Select
           id={field("volume")}
           name="volume"
@@ -368,7 +370,7 @@ export function InquiryForm() {
           type="submit"
           disabled={pending}
           className={cn(
-            "group flex items-center gap-6 bg-[color:var(--brand-blue)] px-7 py-3.5 text-sm font-bold text-white shadow-md shadow-[color:var(--brand-blue)]/20",
+            "group flex w-full items-center justify-between gap-6 bg-[color:var(--brand-blue)] px-7 py-3.5 text-sm font-bold text-white shadow-md shadow-[color:var(--brand-blue)]/20 sm:w-auto sm:justify-start",
             "transition-transform duration-300 hover:-translate-y-0.5",
             "disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0",
           )}

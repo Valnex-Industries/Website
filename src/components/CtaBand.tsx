@@ -4,8 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
+import { useHashNav } from "@/lib/use-hash-nav";
 
 export function CtaBand() {
+  const navigate = useHashNav();
+
   return (
     <section id="careers" className="relative overflow-hidden">
       <div className="absolute inset-0">
@@ -24,7 +27,7 @@ export function CtaBand() {
         />
       </div>
 
-      <div className="relative mx-auto flex w-full max-w-[1280px] flex-col gap-10 px-6 py-24 md:py-32 lg:flex-row lg:items-end lg:justify-between lg:px-10">
+      <div className="relative mx-auto flex w-full max-w-[1280px] flex-col gap-10 px-5 py-20 sm:px-6 md:py-28 lg:flex-row lg:items-end lg:justify-between lg:px-10 lg:py-32">
         <Reveal className="max-w-2xl">
           <span className="eyebrow text-white/50">Careers & inquiry</span>
           <h2 className="mt-4 text-[clamp(2rem,4.8vw,3.75rem)] font-black leading-[0.98] tracking-tight text-white">
@@ -39,7 +42,7 @@ export function CtaBand() {
         </Reveal>
 
         <Reveal delay={0.12} className="shrink-0">
-          <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap lg:flex-col lg:flex-nowrap">
             <Link
               href="/inquiry"
               className="group flex items-center justify-between gap-6 rounded-full bg-white px-7 py-3.5 text-sm font-bold text-[color:var(--brand-blue)] transition-transform duration-300 hover:-translate-y-0.5"
@@ -51,8 +54,9 @@ export function CtaBand() {
                 className="transition-transform duration-300 group-hover:translate-x-1"
               />
             </Link>
-            <a
-              href="#careers"
+            <Link
+              href="/#careers"
+              onClick={(e) => navigate(e, "/#careers")}
               className="group flex items-center justify-between gap-6 rounded-full border border-white/35 px-7 py-3.5 text-sm font-bold text-white transition-colors duration-300 hover:bg-white/10"
             >
               Recruitment entry
@@ -61,7 +65,7 @@ export function CtaBand() {
                 strokeWidth={2.5}
                 className="transition-transform duration-300 group-hover:translate-x-1"
               />
-            </a>
+            </Link>
           </div>
         </Reveal>
       </div>

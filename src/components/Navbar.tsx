@@ -1,52 +1,39 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, ChevronDown, Menu, X } from "lucide-react";
-import { AnimatePresence } from "framer-motion";
-import { usePathname, useRouter } from "next/navigation";
+import { ArrowRight, ChevronDown } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/utils/cn";
+import { NAV_ITEMS } from "@/lib/nav";
+import { useHashNav } from "@/lib/use-hash-nav";
 import { ProductsMegaMenu } from "./ProductsMegaMenu";
-
-/** Root-relative so the section anchors also work from /inquiry and friends. */
-const NAV_LINKS = [
-  { label: "Products", href: "/#products", hasDropdown: true },
-  { label: "Company Profile", href: "/#company", hasDropdown: true },
-  { label: "Careers", href: "/#careers", hasDropdown: true },
-  { label: "News", href: "/#news", hasDropdown: false },
-];
+import { MobileNav } from "./MobileNav";
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
   const [condensed, setCondensed] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  /** Hover menus are a mouse affordance. On touch they latch open and swallow
+   *  the first tap, so they are only wired up for real pointers. */
+  const [canHover, setCanHover] = useState(false);
 
-  const pathname = usePathname();
-  const router = useRouter();
-
-  const handleHashClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    if (href.startsWith("/#")) {
-      e.preventDefault();
-      const hash = href.replace("/", "");
-      if (pathname === "/") {
-        // If we're already on the home page, just scroll natively and update URL gracefully
-        const el = document.querySelector(hash);
-        if (el) el.scrollIntoView({ behavior: "smooth" });
-        window.history.pushState(null, "", hash);
-      } else {
-        // If we are on another page, let the router push correctly
-        router.push(href);
-      }
-      setActiveDropdown(null);
-      setOpen(false);
-    }
-  };
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const navigate = useHashNav();
 
   useEffect(() => {
     const onScroll = () => setCondensed(window.scrollY > 40);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const query = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const update = () => setCanHover(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
   }, []);
 
   const isLightMode = activeDropdown !== null;
@@ -65,15 +52,17 @@ export function Navbar() {
     >
       <div
         className={cn(
-          "mx-auto flex items-center justify-between gap-6 px-6 lg:px-10 transition-all duration-500",
-          condensed && !isLightMode ? "h-14" : "h-16 lg:h-[68px]"
+          "mx-auto flex items-center justify-between gap-4 px-5 sm:px-6 lg:gap-6 lg:px-10 transition-all duration-500",
+          /* Never condensed while the drawer is open, or the toggle would sit
+             8px above the wordmark in the panel's own header row. */
+          condensed && !isLightMode && !open ? "h-14" : "h-16 lg:h-[68px]"
         )}
       >
         {/* Wordmark */}
         <Link
           href="/"
           className={cn(
-            "whitespace-nowrap text-sm font-extrabold uppercase tracking-[0.22em] transition-colors",
+            "whitespace-nowrap text-[11px] font-extrabold uppercase tracking-[0.18em] transition-colors sm:text-sm sm:tracking-[0.22em]",
             isLightMode ? "text-[color:var(--brand-ink)]" : "text-white"
           )}
         >
@@ -82,19 +71,20 @@ export function Navbar() {
 
         {/* Desktop links */}
         <nav className="hidden items-center gap-1 lg:flex h-full">
-          {NAV_LINKS.map((link) => (
+          {NAV_ITEMS.map((link) => (
             <div
               key={link.label}
               className="h-full flex items-center"
-              onMouseEnter={() =>
-                link.hasDropdown
-                  ? setActiveDropdown(link.label)
-                  : setActiveDropdown(null)
-              }
+              onMouseEnter={() => {
+                if (!canHover) return;
+                setActiveDropdown(link.children ? link.label : null);
+              }}
             >
               <Link
                 href={link.href}
-                onClick={(e) => handleHashClick(e, link.href)}
+                onClick={(e) =>
+                  navigate(e, link.href, () => setActiveDropdown(null))
+                }
                 className={cn(
                   "group flex items-center gap-1 whitespace-nowrap px-3 py-6 text-xs font-bold tracking-wide transition-colors",
                   isLightMode
@@ -103,7 +93,7 @@ export function Navbar() {
                 )}
               >
                 {link.label}
-                {link.hasDropdown && (
+                {link.children && (
                   <ChevronDown
                     size={12}
                     strokeWidth={2.2}
@@ -135,7 +125,7 @@ export function Navbar() {
           </Link>
           <Link
             href="/#careers"
-            onClick={(e) => handleHashClick(e, "/#careers")}
+            onClick={(e) => navigate(e, "/#careers")}
             className={cn(
               "group flex items-center gap-2 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-bold transition-transform hover:-translate-y-0.5",
               isLightMode
@@ -161,62 +151,63 @@ export function Navbar() {
           </Link>
         </div>
 
-        {/* Mobile toggle */}
+        {/* Mobile / tablet toggle — 44px target, sits flush with the padding.
+            Stacked above the drawer (z-110) so it stays the one control that
+            opens and closes the menu; the panel therefore carries no X of its
+            own, and the icon flips to ink once the white panel is behind it. */}
         <button
+          ref={triggerRef}
           type="button"
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
-          className={cn("lg:hidden transition-colors", isLightMode ? "text-black" : "text-white")}
+          className={cn(
+            "relative z-[120] -mr-2 flex h-11 w-11 items-center justify-center transition-colors lg:hidden",
+            open || isLightMode ? "text-[color:var(--brand-ink)]" : "text-white"
+          )}
           onClick={() => setOpen((v) => !v)}
         >
-          {open ? (
-            <X size={22} strokeWidth={1.6} />
-          ) : (
-            <Menu size={22} strokeWidth={1.6} />
-          )}
+          <BurgerIcon open={open} />
         </button>
       </div>
 
-      {/* Mega Menus */}
+      {/* Desktop mega menu */}
       <AnimatePresence>
         {activeDropdown === "Products" && (
           <ProductsMegaMenu onClose={() => setActiveDropdown(null)} />
         )}
       </AnimatePresence>
 
-      {/* Mobile drawer */}
-      {open && (
-        <div className="border-t border-white/10 bg-[rgba(2,16,46,0.96)] px-6 py-5 backdrop-blur-lg lg:hidden">
-          <div className="flex flex-col">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                onClick={(e) => handleHashClick(e, link.href)}
-                className="border-b border-white/10 py-3 text-sm font-medium text-white"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
-          <div className="mt-5 flex flex-col gap-3">
-            <Link
-              href="/inquiry"
-              onClick={() => setOpen(false)}
-              className="flex items-center justify-between rounded-full border border-white/35 px-5 py-2.5 text-sm font-semibold text-white"
-            >
-              Inquiry <ArrowRight size={14} />
-            </Link>
-            <Link
-              href="/#careers"
-              onClick={(e) => handleHashClick(e, "/#careers")}
-              className="flex items-center justify-between rounded-full bg-white px-5 py-2.5 text-sm font-bold text-[color:var(--brand-blue)]"
-            >
-              Recruitment entry <ArrowRight size={14} />
-            </Link>
-          </div>
-        </div>
-      )}
+      <MobileNav
+        open={open}
+        onClose={() => setOpen(false)}
+        triggerRef={triggerRef}
+      />
     </header>
+  );
+}
+
+/** Three rules that fold into a cross. */
+function BurgerIcon({ open }: { open: boolean }) {
+  const bar = "absolute left-0 h-[2px] w-full rounded-full bg-current";
+  const transition = { duration: 0.35, ease: [0.22, 1, 0.36, 1] as const };
+
+  return (
+    <span aria-hidden="true" className="relative block h-[14px] w-[22px]">
+      <motion.span
+        className={cn(bar, "top-0")}
+        animate={{ y: open ? 6 : 0, rotate: open ? 45 : 0 }}
+        transition={transition}
+      />
+      <motion.span
+        className={cn(bar, "top-[6px]")}
+        animate={{ opacity: open ? 0 : 1, scaleX: open ? 0.4 : 1 }}
+        transition={{ duration: 0.2 }}
+      />
+      <motion.span
+        className={cn(bar, "top-[12px]")}
+        animate={{ y: open ? -6 : 0, rotate: open ? -45 : 0 }}
+        transition={transition}
+      />
+    </span>
   );
 }

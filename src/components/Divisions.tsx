@@ -60,16 +60,16 @@ export function Divisions() {
   return (
     <section
       id="products"
-      className="relative overflow-hidden bg-[color:var(--brand-ink)] py-24 md:py-32"
+      className="relative overflow-hidden bg-[color:var(--brand-ink)] py-20 md:py-28 lg:py-32"
     >
       <div
         aria-hidden="true"
         className="blueprint-grid pointer-events-none absolute inset-0 opacity-[0.07]"
       />
 
-      <div className="relative mx-auto w-full max-w-[1280px] px-6 lg:px-10">
+      <div className="relative mx-auto w-full max-w-[1280px] px-5 sm:px-6 lg:px-10">
         <Reveal>
-          <div className="flex flex-col gap-6 border-b border-white/10 pb-10 md:flex-row md:items-end md:justify-between">
+          <div className="flex flex-col gap-6 border-b border-white/10 pb-8 md:flex-row md:items-end md:justify-between md:pb-10">
             <div>
               <span className="eyebrow text-white/45">Products</span>
               <h2 className="mt-4 max-w-2xl text-[clamp(2rem,4.4vw,3.5rem)] font-black leading-[0.98] tracking-tight text-white">
@@ -86,7 +86,7 @@ export function Divisions() {
           </div>
         </Reveal>
 
-        <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-10 grid gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 md:mt-14">
           {PRODUCTS.map((product, i) => (
             <Reveal key={product.title} delay={i * 0.1}>
               <article className="group relative h-full overflow-hidden rounded-2xl border border-white/12 bg-white/[0.03] transition-colors duration-500 hover:border-white/30">
@@ -95,7 +95,7 @@ export function Divisions() {
                     src={product.image}
                     alt={`${product.title} product`}
                     fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-linear-to-t from-[#02102e] via-[rgba(2,16,46,0.25)] to-transparent" />
@@ -104,9 +104,9 @@ export function Divisions() {
                   </span>
                 </div>
 
-                <div className="flex flex-col gap-4 p-6">
+                <div className="flex flex-col gap-4 p-5 sm:p-6">
                   <div className="flex items-start justify-between gap-4">
-                    <h3 className="text-xl font-extrabold tracking-tight text-white">
+                    <h3 className="text-lg font-extrabold tracking-tight text-white sm:text-xl">
                       {product.title}
                     </h3>
                     <ArrowUpRight
