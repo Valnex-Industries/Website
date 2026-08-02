@@ -2,7 +2,7 @@
  * The product catalogue — the single source of truth for what Valnex makes.
  *
  * The nav links, the homepage grid, the mega menu, the mobile drawer, the
- * footer, the product pages and the inquiry form's division chips are all
+ * footer, the product pages and the inquiry form's product chips are all
  * derived from this array. Adding a product means adding one entry here.
  *
  * `summary`, `description`, `specs` and `applications` are the slots the
@@ -12,7 +12,7 @@
  */
 
 /** Declared as a literal tuple so `ProductSlug` stays a union rather than
- *  widening to `string`. The inquiry form's `DivisionValue` builds on it. */
+ *  widening to `string`. The inquiry form's `InquiryProduct` builds on it. */
 export const PRODUCT_SLUGS = [
   "chillers",
   "flake-cutter",
@@ -31,7 +31,7 @@ export interface ProductSpec {
 }
 
 export interface Product {
-  /** URL token. Doubles as the inquiry form's division value. */
+  /** URL token. Doubles as the inquiry form's product value. */
   slug: ProductSlug;
   /** Zero-padded position, shown on the homepage cards. */
   index: string;
@@ -153,5 +153,5 @@ export function getProduct(slug: string): Product | undefined {
 
 /** Prefilled inquiry for a specific product, used by the product page CTA. */
 export function inquiryHref(slug: ProductSlug): string {
-  return `/inquiry?division=${slug}`;
+  return `/inquiry?product=${slug}`;
 }

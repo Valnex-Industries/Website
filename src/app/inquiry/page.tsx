@@ -29,7 +29,7 @@ const STEPS = [
   {
     index: "01",
     title: "An engineer reads it",
-    body: "Your inquiry goes to the division lead, not a queue. No qualification call before anyone looks at the technical detail.",
+    body: "Your inquiry goes to the engineer who owns that product line, not a queue. No qualification call before anyone looks at the technical detail.",
   },
   {
     index: "02",
@@ -82,7 +82,7 @@ export default function InquiryPage() {
           <div className="grid gap-10 md:gap-12 lg:grid-cols-12 lg:gap-16">
             <Reveal className="lg:col-span-7">
               <div className="rounded-none border border-[color:var(--brand-blue)]/10 bg-[#f8f9fa] p-5 shadow-2xl shadow-black/10 sm:p-6 md:p-10">
-                {/* The form reads ?division= to preselect a chip when the visitor
+                {/* The form reads ?product= to preselect a chip when the visitor
                     arrives from a product page, and useSearchParams needs a
                     boundary for this route to stay statically prerendered. */}
                 <Suspense fallback={<div className="min-h-[720px]" />}>

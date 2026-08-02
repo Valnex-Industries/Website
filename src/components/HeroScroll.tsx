@@ -10,6 +10,7 @@ import {
   useTransform,
 } from "framer-motion";
 import { Marquee } from "@/components/Marquee";
+import { cn } from "@/utils/cn";
 
 /** Headline that scrolls behind (and inside) the video window. */
 const MARQUEE_TEXT = "Precision That Powers Progress";
@@ -83,6 +84,28 @@ export function HeroScroll() {
     marqueeProgress.set((t % MARQUEE_CYCLE_MS) / MARQUEE_CYCLE_MS);
   });
 
+  /**
+   * One scale for both corner statements, so they carry equal weight.
+   *
+   * The ceiling is pure geometry, not taste. `"power to respond"` is eighteen
+   * characters and Bitcount runs about 0.67em each, so that line needs roughly
+   * 12em of width.
+   *
+   * From sm up there is room for all twelve em, so `whitespace-nowrap` holds
+   * it on one line at 50-86px. On a phone there is not: 12em inside ~350px
+   * caps the type at 28px, which left the statements looking undersized
+   * against the marquee. Below sm the quoted line is therefore allowed to
+   * wrap, which frees the scale to 45px -- the longest unbroken word group
+   * then being nine characters, not eighteen.
+   */
+  const cornerType =
+    "font-bitcount leading-[1.05] text-white/90 sm:whitespace-nowrap sm:leading-[1.15] text-[clamp(2rem,12vw,3.1rem)] sm:text-[clamp(3rem,7.8vw,5.4rem)] xl:text-[clamp(2.75rem,3.6vw,4rem)]";
+
+  /** Both statements need the same room, since they share a scale. The clamp
+   *  floors matter as much as the ceilings: a 3.2rem minimum overflowed a
+   *  640px viewport, where 7.8vw is only 50px. */
+  const cornerBox = "max-w-[94vw] sm:max-w-[96vw]";
+
   /* Stepped rather than one clamp. Phones need roughly 24vw to read as the
      wall of type the design is built on — a desktop-tuned rule merely clamped
      down leaves the headline floating in empty blue. */
@@ -135,19 +158,41 @@ export function HeroScroll() {
 
         {/* Layer 3: corner statements. Static — the video window swallows them
             as it opens, which is the whole point of it being the layer above. */}
-        <div className="pointer-events-none absolute left-[clamp(20px,4vw,64px)] top-[clamp(72px,10vh,150px)] z-[4] max-w-[86vw] sm:max-w-[70vw]">
-          <p className="text-[clamp(1.9rem,12vw,2.75rem)] font-light italic leading-[1.05] text-white/90 sm:text-[clamp(1.75rem,4.4vw,2.2rem)] sm:leading-tight">
-            Creating new value
+        <div
+          className={cn(
+            "pointer-events-none absolute left-[clamp(24px,4vw,64px)] top-[clamp(72px,10vh,150px)] md:top-[clamp(100px,15vh,200px)] z-[4]",
+            cornerBox,
+          )}
+        >
+          {/* Broken deliberately, not by wrapping: "Creating" over "new value"
+              is the stacked, two-beat reading the reference design uses. */}
+          <p className={cornerType}>
+            Creating
+            <br />
+            new value
           </p>
         </div>
 
-        <div className="pointer-events-none absolute bottom-[clamp(56px,9vh,120px)] right-[clamp(20px,4vw,64px)] z-[4] max-w-[88vw] text-right sm:max-w-[min(60vw,420px)]">
-          <p className="text-[clamp(1.75rem,11vw,2.5rem)] font-light italic leading-[1.05] text-white/90 sm:text-[clamp(1.4rem,3.4vw,1.8rem)] sm:leading-tight">
+        {/* Desktop is wide and short, so the clip sits lower in the viewport
+            than it does on a tall tablet. The xl offset drops this block clear
+            of the window's bottom edge instead of letting it ride across the
+            footage. */}
+        {/* The sm cap of min(65vw,540px) was narrower than the quoted line
+            needs at 72px, so it broke across three lines. Widening the box
+            rather than shrinking the type keeps the scale intact; the block is
+            right-aligned, so a wider box changes nothing visually. */}
+        <div
+          className={cn(
+            "pointer-events-none absolute bottom-[clamp(56px,9vh,120px)] md:bottom-[clamp(80px,15vh,180px)] xl:bottom-[clamp(44px,7vh,88px)] right-[clamp(24px,4vw,64px)] z-[4] text-right",
+            cornerBox,
+          )}
+        >
+          <p className={cornerType}>
             with the
             <br />
             &ldquo;power to respond&rdquo;
           </p>
-          <p className="mt-3 text-[clamp(0.72rem,3.4vw,0.9rem)] font-light leading-relaxed tracking-[0.06em] text-white/50 sm:text-[clamp(0.6rem,1.7vw,0.72rem)]">
+          <p className="mt-3 text-[clamp(0.72rem,3.4vw,0.9rem)] font-light leading-relaxed tracking-[0.06em] text-white/50 sm:text-[clamp(0.875rem,2vw,1.125rem)] xl:text-[clamp(0.8rem,0.95vw,1rem)]">
             A dependable response, your engineering solutions partner.
           </p>
         </div>
@@ -199,7 +244,9 @@ export function HeroScroll() {
           className="pointer-events-none absolute inset-0 z-[7] flex flex-col items-center justify-center px-6 text-center"
           style={{ opacity: payoffOpacity, y: payoffY }}
         >
-          <span className="eyebrow text-white/60">Valnex Industries</span>
+          <span className="eyebrow font-orbitron text-white/60">
+            Valnex Industries
+          </span>
           <h1 className="mt-4 max-w-4xl text-[clamp(1.65rem,5.4vw,4.5rem)] font-black leading-[1.02] tracking-tight text-white sm:leading-[0.95]">
             Engineered for the lines
             <br className="hidden sm:block" />{" "}
@@ -213,7 +260,7 @@ export function HeroScroll() {
 
         {/* Layer 6: opening scroll cue */}
         <motion.div
-          className="pointer-events-none absolute bottom-[clamp(20px,4vh,44px)] left-[clamp(20px,4vw,64px)] z-[8] flex items-center gap-3"
+          className="pointer-events-none absolute bottom-[clamp(20px,4vh,44px)] left-[clamp(24px,4vw,64px)] z-[8] flex items-center gap-3"
           style={{ opacity: cueOpacity }}
         >
           <span className="relative block h-9 w-px overflow-hidden bg-white/25">

@@ -61,7 +61,7 @@ function build(): string {
       ".",
   );
   lines.push(
-    "- An inquiry can be pre-filled for a specific product with /inquiry?division=<slug>, using the same slugs.",
+    "- An inquiry can be pre-filled for a specific product with /inquiry?product=<slug>, using the same slugs.",
   );
   lines.push(
     "- Every page carries schema.org JSON-LD (Organization, WebSite, Product, BreadcrumbList).",

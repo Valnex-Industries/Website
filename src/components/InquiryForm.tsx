@@ -5,13 +5,14 @@ import { useSearchParams } from "next/navigation";
 import { ArrowRight, Check, ChevronDown } from "lucide-react";
 import { submitInquiry } from "@/app/inquiry/actions";
 import {
-  DIVISIONS,
+  PRODUCT_OPTIONS,
   INITIAL_INQUIRY_STATE,
   MESSAGE_MAX,
   TIMELINES,
   VOLUMES,
   type InquiryErrors,
 } from "@/lib/inquiry";
+import { COUNTRIES, DEFAULT_COUNTRY_CODE } from "@/lib/countries";
 import { cn } from "@/utils/cn";
 
 /** The form sits on a milk white card, so everything here is ink-on-white with
@@ -37,9 +38,11 @@ function Label({ htmlFor, children, optional }: {
   return (
     <label
       htmlFor={htmlFor}
-      className="eyebrow flex items-center gap-2 text-[color:var(--brand-ink)]/70"
+      className="eyebrow flex items-center gap-2 text-[color:var(--brand-blue)]"
     >
       {children}
+      {/* "optional" stays muted ink: if it were blue too the label would lose
+          its hierarchy and both words would read with equal weight. */}
       {optional && (
         <span className="normal-case tracking-normal text-[color:var(--brand-ink)]/40">
           optional
@@ -116,19 +119,19 @@ export function InquiryForm() {
   const uid = useId();
   const [count, setCount] = useState(0);
 
-  /* Arriving from a product page: /inquiry?division=chillers. The values
-     echoed back by a failed submit win, so a rejected form never reverts the
-     chip to whatever the URL said. */
+  /* Arriving from a product page: /inquiry?product=chillers. Held in state
+     rather than as a defaultChecked radio, because a native radio group cannot
+     be cleared once a choice is made and this one is optional. The component
+     survives a failed submit, so the state is also what preserves the pick. */
   const searchParams = useSearchParams();
-  const requested = searchParams.get("division");
-  const presetDivision = DIVISIONS.some((d) => d.value === requested)
-    ? requested
-    : undefined;
+  const requested = searchParams.get("product");
+  const [product, setProduct] = useState<string>(
+    PRODUCT_OPTIONS.some((o) => o.value === requested) ? requested! : "",
+  );
 
   const errors = state.errors;
   const values = state.values;
   const field = (name: string) => `${uid}-${name}`;
-  const selectedDivision = values?.division ?? presetDivision;
 
   if (state.status === "success") {
     return (
@@ -228,31 +231,74 @@ export function InquiryForm() {
           <Label htmlFor={field("phone")} optional>
             Phone
           </Label>
-          <input
-            id={field("phone")}
-            name="phone"
-            type="tel"
-            autoComplete="tel"
-            defaultValue={values?.phone}
-            placeholder="+1 000 000 0000"
-            className={cn(fieldClass(), "mt-3")}
-          />
+          {/* Country is picked, not typed. The server folds the two into one
+              E.164 string, so the database never sees a free-text number. */}
+          <div className="mt-3 flex gap-2">
+            <div className="relative shrink-0">
+              <select
+                name="phoneCountry"
+                aria-label="Country dialling code"
+                defaultValue={values?.phoneCountry ?? DEFAULT_COUNTRY_CODE}
+                className={cn(
+                  fieldClass(),
+                  "w-[7.5rem] appearance-none pr-9 sm:w-[9rem]",
+                )}
+              >
+                {COUNTRIES.map((country) => (
+                  <option key={country.code} value={country.code}>
+                    {country.name} ({country.dial})
+                  </option>
+                ))}
+              </select>
+              <ChevronDown
+                size={14}
+                strokeWidth={2.2}
+                aria-hidden="true"
+                className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[color:var(--brand-blue)]"
+              />
+            </div>
+            <input
+              id={field("phone")}
+              name="phone"
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel-national"
+              defaultValue={values?.phone}
+              placeholder="94294 81086"
+              aria-invalid={Boolean(errors.phone)}
+              aria-describedby={errors.phone ? `${field("phone")}-error` : undefined}
+              className={cn(fieldClass(Boolean(errors.phone)), "min-w-0 flex-1")}
+            />
+          </div>
+          <FieldError id={`${field("phone")}-error`} message={errors.phone} />
         </div>
       </div>
 
-      {/* Division: chips in the same language as the tags on the division cards. */}
+      {/* Product: chips in the same language as the tags on the product cards. */}
       <fieldset>
-        <legend className="eyebrow text-[color:var(--brand-ink)]/70">
-          Which division
+        <legend className="eyebrow flex flex-wrap items-center gap-2 text-[color:var(--brand-blue)]">
+          Which product
+          <span className="normal-case tracking-normal text-[color:var(--brand-ink)]/40">
+            optional — tap again to clear
+          </span>
         </legend>
         <div className="mt-4 flex flex-wrap gap-2.5">
-          {DIVISIONS.map((division) => (
-            <label key={division.value} className="group cursor-pointer">
+          {PRODUCT_OPTIONS.map((option) => (
+            <label key={option.value} className="group cursor-pointer">
+              {/* Controlled, so it can be turned off again. Clicking an
+                  unchecked radio fires change then click, and `product` still
+                  holds the previous value at that point, so the click handler
+                  correctly does nothing. Clicking a checked one fires only
+                  click — which is the case that clears it. */}
               <input
                 type="radio"
-                name="division"
-                value={division.value}
-                defaultChecked={selectedDivision === division.value}
+                name="product"
+                value={option.value}
+                checked={product === option.value}
+                onChange={() => setProduct(option.value)}
+                onClick={() => {
+                  if (product === option.value) setProduct("");
+                }}
                 className="peer sr-only"
               />
               <span
@@ -264,12 +310,12 @@ export function InquiryForm() {
                   "peer-focus-visible:ring-2 peer-focus-visible:ring-[color:var(--brand-blue)]/60",
                 )}
               >
-                {division.label}
+                {option.label}
               </span>
             </label>
           ))}
         </div>
-        <FieldError id={`${field("division")}-error`} message={errors.division} />
+        <FieldError id={`${field("product")}-error`} message={errors.product} />
       </fieldset>
 
       <div>

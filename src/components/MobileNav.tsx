@@ -45,12 +45,12 @@ export function MobileNav({ open, onClose, triggerRef }: MobileNavProps) {
     return releaseScroll;
   }, [open, lenis, releaseScroll]);
 
-  /* The drawer is `lg:hidden`. Rotating a tablet into desktop width would
+  /* The drawer is `xl:hidden`. Rotating a tablet into desktop width would
      otherwise hide it while `open` stayed true, leaving the page scroll-locked
      with nothing on screen to close. */
   useEffect(() => {
     if (!open) return;
-    const query = window.matchMedia("(min-width: 1024px)");
+    const query = window.matchMedia("(min-width: 1280px)");
     const onChange = () => {
       if (query.matches) onClose();
     };
@@ -153,7 +153,7 @@ export function MobileNav({ open, onClose, triggerRef }: MobileNavProps) {
             transition={{ duration: reduceMotion ? 0 : 0.4 }}
             onClick={onClose}
             aria-hidden="true"
-            className="fixed inset-0 z-[105] bg-[color:var(--brand-ink)]/70 backdrop-blur-sm lg:hidden"
+            className="fixed inset-0 z-[105] bg-[color:var(--brand-ink)]/70 backdrop-blur-sm xl:hidden"
           />
 
           <motion.div
@@ -167,26 +167,21 @@ export function MobileNav({ open, onClose, triggerRef }: MobileNavProps) {
             exit={{ x: "100%" }}
             transition={{ duration: reduceMotion ? 0 : 0.5, ease: PANEL_EASE }}
             className={cn(
-              "fixed inset-y-0 right-0 z-[110] flex w-full flex-col bg-white shadow-[0_0_60px_rgba(2,16,46,0.35)] lg:hidden",
-              "sm:max-w-[440px]",
+              "fixed inset-y-0 right-0 z-[110] flex w-full flex-col bg-white shadow-[0_0_60px_rgba(2,16,46,0.35)] xl:hidden",
+              "sm:max-w-[440px] md:max-w-[540px]",
             )}
             style={{
               paddingTop: "env(safe-area-inset-top)",
               paddingBottom: "env(safe-area-inset-bottom)",
             }}
           >
-            {/* Drawer header. No close button: the site header's toggle is
-                stacked above this panel and does that job, which keeps one
-                control in one place instead of two X marks on top of another. */}
-            <div className="flex h-16 shrink-0 items-center px-5 sm:px-6">
-              <Link
-                href="/"
-                onClick={(e) => handleLink(e, "/")}
-                className="whitespace-nowrap text-[11px] font-extrabold uppercase tracking-[0.18em] text-[color:var(--brand-ink)] sm:text-sm sm:tracking-[0.22em]"
-              >
-                Valnex Industries
-              </Link>
-            </div>
+            {/* Spacer only. The site header sits above this panel and supplies
+                the wordmark and the close control, so repeating either here
+                would double them up. Height matches the header bar. */}
+            {/* Must track the header bar's height at every breakpoint
+                (h-16 / md:h-20 / lg:h-[65px]) or the first menu row slides
+                under it. */}
+            <div aria-hidden="true" className="h-16 shrink-0 md:h-20 lg:h-[65px]" />
 
             {/* Scrollable body: long product lists must not trap the drawer */}
             <motion.div
@@ -380,7 +375,7 @@ function DrawerRow({
               className={cn(
                 "pb-5",
                 hasThumbnails
-                  ? "grid gap-2 sm:grid-cols-2"
+                  ? "flex flex-col gap-3"
                   : "flex flex-col gap-1",
               )}
             >

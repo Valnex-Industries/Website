@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { MapPin, Phone, Mail } from "lucide-react";
 import { CAREER_LINKS, COMPANY_LINKS, PRODUCT_LINKS } from "@/lib/nav";
 import { useHashNav } from "@/lib/use-hash-nav";
@@ -23,13 +24,13 @@ const FOOTER_COLUMNS = [
   {
     title: "Products",
     links: PRODUCT_LINKS,
-    span: "col-span-2 md:col-span-1 lg:col-span-2",
+    span: "col-span-2 md:col-span-1 xl:col-span-2",
     /* columns-2 rather than a 2-up grid: it balances the seven items by
        height on its own, so the split survives a link being added. */
     list: "columns-2 gap-x-5 md:columns-1",
   },
-  { title: "Company", links: COMPANY_LINKS, span: "lg:col-span-2", list: "" },
-  { title: "Careers", links: CAREER_LINKS, span: "lg:col-span-2", list: "" },
+  { title: "Company", links: COMPANY_LINKS, span: "xl:col-span-2", list: "" },
+  { title: "Careers", links: CAREER_LINKS, span: "xl:col-span-2", list: "" },
 ];
 
 /* One hairline rhythm down the page on phones; the dividers disappear once the
@@ -51,14 +52,25 @@ export function SiteFooter() {
       />
 
       <div className="relative mx-auto w-full max-w-[1280px] px-5 sm:px-6 lg:px-10">
-        {/* Two columns on phones, three on tablets, the full twelve on desktop:
-            stacking every list made the footer taller than the page itself. */}
-        <div className="grid grid-cols-2 gap-x-5 sm:gap-x-8 md:grid-cols-3 md:gap-y-12 lg:grid-cols-12 lg:gap-12">
+        {/* Two columns on phones, three from tablet, the full twelve only at
+            xl. Putting all five groups in one row at lg left Contact about
+            125px wide, which broke the postal address over a dozen lines --
+            1024px simply is not enough for five columns and a gap. */}
+        <div className="grid grid-cols-2 gap-x-5 sm:gap-x-8 md:grid-cols-3 md:gap-y-12 xl:grid-cols-12 xl:gap-x-10 xl:gap-y-12">
           {/* Brand Column */}
-          <div className="col-span-2 pb-7 md:col-span-3 md:pb-0 lg:col-span-4">
-            <span className="text-sm font-extrabold uppercase tracking-[0.22em] text-[color:var(--brand-blue)]">
-              Valnex Industries
-            </span>
+          <div className="col-span-2 min-w-0 pb-7 md:col-span-3 md:pb-0 xl:col-span-3">
+            <div className="flex items-center gap-3">
+              <Image
+                src="/assets/blue-valnex-logo.webp"
+                alt=""
+                width={128}
+                height={128}
+                className="h-10 w-10 shrink-0 object-contain"
+              />
+              <span className="font-orbitron text-sm font-extrabold uppercase tracking-[0.2em] text-[color:var(--brand-blue)]">
+                Valnex Industries
+              </span>
+            </div>
             <p className="mt-5 max-w-xs text-sm font-medium leading-relaxed text-[color:var(--brand-ink)]/70">
               Precision that powers progress. Engineering partner to the
               production lines that cannot stop.
@@ -67,7 +79,7 @@ export function SiteFooter() {
 
           {/* Links Columns */}
           {FOOTER_COLUMNS.map((column) => (
-            <div key={column.title} className={cn(BLOCK, column.span)}>
+            <div key={column.title} className={cn(BLOCK, "min-w-0", column.span)}>
               <span className="text-xs font-bold uppercase tracking-[0.2em] text-[color:var(--brand-blue)]/80">
                 {column.title}
               </span>
@@ -89,7 +101,9 @@ export function SiteFooter() {
           ))}
 
           {/* Contact Column */}
-          <div className={cn(BLOCK, "col-span-2 md:col-span-3 lg:col-span-2")}>
+          {/* Three columns at xl, not two: it carries a full postal address and
+              a 28-character email, the widest content in the footer. */}
+          <div className={cn(BLOCK, "col-span-2 min-w-0 md:col-span-3 xl:col-span-3")}>
             <span className="text-xs font-bold uppercase tracking-[0.2em] text-[color:var(--brand-blue)]/80">
               Contact Us
             </span>
@@ -131,7 +145,7 @@ export function SiteFooter() {
                 <Mail size={16} className="mt-0.5 shrink-0 text-[#f97316]" />
                 <a
                   href="mailto:contact@valnexindustries.com"
-                  className="break-words transition-colors hover:text-[#f97316]"
+                  className="[overflow-wrap:anywhere] transition-colors hover:text-[#f97316]"
                 >
                   contact@valnexindustries.com
                 </a>

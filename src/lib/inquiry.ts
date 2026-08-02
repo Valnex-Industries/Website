@@ -8,20 +8,25 @@
  */
 
 import { PRODUCTS, type ProductSlug } from "@/lib/products";
+import { DEFAULT_COUNTRY_CODE, countryFor, toE164 } from "@/lib/countries";
 
-export type DivisionValue = ProductSlug | "unsure";
+/** A catalogue slug, or `other` for something not in the range. */
+export type InquiryProduct = ProductSlug | "other";
 
 /**
- * Division values are the product slugs, so a product URL and the division an
+ * Option values are the product slugs, so a product URL and the product an
  * inquiry names are the same token. That is what lets a product page deep-link
- * `/inquiry?division=<slug>` and have the right chip already selected.
+ * `/inquiry?product=<slug>` and have the right chip already selected.
  */
-export const DIVISIONS: readonly { value: DivisionValue; label: string }[] = [
+export const PRODUCT_OPTIONS: readonly {
+  value: InquiryProduct;
+  label: string;
+}[] = [
   ...PRODUCTS.map((product) => ({
     value: product.slug,
     label: product.title,
   })),
-  { value: "unsure" as const, label: "Not sure yet" },
+  { value: "other" as const, label: "Other or custom" },
 ];
 
 export const VOLUMES = [
@@ -45,8 +50,13 @@ export interface Inquiry {
   name: string;
   email: string;
   company: string;
+  /** Stored E.164 only ("+919429481086") or empty. Never free text. */
   phone: string;
-  division: DivisionValue;
+  /** Form state only, so a rejected submit keeps the chosen country. Not a
+   *  database column — `toRow` in inquiry-store.ts does not carry it. */
+  phoneCountry: string;
+  /** Optional and deselectable, so empty is a legitimate answer. */
+  product: InquiryProduct | "";
   application: string;
   volume: VolumeValue | "";
   timeline: TimelineValue | "";
@@ -103,17 +113,31 @@ export interface ParseResult {
  * uses native `required` attributes, but nothing here trusts that.
  */
 export function parseInquiry(formData: FormData): ParseResult {
-  const rawDivision = text(formData, "division");
+  const rawProduct = text(formData, "product");
   const rawVolume = text(formData, "volume");
   const rawTimeline = text(formData, "timeline");
   const consent = formData.get("consent") === "on";
+
+  /* Folded to E.164 here, before anything downstream sees it, so the value
+     that reaches the table is either "+<digits>" or empty — never whatever a
+     visitor typed. On failure the raw input is echoed back so the field is not
+     silently emptied under them. */
+  const rawPhoneCountry = text(formData, "phoneCountry");
+  const phoneCountry = countryFor(rawPhoneCountry)
+    ? rawPhoneCountry
+    : DEFAULT_COUNTRY_CODE;
+  const rawPhone = text(formData, "phone");
+  const phoneResult = toE164(phoneCountry, rawPhone);
 
   const values: Inquiry = {
     name: text(formData, "name"),
     email: text(formData, "email"),
     company: text(formData, "company"),
-    phone: text(formData, "phone"),
-    division: isOption(DIVISIONS, rawDivision) ? rawDivision : "unsure",
+    phone: phoneResult.error ? rawPhone : phoneResult.phone,
+    phoneCountry,
+    /* Unrecognised falls back to empty, not to a guess: the field is optional,
+       so "nothing chosen" is a truthful answer and beats inventing one. */
+    product: isOption(PRODUCT_OPTIONS, rawProduct) ? rawProduct : "",
     application: text(formData, "application"),
     volume: isOption(VOLUMES, rawVolume) ? rawVolume : "",
     timeline: isOption(TIMELINES, rawTimeline) ? rawTimeline : "",
@@ -132,8 +156,10 @@ export function parseInquiry(formData: FormData): ParseResult {
   if (values.company.length < 2) {
     errors.company = "Company or institution is required.";
   }
-  if (!isOption(DIVISIONS, rawDivision)) {
-    errors.division = "Pick the closest division.";
+  /* No required check on `product`. It is optional and can be deselected, and
+     the message field carries the real detail anyway. */
+  if (phoneResult.error) {
+    errors.phone = phoneResult.error;
   }
   if (values.message.length < MESSAGE_MIN) {
     errors.message = `A little more detail, please: at least ${MESSAGE_MIN} characters.`;
@@ -160,6 +186,8 @@ export function makeReference(now: number = Date.now()): string {
   return `VX-${stamp}${noise}`;
 }
 
-export function divisionLabel(value: DivisionValue): string {
-  return DIVISIONS.find((d) => d.value === value)?.label ?? value;
+/** Human label for an inquiry's product, or an em dash when none was chosen. */
+export function productLabel(value: InquiryProduct | ""): string {
+  if (!value) return "—";
+  return PRODUCT_OPTIONS.find((o) => o.value === value)?.label ?? value;
 }

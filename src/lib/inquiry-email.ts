@@ -1,5 +1,5 @@
 import nodemailer, { type Transporter } from "nodemailer";
-import { divisionLabel } from "@/lib/inquiry";
+import { productLabel } from "@/lib/inquiry";
 import type { DeliveryResult, StoredInquiry } from "@/lib/inquiry-store";
 
 /**
@@ -49,7 +49,7 @@ function buildHtml(inquiry: StoredInquiry): string {
     ${row("Email", inquiry.email)}
     ${row("Company", inquiry.company)}
     ${row("Phone", inquiry.phone)}
-    ${row("Product", divisionLabel(inquiry.division))}
+    ${row("Product", productLabel(inquiry.product))}
     ${row("Application", inquiry.application)}
     ${row("Volume", inquiry.volume)}
     ${row("Timeline", inquiry.timeline)}
@@ -70,7 +70,7 @@ function buildText(inquiry: StoredInquiry): string {
     `Email:       ${inquiry.email}`,
     `Company:     ${inquiry.company}`,
     inquiry.phone ? `Phone:       ${inquiry.phone}` : "",
-    `Product:     ${divisionLabel(inquiry.division)}`,
+    `Product:     ${productLabel(inquiry.product)}`,
     inquiry.application ? `Application: ${inquiry.application}` : "",
     inquiry.volume ? `Volume:      ${inquiry.volume}` : "",
     inquiry.timeline ? `Timeline:    ${inquiry.timeline}` : "",

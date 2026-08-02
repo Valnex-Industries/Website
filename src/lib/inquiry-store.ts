@@ -42,7 +42,7 @@ function toRow(inquiry: StoredInquiry) {
     email: inquiry.email,
     company: inquiry.company,
     phone: inquiry.phone || null,
-    division: inquiry.division,
+    product: inquiry.product || null,
     application: inquiry.application || null,
     volume: inquiry.volume || null,
     timeline: inquiry.timeline || null,

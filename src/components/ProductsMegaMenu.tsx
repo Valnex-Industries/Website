@@ -39,7 +39,7 @@ export function ProductsMegaMenu({ onClose }: { onClose?: () => void }) {
       initial="hidden"
       animate="visible"
       exit="exit"
-      className="absolute left-0 top-full hidden w-full origin-top border-t border-[color:var(--brand-blue)]/10 bg-white shadow-2xl lg:block"
+      className="absolute left-0 top-full hidden w-full origin-top border-t border-[color:var(--brand-blue)]/10 bg-white shadow-2xl xl:block"
     >
       <div className="mx-auto w-full max-w-[1280px] px-6 py-10 lg:px-10">
         <div className="grid grid-cols-12 gap-8 xl:gap-10">

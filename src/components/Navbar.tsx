@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/utils/cn";
@@ -42,35 +43,74 @@ export function Navbar() {
     <header
       onMouseLeave={() => setActiveDropdown(null)}
       className={cn(
-        "fixed inset-x-0 top-0 z-[100] transition-all duration-500",
-        isLightMode
-          ? "bg-white"
-          : condensed
-            ? "bg-[rgba(2,16,46,0.5)] backdrop-blur-md border-b border-white/10"
-            : "bg-transparent border-b border-transparent"
+        /* Colours only. `transition-all` here would also animate the height and
+           the z-index swap, which is what made state changes feel like the bar
+           was resizing. */
+        "fixed inset-x-0 top-0 transition-[background-color,border-color,box-shadow,backdrop-filter] duration-500",
+        /* Above the drawer (110) and its scrim (105) while open, so the bar
+           reads as one continuous header rather than the panel covering it.
+           That is also why the panel carries no wordmark of its own. */
+        open ? "z-[120]" : "z-[100]",
+        open
+          ? "bg-white border-b border-[color:var(--brand-ink)]/10 shadow-sm"
+          : isLightMode
+            ? "bg-white"
+            : condensed
+              ? "bg-[rgba(2,16,46,0.5)] backdrop-blur-md border-b border-white/10"
+              : "bg-transparent border-b border-transparent"
       )}
     >
       <div
         className={cn(
-          "mx-auto flex items-center justify-between gap-4 px-5 sm:px-6 lg:gap-6 lg:px-10 transition-all duration-500",
-          /* Never condensed while the drawer is open, or the toggle would sit
-             8px above the wordmark in the panel's own header row. */
-          condensed && !isLightMode && !open ? "h-14" : "h-16 lg:h-[68px]"
+          /* The drawer renders inside this header, so once the header becomes
+             a stacking context the panel (z-110) would paint over the bar's own
+             contents. This lifts the wordmark and toggle back above it. */
+          /* Fixed height, always. Nothing -- scroll, hover, or the drawer --
+             may resize this bar: a header that changes height mid-scroll drags
+             the whole page with it. `condensed` still drives the background,
+             which is the part that should react to scrolling. */
+          "relative z-[130] mx-auto flex h-16 md:h-20 items-center justify-between gap-4 px-5 sm:px-6 lg:h-[65px] lg:gap-6 lg:px-10"
         )}
       >
         {/* Wordmark */}
         <Link
           href="/"
           className={cn(
-            "whitespace-nowrap text-[11px] font-extrabold uppercase tracking-[0.18em] transition-colors sm:text-sm sm:tracking-[0.22em]",
-            isLightMode ? "text-[color:var(--brand-ink)]" : "text-white"
+            "group flex items-center gap-2.5 sm:gap-3",
+            /* Orbitron is a wide display face, so the tracking comes down a
+               notch from the body-font original to keep the wordmark clear of
+               the burger on small screens. */
+            "font-orbitron whitespace-nowrap text-[11px] font-extrabold uppercase tracking-[0.14em] transition-colors duration-500 sm:text-sm md:text-base lg:text-sm sm:tracking-[0.2em]",
+            open
+              ? "text-[color:var(--brand-blue)]"
+              : isLightMode
+                ? "text-[color:var(--brand-ink)]"
+                : "text-white"
           )}
         >
+          {/* White over the dark hero, blue the moment the bar turns white --
+              opening the drawer or a mega menu -- otherwise the mark would
+              disappear into its own background. No disc behind it: the logo
+              carries its own glow and a circular ground would clip the halo.
+              alt is empty because the wordmark beside it already names the
+              link. */}
+          <Image
+            src={
+              open || isLightMode
+                ? "/assets/blue-valnex-logo.webp"
+                : "/assets/white-valnex-logo.webp"
+            }
+            alt=""
+            width={128}
+            height={128}
+            priority
+            className="h-9 w-9 shrink-0 object-contain sm:h-10 sm:w-10 md:h-12 md:w-12 lg:h-10 lg:w-10"
+          />
           Valnex Industries
         </Link>
 
         {/* Desktop links */}
-        <nav className="hidden items-center gap-1 lg:flex h-full">
+        <nav className="hidden items-center gap-1 xl:flex h-full">
           {NAV_ITEMS.map((link) => (
             <div
               key={link.label}
@@ -106,7 +146,7 @@ export function Navbar() {
         </nav>
 
         {/* Desktop actions */}
-        <div className="hidden items-center gap-2 lg:flex">
+        <div className="hidden items-center gap-2 xl:flex">
           <Link
             href="/inquiry"
             className={cn(
@@ -161,8 +201,16 @@ export function Navbar() {
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
           className={cn(
-            "relative z-[120] -mr-2 flex h-11 w-11 items-center justify-center transition-colors lg:hidden",
-            open || isLightMode ? "text-[color:var(--brand-ink)]" : "text-white"
+            "relative z-[10] -mr-2 flex h-11 w-11 md:h-14 md:w-14 md:scale-125 items-center justify-center transition-all duration-500 xl:hidden",
+            /* A brighter red than the #c81e1e used for form errors. That one is
+               tuned to stay readable as small body text; this is a 2px icon
+               stroke on white, where high chroma reads as intent rather than
+               as a warning. */
+            open
+              ? "text-[#fb2c36]"
+              : isLightMode
+                ? "text-[color:var(--brand-ink)]"
+                : "text-white"
           )}
           onClick={() => setOpen((v) => !v)}
         >
@@ -186,27 +234,68 @@ export function Navbar() {
   );
 }
 
-/** Three rules that fold into a cross. */
+/**
+ * Three bars that morph into an ✕ with a two-phase, butter-smooth animation.
+ *
+ * Phase 1 (hamburger → X): bars slide to centre, then rotate into the cross.
+ * Phase 2 (X → hamburger): bars un-rotate, then slide back to their slots.
+ *
+ * Uses Framer Motion's `animate` prop so the sequence is GPU-composited and
+ * each bar gets its own staggered keyframes.
+ */
 function BurgerIcon({ open }: { open: boolean }) {
-  const bar = "absolute left-0 h-[2px] w-full rounded-full bg-current";
-  const transition = { duration: 0.35, ease: [0.22, 1, 0.36, 1] as const };
+  const shared = {
+    position: "absolute" as const,
+    left: 0,
+    height: 2,
+    width: "100%",
+    borderRadius: 9999,
+    backgroundColor: "currentColor",
+  };
 
   return (
     <span aria-hidden="true" className="relative block h-[14px] w-[22px]">
+      {/* Top bar */}
       <motion.span
-        className={cn(bar, "top-0")}
-        animate={{ y: open ? 6 : 0, rotate: open ? 45 : 0 }}
-        transition={transition}
+        style={{ ...shared, top: 0 }}
+        animate={
+          open
+            ? { y: 6, rotate: 45 }
+            : { y: 0, rotate: 0 }
+        }
+        transition={{
+          y: { duration: 0.25, ease: [0.22, 1, 0.36, 1], delay: open ? 0 : 0.12 },
+          rotate: { duration: 0.3, ease: [0.22, 1, 0.36, 1], delay: open ? 0.12 : 0 },
+        }}
       />
+
+      {/* Middle bar */}
       <motion.span
-        className={cn(bar, "top-[6px]")}
-        animate={{ opacity: open ? 0 : 1, scaleX: open ? 0.4 : 1 }}
-        transition={{ duration: 0.2 }}
+        style={{ ...shared, top: 6 }}
+        animate={
+          open
+            ? { opacity: 0, scaleX: 0.3 }
+            : { opacity: 1, scaleX: 1 }
+        }
+        transition={{
+          duration: 0.2,
+          ease: "easeInOut",
+          delay: open ? 0.05 : 0.18,
+        }}
       />
+
+      {/* Bottom bar */}
       <motion.span
-        className={cn(bar, "top-[12px]")}
-        animate={{ y: open ? -6 : 0, rotate: open ? -45 : 0 }}
-        transition={transition}
+        style={{ ...shared, top: 12 }}
+        animate={
+          open
+            ? { y: -6, rotate: -45 }
+            : { y: 0, rotate: 0 }
+        }
+        transition={{
+          y: { duration: 0.25, ease: [0.22, 1, 0.36, 1], delay: open ? 0 : 0.12 },
+          rotate: { duration: 0.3, ease: [0.22, 1, 0.36, 1], delay: open ? 0.12 : 0 },
+        }}
       />
     </span>
   );
