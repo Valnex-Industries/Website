@@ -52,7 +52,7 @@ export function Navbar() {
            That is also why the panel carries no wordmark of its own. */
         open ? "z-[120]" : "z-[100]",
         open
-          ? "bg-white border-b border-[color:var(--brand-ink)]/10 shadow-sm"
+          ? "bg-transparent border-b border-transparent shadow-none"
           : isLightMode
             ? "bg-white"
             : condensed
@@ -76,36 +76,52 @@ export function Navbar() {
         <Link
           href="/"
           className={cn(
-            "group flex items-center gap-2.5 sm:gap-3",
+            "group relative flex items-center gap-2.5 sm:gap-3",
             /* Orbitron is a wide display face, so the tracking comes down a
                notch from the body-font original to keep the wordmark clear of
                the burger on small screens. */
-            "font-orbitron whitespace-nowrap text-[11px] font-extrabold uppercase tracking-[0.14em] transition-colors duration-500 sm:text-sm md:text-base lg:text-sm sm:tracking-[0.2em]",
+            "font-orbitron whitespace-nowrap text-[11px] font-extrabold uppercase tracking-[0.14em] transition-colors sm:text-sm md:text-base lg:text-sm sm:tracking-[0.2em]",
             open
-              ? "text-[color:var(--brand-blue)]"
+              ? "text-[color:var(--brand-blue)] sm:text-white duration-150 delay-[350ms] sm:delay-0 sm:duration-500"
               : isLightMode
-                ? "text-[color:var(--brand-ink)]"
-                : "text-white"
+                ? "text-[color:var(--brand-ink)] duration-500 delay-0"
+                : "text-white duration-500 delay-0"
           )}
         >
-          {/* White over the dark hero, blue the moment the bar turns white --
-              opening the drawer or a mega menu -- otherwise the mark would
-              disappear into its own background. No disc behind it: the logo
-              carries its own glow and a circular ground would clip the halo.
-              alt is empty because the wordmark beside it already names the
-              link. */}
+          {/* White logo: visible unless we're open on mobile, or in desktop light mode */}
           <Image
-            src={
-              open || isLightMode
-                ? "/assets/blue-valnex-logo.webp"
-                : "/assets/white-valnex-logo.webp"
-            }
+            src="/assets/white-valnex-logo.webp"
             alt=""
             width={128}
             height={128}
             priority
-            className="h-9 w-9 shrink-0 object-contain sm:h-10 sm:w-10 md:h-12 md:w-12 lg:h-10 lg:w-10"
+            className={cn(
+              "absolute left-0 top-1/2 -translate-y-1/2 h-9 w-9 shrink-0 object-contain sm:h-10 sm:w-10 md:h-12 md:w-12 lg:h-10 lg:w-10 transition-opacity",
+              open
+                ? "opacity-0 sm:opacity-100 duration-150 delay-[350ms] sm:delay-0 sm:duration-500"
+                : isLightMode
+                  ? "opacity-0 duration-500 delay-0"
+                  : "opacity-100 duration-500 delay-0"
+            )}
           />
+          {/* Blue logo: visible when open on mobile, or in desktop light mode */}
+          <Image
+            src="/assets/blue-valnex-logo.webp"
+            alt=""
+            width={128}
+            height={128}
+            priority
+            className={cn(
+              "absolute left-0 top-1/2 -translate-y-1/2 h-9 w-9 shrink-0 object-contain sm:h-10 sm:w-10 md:h-12 md:w-12 lg:h-10 lg:w-10 transition-opacity",
+              open
+                ? "opacity-100 sm:opacity-0 duration-150 delay-[350ms] sm:delay-0 sm:duration-500"
+                : isLightMode
+                  ? "opacity-100 duration-500 delay-0"
+                  : "opacity-0 duration-500 delay-0"
+            )}
+          />
+          {/* Spacer to reserve layout space for the absolute images */}
+          <div className="h-9 w-9 shrink-0 sm:h-10 sm:w-10 md:h-12 md:w-12 lg:h-10 lg:w-10" />
           Valnex Industries
         </Link>
 

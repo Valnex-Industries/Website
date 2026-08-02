@@ -272,19 +272,6 @@ export function HeroScroll() {
           </span>
           <span className="eyebrow text-white/55">Scroll more</span>
         </motion.div>
-
-        {/* Layer 7, the hand-off cue: the pin is about to release */}
-        <motion.div
-          className="pointer-events-none absolute bottom-[clamp(20px,4vh,44px)] left-1/2 z-[8] flex -translate-x-1/2 flex-col items-center gap-2 whitespace-nowrap"
-          style={{ opacity: payoffOpacity }}
-        >
-          <span className="eyebrow text-white/45">Keep scrolling</span>
-          <motion.span
-            className="block h-4 w-px bg-white/40"
-            animate={{ scaleY: [0.4, 1, 0.4], opacity: [0.3, 1, 0.3] }}
-            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-          />
-        </motion.div>
       </motion.div>
     </section>
   );

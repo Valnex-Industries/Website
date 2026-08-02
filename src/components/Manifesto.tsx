@@ -57,18 +57,23 @@ export function Manifesto() {
           </Reveal>
         </div>
 
-        <div className="mt-14 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/15 bg-white/10 md:mt-20 lg:grid-cols-4">
+        {/* Square corners, but held inside the page gutter rather than run to
+            the viewport edge. Hairlines are the parent showing through the
+            gap, which redraws itself across the 2→4 column change without
+            per-cell border rules. */}
+        <div className="mt-14 grid grid-cols-2 gap-px bg-[color:var(--brand-ink)]/10 md:mt-20 lg:grid-cols-4">
           {STATS.map((stat, i) => (
-            <Reveal
-              key={stat.label}
-              delay={i * 0.08}
-              className="bg-[#0a2472]"
-            >
-              <div className="flex h-full flex-col gap-2 p-5 sm:p-6 md:p-8">
-                <span className="text-[clamp(1.6rem,7vw,2.75rem)] font-black leading-none tracking-tight text-white">
+            <Reveal key={stat.label} delay={i * 0.08} className="min-w-0 bg-white">
+              <div className="flex h-full min-w-0 flex-col gap-2 p-5 sm:p-6 md:p-8">
+                {/* Capped well below the cell width: "Gujarat" is the widest
+                    value and Orbitron is a wide face, so at 1024px — where the
+                    band first splits into four — it has only ~188px to sit in. */}
+                <span className="font-orbitron text-[clamp(1.5rem,5vw,2.25rem)] font-black leading-none tracking-tight text-[#f97316] xl:text-[2.5rem]">
                   {stat.value}
                 </span>
-                <span className="eyebrow text-white/45">{stat.label}</span>
+                <span className="eyebrow text-[color:var(--brand-ink)]/55">
+                  {stat.label}
+                </span>
               </div>
             </Reveal>
           ))}

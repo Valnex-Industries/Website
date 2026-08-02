@@ -2,6 +2,7 @@ import { Navbar } from "@/components/Navbar";
 import { HeroScroll } from "@/components/HeroScroll";
 import { Manifesto } from "@/components/Manifesto";
 import { Divisions } from "@/components/Divisions";
+import { Strengths } from "@/components/Strengths";
 import { CtaBand } from "@/components/CtaBand";
 import { SiteFooter } from "@/components/SiteFooter";
 import { JsonLd } from "@/components/JsonLd";
@@ -18,6 +19,7 @@ export default function Home() {
       <main>
         <HeroScroll />
         <Divisions />
+        <Strengths />
         <Manifesto />
         <CtaBand />
       </main>
