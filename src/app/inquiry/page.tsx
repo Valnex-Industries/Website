@@ -1,13 +1,28 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Navbar } from "@/components/Navbar";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Reveal } from "@/components/Reveal";
 import { InquiryForm } from "@/components/InquiryForm";
 
+const DESCRIPTION =
+  "Send Valnex Industries a drawing, a duty cycle, or just the problem. An engineer reads every inquiry that arrives.";
+
 export const metadata: Metadata = {
-  title: "Inquiry | Valnex Industries",
-  description:
-    "Send Valnex Industries a drawing, a duty cycle, or just the problem. An engineer reads every inquiry that arrives.",
+  title: "Inquiry",
+  description: DESCRIPTION,
+  alternates: { canonical: "/inquiry" },
+  openGraph: {
+    type: "website",
+    title: "Inquiry",
+    description: DESCRIPTION,
+    url: "/inquiry",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Inquiry",
+    description: DESCRIPTION,
+  },
 };
 
 const STEPS = [
@@ -67,7 +82,12 @@ export default function InquiryPage() {
           <div className="grid gap-10 md:gap-12 lg:grid-cols-12 lg:gap-16">
             <Reveal className="lg:col-span-7">
               <div className="rounded-none border border-[color:var(--brand-blue)]/10 bg-[#f8f9fa] p-5 shadow-2xl shadow-black/10 sm:p-6 md:p-10">
-                <InquiryForm />
+                {/* The form reads ?division= to preselect a chip when the visitor
+                    arrives from a product page, and useSearchParams needs a
+                    boundary for this route to stay statically prerendered. */}
+                <Suspense fallback={<div className="min-h-[720px]" />}>
+                  <InquiryForm />
+                </Suspense>
               </div>
             </Reveal>
 

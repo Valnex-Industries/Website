@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useId, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { ArrowRight, Check, ChevronDown } from "lucide-react";
 import { submitInquiry } from "@/app/inquiry/actions";
 import {
@@ -115,9 +116,19 @@ export function InquiryForm() {
   const uid = useId();
   const [count, setCount] = useState(0);
 
+  /* Arriving from a product page: /inquiry?division=chillers. The values
+     echoed back by a failed submit win, so a rejected form never reverts the
+     chip to whatever the URL said. */
+  const searchParams = useSearchParams();
+  const requested = searchParams.get("division");
+  const presetDivision = DIVISIONS.some((d) => d.value === requested)
+    ? requested
+    : undefined;
+
   const errors = state.errors;
   const values = state.values;
   const field = (name: string) => `${uid}-${name}`;
+  const selectedDivision = values?.division ?? presetDivision;
 
   if (state.status === "success") {
     return (
@@ -241,7 +252,7 @@ export function InquiryForm() {
                 type="radio"
                 name="division"
                 value={division.value}
-                defaultChecked={values?.division === division.value}
+                defaultChecked={selectedDivision === division.value}
                 className="peer sr-only"
               />
               <span

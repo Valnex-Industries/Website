@@ -20,9 +20,18 @@ export interface StoredInquiry extends Inquiry {
   submittedAt: string;
 }
 
-export type SaveResult =
-  | { ok: true; persisted: boolean }
-  | { ok: false; error: string };
+/**
+ * The outcome of one delivery channel. `configured` and `delivered` are
+ * separate on purpose: an unconfigured channel is a local-development state,
+ * while a configured channel that delivered nothing is a production incident.
+ * Only the second should ever show the visitor an error.
+ */
+export interface DeliveryResult {
+  ok: boolean;
+  configured: boolean;
+  delivered: boolean;
+  error?: string;
+}
 
 /** camelCase app shape → snake_case table columns. */
 function toRow(inquiry: StoredInquiry) {
@@ -46,7 +55,7 @@ async function insertViaSupabase(
   url: string,
   key: string,
   inquiry: StoredInquiry,
-): Promise<SaveResult> {
+): Promise<DeliveryResult> {
   try {
     const response = await fetch(`${url.replace(/\/$/, "")}/rest/v1/inquiries`, {
       method: "POST",
@@ -63,17 +72,29 @@ async function insertViaSupabase(
     if (!response.ok) {
       const detail = await response.text();
       console.error("[inquiry] Supabase insert failed", response.status, detail);
-      return { ok: false, error: `Supabase responded ${response.status}` };
+      return {
+        ok: false,
+        configured: true,
+        delivered: false,
+        error: `Supabase responded ${response.status}`,
+      };
     }
 
-    return { ok: true, persisted: true };
+    return { ok: true, configured: true, delivered: true };
   } catch (error) {
     console.error("[inquiry] Supabase insert threw", error);
-    return { ok: false, error: "Could not reach the database." };
+    return {
+      ok: false,
+      configured: true,
+      delivered: false,
+      error: "Could not reach the database.",
+    };
   }
 }
 
-export async function saveInquiry(inquiry: StoredInquiry): Promise<SaveResult> {
+export async function saveInquiry(
+  inquiry: StoredInquiry,
+): Promise<DeliveryResult> {
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -88,5 +109,5 @@ export async function saveInquiry(inquiry: StoredInquiry): Promise<SaveResult> {
     email: inquiry.email,
   });
 
-  return { ok: true, persisted: false };
+  return { ok: true, configured: false, delivered: false };
 }

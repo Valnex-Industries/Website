@@ -4,7 +4,16 @@ import Link from "next/link";
 import { MapPin, Phone, Mail } from "lucide-react";
 import { CAREER_LINKS, COMPANY_LINKS, PRODUCT_LINKS } from "@/lib/nav";
 import { useHashNav } from "@/lib/use-hash-nav";
+import { BUSINESS, CONTACT, SITE_NAME } from "@/lib/site";
 import { cn } from "@/utils/cn";
+
+/** The verified listing once it exists; a name+address search until then, which
+ *  resolves to the same place without hardcoding a guessed pin. */
+const MAPS_SEARCH_URL =
+  BUSINESS.mapUrl ??
+  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+    `${SITE_NAME}, ${CONTACT.address.full}`,
+  )}`;
 
 /* Products takes the full width on phones and splits its own list into two
    balanced columns, so the right half is used rather than left empty. The two
@@ -87,9 +96,19 @@ export function SiteFooter() {
             <ul className="mt-5 flex flex-col gap-5 text-sm font-medium text-[color:var(--brand-ink)]/70">
               <li className="flex items-start gap-3">
                 <MapPin size={16} className="shrink-0 text-[#f97316] mt-0.5" />
-                <span className="leading-relaxed">
-                  3, Maruti Industrial Park-2, Dhamatvan Bakrol Road, Dhamatvan, Ahmedabad-382435, Gujarat, INDIA.
-                </span>
+                {/* Marked up as a postal address and linked to Maps: it is the
+                    same NAP string as the Business Profile, which is what lets
+                    Google treat the listing and this site as one business. */}
+                <address className="not-italic leading-relaxed">
+                  <a
+                    href={MAPS_SEARCH_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="transition-colors hover:text-[#f97316]"
+                  >
+                    {CONTACT.address.full}
+                  </a>
+                </address>
               </li>
               <li className="flex items-start gap-3">
                 <Phone size={16} className="shrink-0 text-[#f97316] mt-0.5" />

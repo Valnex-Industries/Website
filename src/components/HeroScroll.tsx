@@ -157,13 +157,18 @@ export function HeroScroll() {
           className="hero-window absolute inset-0 z-[6] overflow-hidden"
           style={{ clipPath }}
         >
+          {/* Brave's shields, iOS Low Power Mode and data-saver modes all
+              refuse autoplay. Without a poster the window opens onto a blank
+              rectangle in those cases. */}
           <video
             autoPlay
             muted
             loop
             playsInline
             preload="auto"
+            poster="/assets/hero_bg.png"
             src="/videos/movie.mp4"
+            aria-hidden="true"
             className="absolute inset-0 h-full w-full object-cover"
           />
 

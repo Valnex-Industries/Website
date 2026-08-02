@@ -1,60 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
-
-const PRODUCTS = [
-  {
-    index: "01",
-    title: "Air/Water Cooled Chillers",
-    image: "/assets/division_energy.png",
-    description: "Industrial cooling systems designed for precision temperature control and maximum uptime.",
-    tags: ["Air Cooled", "Water Cooled", "Thermal"],
-  },
-  {
-    index: "02",
-    title: "Flake Cutter",
-    image: "/assets/division_materials.png",
-    description: "High-performance size reduction equipment for consistent, clean flake processing.",
-    tags: ["Size Reduction", "Processing"],
-  },
-  {
-    index: "03",
-    title: "Hopper Loader",
-    image: "/assets/division_robotics.png",
-    description: "Automated material handling solutions for seamless production line integration.",
-    tags: ["Material Handling", "Automation"],
-  },
-  {
-    index: "04",
-    title: "Laser Marking Machine",
-    image: "/assets/division_energy.png",
-    description: "High-speed, precision marking systems for permanent part identification and traceability.",
-    tags: ["Marking", "Traceability"],
-  },
-  {
-    index: "05",
-    title: "Volumetric Feeder",
-    image: "/assets/division_materials.png",
-    description: "Accurate dosing and feeding technology for strict quality and recipe control.",
-    tags: ["Dosing", "Feeding"],
-  },
-  {
-    index: "06",
-    title: "Mould Temp Controller",
-    image: "/assets/division_energy.png",
-    description: "Critical thermal regulation units to maintain precise mould conditions.",
-    tags: ["Thermal", "Regulation"],
-  },
-  {
-    index: "07",
-    title: "Dehumidifier",
-    image: "/assets/division_robotics.png",
-    description: "Advanced moisture removal systems to protect sensitive materials and processes.",
-    tags: ["Moisture Control", "Drying"],
-  },
-];
+import { PRODUCTS, productHref } from "@/lib/products";
 
 export function Divisions() {
   return (
@@ -88,8 +38,13 @@ export function Divisions() {
 
         <div className="mt-10 grid gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 md:mt-14">
           {PRODUCTS.map((product, i) => (
-            <Reveal key={product.title} delay={i * 0.1}>
-              <article className="group relative h-full overflow-hidden rounded-2xl border border-white/12 bg-white/[0.03] transition-colors duration-500 hover:border-white/30">
+            <Reveal key={product.slug} delay={i * 0.1}>
+              {/* The whole card is the link — the arrow was only ever a hint
+                  that it went somewhere, and now it actually does. */}
+              <Link
+                href={productHref(product.slug)}
+                className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/12 bg-white/[0.03] transition-colors duration-500 hover:border-white/30"
+              >
                 <div className="relative aspect-4/3 overflow-hidden">
                   <Image
                     src={product.image}
@@ -115,7 +70,7 @@ export function Divisions() {
                     />
                   </div>
                   <p className="text-sm font-light leading-relaxed text-white/55">
-                    {product.description}
+                    {product.summary}
                   </p>
                   <div className="mt-1 flex flex-wrap gap-2">
                     {product.tags.map((tag) => (
@@ -128,7 +83,7 @@ export function Divisions() {
                     ))}
                   </div>
                 </div>
-              </article>
+              </Link>
             </Reveal>
           ))}
         </div>

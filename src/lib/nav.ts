@@ -1,5 +1,8 @@
 /** One source of truth for the header, the mega menu, the mobile drawer and the
- *  footer, so a link only ever has to be corrected in one place. */
+ *  footer, so a link only ever has to be corrected in one place. The product
+ *  links are derived from the catalogue in `lib/products.ts`. */
+
+import { PRODUCTS, productHref } from "@/lib/products";
 
 export type NavChild = {
   label: string;
@@ -21,43 +24,11 @@ export type NavItem = {
  *  header never covers the heading it just jumped to. */
 export const HEADER_OFFSET = 72;
 
-export const PRODUCT_LINKS: ProductLink[] = [
-  {
-    label: "Air/Water Cooled Chillers",
-    href: "/#products",
-    image: "/assets/division_energy.png",
-  },
-  {
-    label: "Flake Cutter",
-    href: "/#products",
-    image: "/assets/division_materials.png",
-  },
-  {
-    label: "Hopper Loader",
-    href: "/#products",
-    image: "/assets/division_robotics.png",
-  },
-  {
-    label: "Laser Marking Machine",
-    href: "/#products",
-    image: "/assets/division_energy.png",
-  },
-  {
-    label: "Volumetric Feeder",
-    href: "/#products",
-    image: "/assets/division_materials.png",
-  },
-  {
-    label: "Mould Temp Controller",
-    href: "/#products",
-    image: "/assets/division_energy.png",
-  },
-  {
-    label: "Dehumidifier",
-    href: "/#products",
-    image: "/assets/division_robotics.png",
-  },
-];
+export const PRODUCT_LINKS: ProductLink[] = PRODUCTS.map((product) => ({
+  label: product.title,
+  href: productHref(product.slug),
+  image: product.image,
+}));
 
 export const COMPANY_LINKS: NavChild[] = [
   { label: "Company profile", href: "/#company" },

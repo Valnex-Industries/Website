@@ -1,12 +1,21 @@
 "use client";
 
 import { Reveal } from "@/components/Reveal";
+import { PRODUCTS } from "@/lib/products";
 
+/**
+ * Every figure here has to be one the company can stand behind if a customer
+ * checks it. The previous set — founded 1962, 24 plants, 3,400+ staff, 99.2%
+ * on-time — was placeholder copy, and contradicted by the public incorporation
+ * record (Valnex Industries Private Limited, 05 Aug 2021).
+ *
+ * The product count is derived rather than typed, so it cannot go stale.
+ */
 const STATS = [
-  { value: "1962", label: "Founded" },
-  { value: "24", label: "Plants worldwide" },
-  { value: "3,400+", label: "Engineers & operators" },
-  { value: "99.2%", label: "On-time delivery" },
+  { value: "2021", label: "Founded in Ahmedabad" },
+  { value: String(PRODUCTS.length), label: "Product lines" },
+  { value: "Gujarat", label: "Manufacturing base" },
+  { value: "2", label: "Satisfied clients" },
 ];
 
 export function Manifesto() {
@@ -30,16 +39,20 @@ export function Manifesto() {
           </Reveal>
 
           <Reveal delay={0.1} className="lg:col-span-7">
+            {/* "For decades" and "twenty years without a service call" were
+                removed with the stats above: the first is contradicted by the
+                2021 incorporation date, the second is a durability claim no
+                document supports. The voice is unchanged. */}
             <p className="text-base font-light leading-relaxed text-white/75 sm:text-lg md:text-xl">
-              For decades Valnex Industries has engineered the industrial equipment
-              nobody else could deliver: the chillers that hold tolerance under extreme thermal load,
-              the volumetric feeders that cannot drift, and the flake cutters that have to
-              cycle for twenty years without a service call.
+              Valnex Industries engineers the equipment a production line cannot
+              afford to lose: the chillers that hold tolerance under thermal
+              load, the volumetric feeders that cannot drift, and the flake
+              cutters that have to keep cycling.
             </p>
             <p className="mt-6 text-sm font-light leading-relaxed text-white/55 md:text-base">
-              We keep advanced thermal management, materials processing, and automation
-              under one roof, so every system is validated against the highest standards
-              before it ever reaches a customer line. That is what we mean by the power to respond.
+              We keep thermal management, materials processing, and automation
+              under one roof, so every system is validated before it ever reaches
+              a customer line. That is what we mean by the power to respond.
             </p>
           </Reveal>
         </div>

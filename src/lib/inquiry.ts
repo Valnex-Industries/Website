@@ -7,16 +7,22 @@
  * (see supabase/migrations/0001_inquiries.sql), just camelCase → snake_case.
  */
 
-export const DIVISIONS = [
-  { value: "chillers", label: "Air / Water cooled chillers" },
-  { value: "flake-cutter", label: "Flake Cutter" },
-  { value: "hopper-loader", label: "Hopper loader" },
-  { value: "laser-marking", label: "Laser marking machine" },
-  { value: "volumetric-feeder", label: "Volumetric feeder" },
-  { value: "mould-temp", label: "Mould temp controller" },
-  { value: "dehumidifier", label: "Dehumidifier" },
-  { value: "unsure", label: "Not sure yet" },
-] as const;
+import { PRODUCTS, type ProductSlug } from "@/lib/products";
+
+export type DivisionValue = ProductSlug | "unsure";
+
+/**
+ * Division values are the product slugs, so a product URL and the division an
+ * inquiry names are the same token. That is what lets a product page deep-link
+ * `/inquiry?division=<slug>` and have the right chip already selected.
+ */
+export const DIVISIONS: readonly { value: DivisionValue; label: string }[] = [
+  ...PRODUCTS.map((product) => ({
+    value: product.slug,
+    label: product.title,
+  })),
+  { value: "unsure" as const, label: "Not sure yet" },
+];
 
 export const VOLUMES = [
   { value: "prototype", label: "Prototype / one-off" },
@@ -32,7 +38,6 @@ export const TIMELINES = [
   { value: "6m+", label: "6 months or later" },
 ] as const;
 
-export type DivisionValue = (typeof DIVISIONS)[number]["value"];
 export type VolumeValue = (typeof VOLUMES)[number]["value"];
 export type TimelineValue = (typeof TIMELINES)[number]["value"];
 
