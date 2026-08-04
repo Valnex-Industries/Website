@@ -10,6 +10,8 @@ import { NAV_ITEMS } from "@/lib/nav";
 import { useHashNav } from "@/lib/use-hash-nav";
 import { ProductsMegaMenu } from "./ProductsMegaMenu";
 import { MobileNav } from "./MobileNav";
+import { whatsappHref } from "@/lib/site";
+import { WhatsAppIcon } from "@/components/WhatsAppIcon";
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
@@ -179,32 +181,34 @@ export function Navbar() {
               className="transition-transform duration-300 group-hover:translate-x-0.5"
             />
           </Link>
-          <Link
-            href="/#careers"
-            onClick={(e) => navigate(e, "/#careers")}
+          {/* Leaves the site, so a plain anchor rather than next/link, and
+              noreferrer alongside the new tab. */}
+          <a
+            href={whatsappHref()}
+            target="_blank"
+            rel="noopener noreferrer"
             className={cn(
               "group flex items-center gap-2 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-bold transition-transform hover:-translate-y-0.5",
+              /* Inverted in light mode: the bar turns white behind a mega
+                 menu, so a white pill would vanish into it. */
               isLightMode
-                ? "bg-[color:var(--brand-blue)] text-white"
-                : "bg-white text-[color:var(--brand-blue)]"
+                ? "bg-[#25D366] text-white"
+                : "bg-white text-[#25D366]"
             )}
           >
-            Recruitment entry
+            WhatsApp inquiry
             <span
               className={cn(
                 "flex h-4 w-4 items-center justify-center rounded-full",
-                isLightMode ? "bg-white" : "bg-[color:var(--brand-blue)]"
+                isLightMode ? "bg-white" : "bg-[#25D366]"
               )}
             >
-              <ArrowRight
+              <WhatsAppIcon
                 size={10}
-                strokeWidth={3}
-                className={
-                  isLightMode ? "text-[color:var(--brand-blue)]" : "text-white"
-                }
+                className={isLightMode ? "text-[#25D366]" : "text-white"}
               />
             </span>
-          </Link>
+          </a>
         </div>
 
         {/* Mobile / tablet toggle — 44px target, sits flush with the padding.

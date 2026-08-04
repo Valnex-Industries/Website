@@ -105,7 +105,7 @@ Verify auth works before touching anything else:
 
 ```bash
 # from a machine, not the browser
-node -e "const n=require('nodemailer');n.createTransport({host:'smtp.office365.com',port:587,secure:false,requireTLS:true,auth:{user:'contact@valnexindustries.com',pass:'...'}}).verify().then(console.log).catch(console.error)"
+node -e "const n=require('nodemailer');n.createTransport({host:'smtp.office365.com',port:587,secure:false,requireTLS:true,auth:{user:'info@valnexindustries.com',pass:'...'}}).verify().then(console.log).catch(console.error)"
 ```
 
 Then set, in Vercel → Settings → Environment Variables:
@@ -113,10 +113,10 @@ Then set, in Vercel → Settings → Environment Variables:
 ```
 SMTP_HOST=smtp.office365.com
 SMTP_PORT=587
-SMTP_USER=contact@valnexindustries.com
+SMTP_USER=info@valnexindustries.com
 SMTP_PASS=<app password>
-INQUIRY_FROM_EMAIL=contact@valnexindustries.com
-INQUIRY_TO_EMAIL=contact@valnexindustries.com
+INQUIRY_FROM_EMAIL=info@valnexindustries.com
+INQUIRY_TO_EMAIL=info@valnexindustries.com
 ```
 
 `INQUIRY_FROM_EMAIL` must equal `SMTP_USER` — Exchange Online rejects a From
@@ -157,7 +157,7 @@ Provisioning is not done until the failure paths have been exercised. The
 success path passing proves very little.
 
 - [ ] Submit a real inquiry from the deployed site
-- [ ] Email arrives at `contact@valnexindustries.com`
+- [ ] Email arrives at `info@valnexindustries.com`
 - [ ] Reply goes to the **customer**, not the sending mailbox (`replyTo`)
 - [ ] Row appears in `inquiries` with the correct `division` slug
 - [ ] Reference in the email matches the one on screen and the row
