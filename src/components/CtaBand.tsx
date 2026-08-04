@@ -4,13 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
-import { useHashNav } from "@/lib/use-hash-nav";
+import { whatsappHref } from "@/lib/site";
+import { WhatsAppIcon } from "@/components/WhatsAppIcon";
 
 export function CtaBand() {
-  const navigate = useHashNav();
-
   return (
-    <section id="careers" className="relative overflow-hidden">
+    <section id="contact" className="relative overflow-hidden">
       <div className="absolute inset-0">
         <Image
           src="/assets/hero_bg.png"
@@ -29,7 +28,7 @@ export function CtaBand() {
 
       <div className="relative mx-auto flex w-full max-w-[1280px] flex-col gap-10 px-5 py-20 sm:px-6 md:py-28 lg:flex-row lg:items-end lg:justify-between lg:px-10 lg:py-32">
         <Reveal className="max-w-2xl">
-          <span className="eyebrow text-white/50">Careers & inquiry</span>
+          <span className="eyebrow text-white/50">Inquiry</span>
           <h2 className="mt-4 text-[clamp(2rem,4.8vw,3.75rem)] font-black leading-[0.98] tracking-tight text-white">
             Bring us the part
             <br />
@@ -54,18 +53,20 @@ export function CtaBand() {
                 className="transition-transform duration-300 group-hover:translate-x-1"
               />
             </Link>
-            <Link
-              href="/#careers"
-              onClick={(e) => navigate(e, "/#careers")}
+            {/* Was a "Recruitment entry" link pointing at this very section,
+                so it went nowhere even before Careers was removed. */}
+            <a
+              href={whatsappHref()}
+              target="_blank"
+              rel="noopener noreferrer"
               className="group flex items-center justify-between gap-6 rounded-full border border-white/35 px-7 py-3.5 text-sm font-bold text-white transition-colors duration-300 hover:bg-white/10"
             >
-              Recruitment entry
-              <ArrowRight
+              WhatsApp inquiry
+              <WhatsAppIcon
                 size={16}
-                strokeWidth={2.5}
                 className="transition-transform duration-300 group-hover:translate-x-1"
               />
-            </Link>
+            </a>
           </div>
         </Reveal>
       </div>

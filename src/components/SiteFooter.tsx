@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { MapPin, Phone, Mail } from "lucide-react";
-import { CAREER_LINKS, COMPANY_LINKS, PRODUCT_LINKS } from "@/lib/nav";
+import { COMPANY_LINKS, PRODUCT_LINKS } from "@/lib/nav";
 import { useHashNav } from "@/lib/use-hash-nav";
 import { BUSINESS, CONTACT, SITE_NAME } from "@/lib/site";
 import { cn } from "@/utils/cn";
@@ -24,13 +24,12 @@ const FOOTER_COLUMNS = [
   {
     title: "Products",
     links: PRODUCT_LINKS,
-    span: "col-span-2 md:col-span-1 xl:col-span-2",
+    span: "col-span-2 md:col-span-1 xl:col-span-3",
     /* columns-2 rather than a 2-up grid: it balances the seven items by
        height on its own, so the split survives a link being added. */
     list: "columns-2 gap-x-5 md:columns-1",
   },
-  { title: "Company", links: COMPANY_LINKS, span: "xl:col-span-2", list: "" },
-  { title: "Careers", links: CAREER_LINKS, span: "xl:col-span-2", list: "" },
+  { title: "Company", links: COMPANY_LINKS, span: "xl:col-span-3", list: "" },
 ];
 
 /* One hairline rhythm down the page on phones; the dividers disappear once the

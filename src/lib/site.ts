@@ -65,6 +65,22 @@ export const BUSINESS = {
   sameAs: [] as string[],
 } as const;
 
+/**
+ * wa.me wants the number as digits only, country code first — it rejects the
+ * "+", the spaces and the dashes that CONTACT.phones is formatted with, so the
+ * two cannot share a string. This is the same line as CONTACT.phones[0].
+ */
+export const WHATSAPP = {
+  number: "917574848748",
+  message:
+    "Hello Valnex Industries, I would like to enquire about your equipment.",
+} as const;
+
+/** Prefilled chat link. Pass a message to deep-link a specific product. */
+export function whatsappHref(message: string = WHATSAPP.message) {
+  return `https://wa.me/${WHATSAPP.number}?text=${encodeURIComponent(message)}`;
+}
+
 export const CONTACT = {
   email: "contact@valnexindustries.com",
   phones: ["+91 7574848748", "+91 94294 81086"],
