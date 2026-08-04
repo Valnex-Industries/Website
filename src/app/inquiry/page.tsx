@@ -44,7 +44,7 @@ const STEPS = [
 ];
 
 const DIRECT = [
-  { label: "Email", value: "contact@valnexindustries.com" },
+  { label: "Email", value: "info@valnexindustries.com" },
   { label: "Phone", value: "+91 7574848748, +91 94294 81086" },
   { label: "Address", value: "3, Maruti Industrial Park-2, Dhamatvan Bakrol Road, Dhamatvan, Ahmedabad-382435, Gujarat, INDIA." },
 ];

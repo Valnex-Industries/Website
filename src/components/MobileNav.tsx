@@ -9,6 +9,8 @@ import { useLenis } from "lenis/react";
 import { NAV_ITEMS, UTILITY_LINKS, type NavItem } from "@/lib/nav";
 import { useHashNav } from "@/lib/use-hash-nav";
 import { cn } from "@/utils/cn";
+import { whatsappHref } from "@/lib/site";
+import { WhatsAppIcon } from "@/components/WhatsAppIcon";
 
 /** Same curve the preloader uses, so the site has one "panel" motion. */
 const PANEL_EASE = [0.22, 1, 0.36, 1] as const;
@@ -213,20 +215,19 @@ export function MobileNav({ open, onClose, triggerRef }: MobileNavProps) {
                   </span>
                 </Link>
 
-                <Link
-                  href="/#careers"
-                  onClick={(e) => handleLink(e, "/#careers")}
-                  className="group flex items-center justify-between gap-4 rounded-xl bg-[color:var(--brand-blue)] px-6 py-5 text-sm font-bold text-white"
+                {/* Leaves the site, so a plain anchor and no drawer-close
+                    handler — the tab it opens takes over anyway. */}
+                <a
+                  href={whatsappHref()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center justify-between gap-4 rounded-xl bg-[#25D366] px-6 py-5 text-sm font-bold text-white"
                 >
-                  Recruitment entry
+                  WhatsApp inquiry
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white transition-transform duration-300 group-hover:translate-x-0.5">
-                    <ArrowRight
-                      size={14}
-                      strokeWidth={2.5}
-                      className="text-[color:var(--brand-blue)]"
-                    />
+                    <WhatsAppIcon size={16} className="text-[#25D366]" />
                   </span>
-                </Link>
+                </a>
               </motion.div>
 
               <motion.div

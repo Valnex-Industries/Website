@@ -12,10 +12,10 @@ import type { DeliveryResult, StoredInquiry } from "@/lib/inquiry-store";
  *
  *   SMTP_HOST=smtp.office365.com
  *   SMTP_PORT=587
- *   SMTP_USER=contact@valnexindustries.com
+ *   SMTP_USER=info@valnexindustries.com
  *   SMTP_PASS=<app password, or OAuth2 — see note below>
- *   INQUIRY_FROM_EMAIL=contact@valnexindustries.com   # must match SMTP_USER
- *   INQUIRY_TO_EMAIL=contact@valnexindustries.com
+ *   INQUIRY_FROM_EMAIL=info@valnexindustries.com   # must match SMTP_USER
+ *   INQUIRY_TO_EMAIL=info@valnexindustries.com
  *
  * Exchange Online rejects a From address the authenticated mailbox has no
  * SendAs right over, so INQUIRY_FROM_EMAIL should normally equal SMTP_USER.
