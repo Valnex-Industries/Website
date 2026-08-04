@@ -37,17 +37,9 @@ export const COMPANY_LINKS: NavChild[] = [
   { label: "Sustainability", href: "/#company" },
 ];
 
-export const CAREER_LINKS: NavChild[] = [
-  { label: "Open roles", href: "/#careers" },
-  { label: "Graduate program", href: "/#careers" },
-  { label: "Life at Valnex", href: "/#careers" },
-  { label: "Recruitment entry", href: "/#careers" },
-];
-
 export const NAV_ITEMS: NavItem[] = [
   { label: "Products", href: "/#products", children: PRODUCT_LINKS },
   { label: "Company Profile", href: "/#company", children: COMPANY_LINKS },
-  { label: "Careers", href: "/#careers", children: CAREER_LINKS },
   { label: "News", href: "/#news" },
 ];
 
