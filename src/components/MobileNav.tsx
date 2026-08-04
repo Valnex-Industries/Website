@@ -179,9 +179,9 @@ export function MobileNav({ open, onClose, triggerRef }: MobileNavProps) {
                 the wordmark and the close control, so repeating either here
                 would double them up. Height matches the header bar. */}
             {/* Must track the header bar's height at every breakpoint
-                (h-16 / md:h-20 / lg:h-[65px]) or the first menu row slides
+                (h-16 / lg:h-[65px]) or the first menu row slides
                 under it. */}
-            <div aria-hidden="true" className="h-16 shrink-0 md:h-20 lg:h-[65px]" />
+            <div aria-hidden="true" className="h-16 shrink-0 lg:h-[65px]" />
 
             {/* Scrollable body: long product lists must not trap the drawer */}
             <motion.div

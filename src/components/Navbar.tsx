@@ -69,7 +69,7 @@ export function Navbar() {
              may resize this bar: a header that changes height mid-scroll drags
              the whole page with it. `condensed` still drives the background,
              which is the part that should react to scrolling. */
-          "relative z-[130] mx-auto flex h-16 md:h-20 items-center justify-between gap-4 px-5 sm:px-6 lg:h-[65px] lg:gap-6 lg:px-10"
+          "relative z-[130] mx-auto flex h-16 items-center justify-between gap-4 px-5 sm:px-6 lg:h-[65px] lg:gap-6 lg:px-10"
         )}
       >
         {/* Wordmark */}
