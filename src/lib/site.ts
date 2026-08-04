@@ -73,7 +73,7 @@ export const BUSINESS = {
 export const WHATSAPP = {
   number: "917574848748",
   message:
-    "Hello Valnex Industries, I would like to enquire about your equipment.",
+    "Hello Valnex Industries, I would like to inquire about your equipment.",
 } as const;
 
 /** Prefilled chat link. Pass a message to deep-link a specific product. */
@@ -82,7 +82,7 @@ export function whatsappHref(message: string = WHATSAPP.message) {
 }
 
 export const CONTACT = {
-  email: "contact@valnexindustries.com",
+  email: "info@valnexindustries.com",
   phones: ["+91 7574848748", "+91 94294 81086"],
   address: {
     street: "3, Maruti Industrial Park-2, Dhamatvan Bakrol Road",

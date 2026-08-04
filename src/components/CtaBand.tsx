@@ -59,7 +59,7 @@ export function CtaBand() {
               href={whatsappHref()}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center justify-between gap-6 rounded-full border border-white/35 px-7 py-3.5 text-sm font-bold text-white transition-colors duration-300 hover:bg-white/10"
+              className="group flex items-center justify-between gap-6 rounded-full bg-white px-7 py-3.5 text-sm font-bold text-[#25D366] transition-transform duration-300 hover:-translate-y-0.5"
             >
               WhatsApp inquiry
               <WhatsAppIcon

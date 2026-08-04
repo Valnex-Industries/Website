@@ -58,7 +58,7 @@ export async function submitInquiry(
     return {
       status: "error",
       message:
-        "We could not record that inquiry. Try again, or email contact@valnexindustries.com directly.",
+        "We could not record that inquiry. Try again, or email info@valnexindustries.com directly.",
       errors: {},
       values,
     };

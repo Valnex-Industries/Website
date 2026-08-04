@@ -143,10 +143,10 @@ export function SiteFooter() {
               <li className="flex items-start gap-3">
                 <Mail size={16} className="mt-0.5 shrink-0 text-[#f97316]" />
                 <a
-                  href="mailto:contact@valnexindustries.com"
+                  href="mailto:info@valnexindustries.com"
                   className="[overflow-wrap:anywhere] transition-colors hover:text-[#f97316]"
                 >
-                  contact@valnexindustries.com
+                  info@valnexindustries.com
                 </a>
               </li>
             </ul>

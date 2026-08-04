@@ -189,23 +189,23 @@ export function Navbar() {
             rel="noopener noreferrer"
             className={cn(
               "group flex items-center gap-2 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-bold transition-transform hover:-translate-y-0.5",
+              /* Inverted in light mode: the bar turns white behind a mega
+                 menu, so a white pill would vanish into it. */
               isLightMode
-                ? "bg-[color:var(--brand-blue)] text-white"
-                : "bg-white text-[color:var(--brand-blue)]"
+                ? "bg-[#25D366] text-white"
+                : "bg-white text-[#25D366]"
             )}
           >
             WhatsApp inquiry
             <span
               className={cn(
                 "flex h-4 w-4 items-center justify-center rounded-full",
-                isLightMode ? "bg-white" : "bg-[color:var(--brand-blue)]"
+                isLightMode ? "bg-white" : "bg-[#25D366]"
               )}
             >
               <WhatsAppIcon
                 size={10}
-                className={
-                  isLightMode ? "text-[color:var(--brand-blue)]" : "text-white"
-                }
+                className={isLightMode ? "text-[#25D366]" : "text-white"}
               />
             </span>
           </a>
