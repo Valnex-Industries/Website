@@ -175,11 +175,21 @@ export function Strengths() {
             <li
               key={card.n}
               className={cn(
-                "w-full max-w-[340px] lg:max-w-[360px]",
+                /* mx-auto centres the card below md, where the alternating
+                   cascade drops out and every card sits in one column —
+                   without it, a phone wider than the 340px cap left the
+                   leftover space stacked entirely on the right, since a flex
+                   column's default cross-axis alignment is stretch-then-pin-
+                   to-start once a max-width caps the item. */
+                "mx-auto w-full max-w-[340px] lg:max-w-[360px]",
                 /* Right, left, right, left — a fixed diagonal cascade, not a
                    scroll-linked one. Below md there is no room for two columns,
-                   so this drops out entirely in favour of the sticky stack. */
-                fromRight ? "md:ml-auto" : "md:mr-auto",
+                   so this drops out entirely in favour of the sticky stack.
+                   Both sides are set explicitly (not just the auto side): the
+                   base mx-auto above still applies at md+ unless overridden,
+                   so leaving the opposite margin unset would centre the card
+                   instead of pushing it to the edge the cascade needs. */
+                fromRight ? "md:mr-0 md:ml-auto" : "md:ml-0 md:mr-auto",
                 /* The two md:mt-* values are mutually exclusive per card
                    (never both present on one element), so there is no cascade
                    order for twMerge to get wrong — the overlap on cards 2-4
