@@ -62,35 +62,27 @@ const CARDS = [
  *      element at the same offset instead, which turns the same negative-space
  *      problem into a stacking deck.
  *
- * The one piece of scroll-driven JS is a single boolean: an IntersectionObserver
- * on the card list flips a blur scrim on over the backdrop once card 01 is
- * genuinely arriving, not once it has already fully arrived, so the drawings
- * recede as the cards do — not a few hundred pixels after them. It is a
+ * The one piece of scroll-driven JS is a single boolean: a sentinel at the top
+ * of the card list flips a blur scrim on over the backdrop once the cards begin
+ * arriving, so the drawings recede instead of competing with card 01. It is a
  * threshold crossing, not a per-frame computation.
  */
 export function Strengths() {
-  const listRef = useRef<HTMLUListElement>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
   const [blurred, setBlurred] = useState(false);
 
   useEffect(() => {
-    const el = listRef.current;
+    const el = sentinelRef.current;
     if (!el) return;
-    /* The target is the whole card list, not a 1px marker at its top edge.
-       That earlier version measured the wrong moment: a sentinel positioned
-       right where card 1 begins only crosses the top of the viewport once
-       card 1 has *finished* rising into place, by which point — since card 1
-       is far shorter than a screen — it had already been fully visible for a
-       few hundred pixels of scroll.
-       Observing the list itself fixes that without needing a sign-of-top
-       direction check: the list is much taller than one screen, so
-       isIntersecting is genuinely true for the whole time any part of it is
-       on screen — a real sustained state, not a one-frame crossing — and it
-       goes true the moment card 1's leading edge first appears at the bottom,
-       which is the moment worth marking. No rootMargin offset: it delayed the
-       already-late old trigger further, which compounded the problem instead
-       of fixing it now that the trigger point itself is correct. */
+    /* Fires whenever the sentinel crosses either viewport edge. The sign of
+       its own top tells us which edge: negative means it has scrolled past
+       the top (cards are arriving — blur on), positive means it is entering
+       from below or we have scrolled back above it (blur off). No rootMargin
+       trick, because that shrinks the root to a slice and answers a different
+       question ("is this crossing a fixed line") than the one asked here
+       ("has this been scrolled past at all"). */
     const observer = new IntersectionObserver(
-      ([entry]) => setBlurred(entry.isIntersecting),
+      ([entry]) => setBlurred(entry.boundingClientRect.top < 0),
       { threshold: 0 }
     );
     observer.observe(el);
@@ -174,42 +166,26 @@ export function Strengths() {
 
       {/* Normal flow from here down. Nothing is pinned for a fixed number of
           screens — the section is exactly as tall as four cards make it. */}
-      <ul
-        ref={listRef}
-        className="relative flex flex-col px-5 pb-24 sm:px-6 md:px-12 md:pb-32 lg:px-10"
-      >
+      <ul className="relative flex flex-col px-5 pb-24 sm:px-6 md:px-12 md:pb-32 lg:px-10">
+        <div ref={sentinelRef} aria-hidden="true" className="h-px w-full" />
+
         {CARDS.map((card, i) => {
           const fromRight = i % 2 === 0;
           return (
             <li
               key={card.n}
               className={cn(
-                /* mx-auto centres the card below md, where the alternating
-                   cascade drops out and every card sits in one column — without
-                   it, a phone wider than the 340px cap (anything past ~380px of
-                   usable width) left the leftover space stacked entirely on the
-                   right, since a flex column's default cross-axis alignment is
-                   stretch-then-pin-to-start once a max-width caps the item. */
-                "mx-auto w-full max-w-[340px] lg:max-w-[360px]",
+                "w-full max-w-[340px] lg:max-w-[360px]",
                 /* Right, left, right, left — a fixed diagonal cascade, not a
                    scroll-linked one. Below md there is no room for two columns,
-                   so this drops out entirely in favour of the sticky stack.
-                   Both sides are set explicitly (not just the auto side): the
-                   base mx-auto above still applies at md+ unless overridden, so
-                   leaving the opposite margin unset would centre the card
-                   instead of pushing it to the edge the cascade needs. */
-                fromRight ? "md:mr-0 md:ml-auto" : "md:ml-0 md:mr-auto",
-                /* A light shingle, not a heavy stack: -220px on this card's
-                   ~500px height was overlapping close to half of it, hiding
-                   most of the card underneath rather than cascading past it.
-                   -64px is enough to read as one flowing sequence without
-                   swallowing the card above.
-                   The two md:mt-* values are mutually exclusive per card
+                   so this drops out entirely in favour of the sticky stack. */
+                fromRight ? "md:ml-auto" : "md:mr-auto",
+                /* The two md:mt-* values are mutually exclusive per card
                    (never both present on one element), so there is no cascade
                    order for twMerge to get wrong — the overlap on cards 2-4
                    cannot be silently cancelled by a reset meant only for
                    card 1. */
-                i === 0 ? "md:mt-0" : "md:-mt-16",
+                i === 0 ? "md:mt-0" : "md:-mt-[220px]",
                 /* Mobile only: each card pins at the same offset, so the next
                    one simply covers the last as it scrolls up — the same
                    negative-space problem the desktop cascade solves with
