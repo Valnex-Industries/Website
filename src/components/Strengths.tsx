@@ -80,20 +80,18 @@ export function Strengths() {
        right where card 1 begins only crosses the top of the viewport once
        card 1 has *finished* rising into place, by which point — since card 1
        is far shorter than a screen — it had already been fully visible for a
-       few hundred pixels of scroll. The section looked blurred well after the
-       cards had arrived, not as they arrived.
-       Observing the list itself fixes both problems it once needed the sign
-       check and the sentinel for. The list is much taller than one screen, so
+       few hundred pixels of scroll.
+       Observing the list itself fixes that without needing a sign-of-top
+       direction check: the list is much taller than one screen, so
        isIntersecting is genuinely true for the whole time any part of it is
        on screen — a real sustained state, not a one-frame crossing — and it
        goes true the moment card 1's leading edge first appears at the bottom,
-       which is the moment worth marking, not 300-odd pixels later. The -24px
-       bottom rootMargin keeps the small delay that was asked for, now
-       measured from that correct moment: the list has to be visibly a little
-       way into the screen before it counts as arrived. */
+       which is the moment worth marking. No rootMargin offset: it delayed the
+       already-late old trigger further, which compounded the problem instead
+       of fixing it now that the trigger point itself is correct. */
     const observer = new IntersectionObserver(
       ([entry]) => setBlurred(entry.isIntersecting),
-      { threshold: 0, rootMargin: "0px 0px -24px 0px" }
+      { threshold: 0 }
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -201,12 +199,17 @@ export function Strengths() {
                    leaving the opposite margin unset would centre the card
                    instead of pushing it to the edge the cascade needs. */
                 fromRight ? "md:mr-0 md:ml-auto" : "md:ml-0 md:mr-auto",
-                /* The two md:mt-* values are mutually exclusive per card
+                /* A light shingle, not a heavy stack: -220px on this card's
+                   ~500px height was overlapping close to half of it, hiding
+                   most of the card underneath rather than cascading past it.
+                   -64px is enough to read as one flowing sequence without
+                   swallowing the card above.
+                   The two md:mt-* values are mutually exclusive per card
                    (never both present on one element), so there is no cascade
                    order for twMerge to get wrong — the overlap on cards 2-4
                    cannot be silently cancelled by a reset meant only for
                    card 1. */
-                i === 0 ? "md:mt-0" : "md:-mt-[220px]",
+                i === 0 ? "md:mt-0" : "md:-mt-16",
                 /* Mobile only: each card pins at the same offset, so the next
                    one simply covers the last as it scrolls up — the same
                    negative-space problem the desktop cascade solves with
