@@ -2,7 +2,7 @@
   <img src="public/assets/blue-valnex-logo.webp" alt="Valnex Industries" width="72" />
 </p>
 
-<h1 align="center">Valnex Industries — Marketing Site</h1>
+<h1 align="center">Valnex Industries: Marketing Site</h1>
 
 <p align="center">
   The public website for Valnex Industries: engineering-equipment manufacturer, chillers to dehumidifiers,
@@ -22,14 +22,14 @@
 
 ## What this is, in plain terms
 
-This is the website at **[valnexindustries.com](https://www.valnexindustries.com)** — the front door for a
+This is the website at **[valnexindustries.com](https://www.valnexindustries.com)**, the front door for a
 company that manufactures industrial equipment (chillers, flake cutters, hopper loaders, laser marking
 machines, volumetric feeders, mould temperature controllers, dehumidifiers). A visitor lands here to see
 what Valnex builds, read about the company, and send an inquiry. That inquiry has to actually arrive
-somewhere real — this repo is also the plumbing that makes that happen (a database record *and* an email,
+somewhere real, so this repo is also the plumbing that makes that happen (a database record *and* an email,
 not a form that quietly discards what people type into it).
 
-If you're not a developer and just want to know "does this work," the short version: **yes** — pages render
+If you're not a developer and just want to know "does this work," the short version is **yes**: pages render
 fast, the contact form writes to a real database and emails a real inbox, and the site is built to be found
 and correctly understood by both Google and AI answer engines (ChatGPT, Perplexity, Google's AI Overviews),
 not just ranked in a classic search results page.
@@ -37,9 +37,9 @@ not just ranked in a classic search results page.
 ## What this is, technically
 
 - **[Next.js 16](https://nextjs.org)** (App Router, Turbopack) on **React 19** and **TypeScript**.
-- **[Tailwind CSS 4](https://tailwindcss.com)** for styling — no separate CSS files per component.
+- **[Tailwind CSS 4](https://tailwindcss.com)** for styling, no separate CSS files per component.
 - **[Framer Motion](https://motion.dev)** for the scroll-driven sequences (the hero video reveal, the pinned
-  "Strengths" section, the horizontal product scroller) — all CSS-transform-driven, nothing GPU-hostile.
+  "Strengths" section, the horizontal product scroller), all CSS-transform-driven, nothing GPU-hostile.
 - **[Lenis](https://lenis.darkroom.engineering)** for smooth scrolling.
 - **[Supabase](https://supabase.com)** (Postgres + PostgREST) as the inquiry database.
 - **[Nodemailer](https://nodemailer.com)** over SMTP for the inquiry email notification.
@@ -48,10 +48,10 @@ not just ranked in a classic search results page.
 ### ⚠️ This is not the Next.js you remember
 
 The project pins **Next.js 16**, which is new enough that a lot of AI training data (and muscle memory) is
-stale against it — `params`/`searchParams` are `Promise`s now, file conventions for metadata
+stale against it: `params`/`searchParams` are `Promise`s now, file conventions for metadata
 (`sitemap.ts`, `robots.ts`, `manifest.ts`, `opengraph-image.tsx`) have specific shapes, and some patterns
 that worked in Next 13/14 will silently do the wrong thing here. **Read `node_modules/next/dist/docs/` before
-assuming you know an API.** This isn't a style preference — it's in `AGENTS.md` for a reason, and it applies
+assuming you know an API.** This isn't a style preference; it's in `AGENTS.md` for a reason, and it applies
 to human contributors as much as to an AI one.
 
 ## Project structure
@@ -62,17 +62,17 @@ src/
     inquiry/              The contact form page + its server action
     products/[slug]/      One page per product, statically generated
     sitemap.ts            Generated from the product catalogue
-    robots.ts             Crawler rules — see "Built to be read by AI" below
+    robots.ts             Crawler rules, see "Built to be read by AI" below
     manifest.ts           PWA manifest
     llms.txt/             The llms.txt convention, for AI agents that read it
   components/             UI components (PascalCase, one per file)
   lib/                    Business logic, data, and the "single source of truth" files:
-    products.ts             — the product catalogue (nav, cards, pages all derive from this)
-    site.ts                 — company identity, contact details, WhatsApp link
-    inquiry.ts               — inquiry form types + validation
-    inquiry-store.ts         — writes an inquiry to Supabase
-    inquiry-email.ts          — emails a notification via Nodemailer
-    countries.ts              — static country/dial-code list for the phone field
+    products.ts             the product catalogue (nav, cards, pages all derive from this)
+    site.ts                 company identity, contact details, WhatsApp link
+    inquiry.ts               inquiry form types + validation
+    inquiry-store.ts         writes an inquiry to Supabase
+    inquiry-email.ts          emails a notification via Nodemailer
+    countries.ts              static country/dial-code list for the phone field
   utils/                  Small stateless helpers (e.g. `cn` for class merging)
 supabase/
   migrations/             SQL migrations for the inquiries table
@@ -82,31 +82,31 @@ public/
   assets/                 Images (WebP), logos, product sketches
 ```
 
-**The pattern to know before editing anything:** most content that appears in more than one place — the
-product list, company contact info, the WhatsApp number — has exactly **one** file that owns it
+**The pattern to know before editing anything:** most content that appears in more than one place, the
+product list, company contact info, the WhatsApp number, has exactly **one** file that owns it
 (`src/lib/products.ts`, `src/lib/site.ts`). The navbar, footer, mega menu, mobile drawer, homepage grid, and
 individual product pages all *derive* from that file rather than repeating the data. If you're adding a
-product or changing a phone number, there is one correct place to do it — grep for the current value first.
+product or changing a phone number, there is one correct place to do it: grep for the current value first.
 
 ## Getting started
 
 ```bash
 npm install
-cp .env.example .env    # then fill in real values — see below
+cp .env.example .env    # then fill in real values, see below
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
 
 ```bash
-npm run build   # production build — also the closest thing to a full test suite this repo has
+npm run build   # production build, also the closest thing to a full test suite this repo has
 npm run lint     # ESLint
-npx tsc --noEmit # TypeScript, no test runner configured — this + build + lint is the verification loop
+npx tsc --noEmit # TypeScript, no test runner configured: this + build + lint is the verification loop
 ```
 
 ### Environment variables
 
-Copy `.env.example` to `.env` and fill in real values. **Never commit `.env`** — it's gitignored, and the
+Copy `.env.example` to `.env` and fill in real values. **Never commit `.env`**: it's gitignored, and the
 `SUPABASE_SERVICE_ROLE_KEY` in particular bypasses every database access rule if it leaks.
 
 | Variable | What it's for |
@@ -126,24 +126,24 @@ sees an actual error rather than a fabricated reference number. See
 A meaningful part of this codebase exists to make the site legible to things that aren't a person scrolling
 a browser:
 
-- **Structured data** (`src/components/JsonLd.tsx`, `src/lib/schema.ts`) — Organization, LocalBusiness,
+- **Structured data** (`src/components/JsonLd.tsx`, `src/lib/schema.ts`): Organization, LocalBusiness,
   WebSite, Product, and BreadcrumbList schema, so a search engine or an LLM doesn't have to guess what the
   page is about.
-- **`llms.txt`** (`src/app/llms.txt/route.ts`) — the emerging convention for telling an AI agent what a site
+- **`llms.txt`** (`src/app/llms.txt/route.ts`): the emerging convention for telling an AI agent what a site
   is and where to find the parts that matter.
-- **`robots.ts`** — explicitly allows the known AI crawlers (GPTBot, ClaudeBot, PerplexityBot,
+- **`robots.ts`**: explicitly allows the known AI crawlers (GPTBot, ClaudeBot, PerplexityBot,
   Google-Extended) rather than leaving them to a default that might block them.
 - **Per-product static pages** (`/products/[slug]`) with their own metadata, so a product can be a direct
   answer to a search query instead of only reachable by browsing a grid.
 
 If you're touching any of this, the goal in one sentence: a visitor asking ChatGPT "who makes industrial
-chillers in Gujarat" should be answerable from what's actually published here — not from an SEO trick that
+chillers in Gujarat" should be answerable from what's actually published here, not from an SEO trick that
 only works on a 2015-era search engine.
 
 ## Deployment
 
 Production deploys automatically on push to `main` via Vercel, to `www.valnexindustries.com`. There is no
-staging environment — `npm run build` locally is the check before merging, along with a manual pass over the
+staging environment, so `npm run build` locally is the check before merging, along with a manual pass over the
 change at mobile, tablet, and desktop widths, since a meaningful share of this site's traffic is mobile and
 that isn't covered by a type check.
 
@@ -154,4 +154,4 @@ expected on every change.
 
 ## License
 
-Proprietary — © Valnex Industries. All rights reserved. This code is not licensed for reuse.
+Proprietary. © Valnex Industries. All rights reserved. This code is not licensed for reuse.
