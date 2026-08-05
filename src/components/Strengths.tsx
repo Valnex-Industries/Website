@@ -74,16 +74,19 @@ export function Strengths() {
   useEffect(() => {
     const el = sentinelRef.current;
     if (!el) return;
-    /* Fires whenever the sentinel crosses either viewport edge. The sign of
-       its own top tells us which edge: negative means it has scrolled past
-       the top (cards are arriving — blur on), positive means it is entering
-       from below or we have scrolled back above it (blur off). No rootMargin
-       trick, because that shrinks the root to a slice and answers a different
-       question ("is this crossing a fixed line") than the one asked here
-       ("has this been scrolled past at all"). */
+    /* Fires whenever the sentinel crosses the (widened) root edge. The sign of
+       its own real top tells us which edge: negative means it has scrolled
+       past the top (cards are arriving — blur on), positive means it is
+       entering from below or we have scrolled back above it (blur off).
+       The 24px top rootMargin expands the root upward by that much, which
+       delays the "scrolled past" crossing by the same 24px — the sketches sit
+       sharp for a beat after the section engages, and only then does the blur
+       come in, rather than firing the instant the pin takes hold. boundingClientRect
+       is always the element's real position regardless of rootMargin, so the
+       sign check above still means the same thing. */
     const observer = new IntersectionObserver(
       ([entry]) => setBlurred(entry.boundingClientRect.top < 0),
-      { threshold: 0 }
+      { threshold: 0, rootMargin: "24px 0px 0px 0px" }
     );
     observer.observe(el);
     return () => observer.disconnect();
