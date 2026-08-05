@@ -62,31 +62,38 @@ const CARDS = [
  *      element at the same offset instead, which turns the same negative-space
  *      problem into a stacking deck.
  *
- * The one piece of scroll-driven JS is a single boolean: a sentinel at the top
- * of the card list flips a blur scrim on over the backdrop once the cards begin
- * arriving, so the drawings recede instead of competing with card 01. It is a
+ * The one piece of scroll-driven JS is a single boolean: an IntersectionObserver
+ * on the card list flips a blur scrim on over the backdrop once card 01 is
+ * genuinely arriving, not once it has already fully arrived, so the drawings
+ * recede as the cards do — not a few hundred pixels after them. It is a
  * threshold crossing, not a per-frame computation.
  */
 export function Strengths() {
-  const sentinelRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
   const [blurred, setBlurred] = useState(false);
 
   useEffect(() => {
-    const el = sentinelRef.current;
+    const el = listRef.current;
     if (!el) return;
-    /* Fires whenever the sentinel crosses the (widened) root edge. The sign of
-       its own real top tells us which edge: negative means it has scrolled
-       past the top (cards are arriving — blur on), positive means it is
-       entering from below or we have scrolled back above it (blur off).
-       The 24px top rootMargin expands the root upward by that much, which
-       delays the "scrolled past" crossing by the same 24px — the sketches sit
-       sharp for a beat after the section engages, and only then does the blur
-       come in, rather than firing the instant the pin takes hold. boundingClientRect
-       is always the element's real position regardless of rootMargin, so the
-       sign check above still means the same thing. */
+    /* The target is the whole card list, not a 1px marker at its top edge.
+       That earlier version measured the wrong moment: a sentinel positioned
+       right where card 1 begins only crosses the top of the viewport once
+       card 1 has *finished* rising into place, by which point — since card 1
+       is far shorter than a screen — it had already been fully visible for a
+       few hundred pixels of scroll. The section looked blurred well after the
+       cards had arrived, not as they arrived.
+       Observing the list itself fixes both problems it once needed the sign
+       check and the sentinel for. The list is much taller than one screen, so
+       isIntersecting is genuinely true for the whole time any part of it is
+       on screen — a real sustained state, not a one-frame crossing — and it
+       goes true the moment card 1's leading edge first appears at the bottom,
+       which is the moment worth marking, not 300-odd pixels later. The -24px
+       bottom rootMargin keeps the small delay that was asked for, now
+       measured from that correct moment: the list has to be visibly a little
+       way into the screen before it counts as arrived. */
     const observer = new IntersectionObserver(
-      ([entry]) => setBlurred(entry.boundingClientRect.top < 0),
-      { threshold: 0, rootMargin: "24px 0px 0px 0px" }
+      ([entry]) => setBlurred(entry.isIntersecting),
+      { threshold: 0, rootMargin: "0px 0px -24px 0px" }
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -169,9 +176,10 @@ export function Strengths() {
 
       {/* Normal flow from here down. Nothing is pinned for a fixed number of
           screens — the section is exactly as tall as four cards make it. */}
-      <ul className="relative flex flex-col px-5 pb-24 sm:px-6 md:px-12 md:pb-32 lg:px-10">
-        <div ref={sentinelRef} aria-hidden="true" className="h-px w-full" />
-
+      <ul
+        ref={listRef}
+        className="relative flex flex-col px-5 pb-24 sm:px-6 md:px-12 md:pb-32 lg:px-10"
+      >
         {CARDS.map((card, i) => {
           const fromRight = i % 2 === 0;
           return (
