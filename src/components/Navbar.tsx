@@ -10,10 +10,11 @@ import { NAV_ITEMS } from "@/lib/nav";
 import { useHashNav } from "@/lib/use-hash-nav";
 import { ProductsMegaMenu } from "./ProductsMegaMenu";
 import { MobileNav } from "./MobileNav";
-import { whatsappHref } from "@/lib/site";
+import { useWhatsAppHref } from "@/lib/use-whatsapp-href";
 import { WhatsAppIcon } from "@/components/WhatsAppIcon";
 
 export function Navbar() {
+  const whatsapp = useWhatsAppHref();
   const [open, setOpen] = useState(false);
   const [condensed, setCondensed] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
@@ -184,7 +185,7 @@ export function Navbar() {
           {/* Leaves the site, so a plain anchor rather than next/link, and
               noreferrer alongside the new tab. */}
           <a
-            href={whatsappHref()}
+            href={whatsapp}
             target="_blank"
             rel="noopener noreferrer"
             className={cn(

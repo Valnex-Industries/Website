@@ -12,7 +12,8 @@ import { cn } from "@/utils/cn";
  * than typed so it cannot go stale. Replace with the real strengths once the
  * company documents land; do not invent a fifth.
  */
-const CARDS = [
+function cards(productCount: number) {
+  return [
   {
     n: "01",
     title: "Thermal, materials and automation under one roof",
@@ -27,7 +28,7 @@ const CARDS = [
   },
   {
     n: "03",
-    title: `${PRODUCTS.length} lines of production equipment`,
+    title: `${productCount} lines of production equipment`,
     body: "Chillers, flake cutters, hopper loaders, laser marking, volumetric feeders, mould temperature controllers and dehumidifiers.",
     image: "/assets/division_robotics.png",
   },
@@ -37,7 +38,8 @@ const CARDS = [
     body: "Send a drawing, a duty cycle, or just the problem. It reaches a person who can answer it, not a queue.",
     image: "/assets/hero_bg.png",
   },
-] as const;
+  ] as const;
+}
 
 /**
  * The one white section on a site that is otherwise blue, placed straight after
@@ -67,7 +69,13 @@ const CARDS = [
  * arriving, so the drawings recede instead of competing with card 01. It is a
  * threshold crossing, not a per-frame computation.
  */
-export function Strengths() {
+export function Strengths({
+  productCount = PRODUCTS.length,
+}: {
+  productCount?: number;
+}) {
+  const CARDS = cards(productCount);
+
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [blurred, setBlurred] = useState(false);
 

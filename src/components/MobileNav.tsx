@@ -9,7 +9,7 @@ import { useLenis } from "lenis/react";
 import { NAV_ITEMS, UTILITY_LINKS, type NavItem } from "@/lib/nav";
 import { useHashNav } from "@/lib/use-hash-nav";
 import { cn } from "@/utils/cn";
-import { whatsappHref } from "@/lib/site";
+import { useWhatsAppHref } from "@/lib/use-whatsapp-href";
 import { WhatsAppIcon } from "@/components/WhatsAppIcon";
 
 /** Same curve the preloader uses, so the site has one "panel" motion. */
@@ -27,6 +27,7 @@ interface MobileNavProps {
 }
 
 export function MobileNav({ open, onClose, triggerRef }: MobileNavProps) {
+  const whatsapp = useWhatsAppHref();
   const panelRef = useRef<HTMLDivElement>(null);
   const lenis = useLenis();
   const navigate = useHashNav();
@@ -218,7 +219,7 @@ export function MobileNav({ open, onClose, triggerRef }: MobileNavProps) {
                 {/* Leaves the site, so a plain anchor and no drawer-close
                     handler — the tab it opens takes over anyway. */}
                 <a
-                  href={whatsappHref()}
+                  href={whatsapp}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group flex items-center justify-between gap-4 rounded-xl bg-[#25D366] px-6 py-5 text-sm font-bold text-white"

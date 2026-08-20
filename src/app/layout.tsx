@@ -1,8 +1,10 @@
 import type { Metadata, Viewport } from "next";
+import { Suspense } from "react";
 import { Exo_2, Orbitron } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
+import { Analytics as PortalAnalytics } from "@/components/Analytics";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { Preloader } from "@/components/Preloader";
 import { JsonLd } from "@/components/JsonLd";
@@ -116,6 +118,14 @@ export default function RootLayout({
             two-second preloader inflates by design. */}
         <Analytics />
         <SpeedInsights />
+        {/* The first-party beacon that feeds the Analytics Portal. It does not
+            replace the two above: Vercel's dashboards stay where they are, but
+            neither product has a read API, so the portal has to measure the
+            site itself. Suspense because it reads useSearchParams, which would
+            otherwise opt every page into client-side rendering. */}
+        <Suspense fallback={null}>
+          <PortalAnalytics />
+        </Suspense>
       </body>
     </html>
   );

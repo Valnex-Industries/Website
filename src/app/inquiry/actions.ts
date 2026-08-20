@@ -5,8 +5,7 @@ import {
   parseInquiry,
   type InquiryFormState,
 } from "@/lib/inquiry";
-import { saveInquiry, type StoredInquiry } from "@/lib/inquiry-store";
-import { sendInquiryEmail } from "@/lib/inquiry-email";
+import { deliverInquiry, type StoredInquiry } from "@/services/inquiries";
 
 export async function submitInquiry(
   _prevState: InquiryFormState,
@@ -40,21 +39,14 @@ export async function submitInquiry(
     submittedAt: new Date().toISOString(),
   };
 
-  /* Two independent channels. Neither is allowed to sink the other: an inquiry
-     that reached the inbox is not lost because the database was down, and one
-     that reached the database is not lost because the mail provider was. */
-  const [stored, emailed] = await Promise.all([
-    saveInquiry(record),
-    sendInquiryEmail(record),
-  ]);
-
-  const anyConfigured = stored.configured || emailed.configured;
-  const anyDelivered = stored.delivered || emailed.delivered;
+  /* Both channels, in parallel, reconciled inside the service — see
+     services/inquiries.ts for why neither is allowed to sink the other. */
+  const { configured, delivered } = await deliverInquiry(record);
 
   /* Nothing configured at all is local development, where both channels log to
      the console instead — that is not the visitor's problem. A channel that is
      configured and delivered nothing is a real failure and has to be shown. */
-  if (anyConfigured && !anyDelivered) {
+  if (configured && !delivered) {
     return {
       status: "error",
       message:
@@ -62,14 +54,6 @@ export async function submitInquiry(
       errors: {},
       values,
     };
-  }
-
-  if (anyConfigured && (!stored.ok || !emailed.ok)) {
-    console.warn("[inquiry] delivered on one channel only", {
-      reference,
-      stored: stored.ok,
-      emailed: emailed.ok,
-    });
   }
 
   return {

@@ -11,14 +11,22 @@ import { PRODUCTS } from "@/lib/products";
  *
  * The product count is derived rather than typed, so it cannot go stale.
  */
-const STATS = [
-  { value: "2021", label: "Founded in Ahmedabad" },
-  { value: String(PRODUCTS.length), label: "Product lines" },
-  { value: "Gujarat", label: "Manufacturing base" },
-  { value: "2", label: "Satisfied clients" },
-];
+function stats(productCount: number) {
+  return [
+    { value: "2021", label: "Founded in Ahmedabad" },
+    { value: String(productCount), label: "Product lines" },
+    { value: "Gujarat", label: "Manufacturing base" },
+    { value: "2", label: "Satisfied clients" },
+  ];
+}
 
-export function Manifesto() {
+export function Manifesto({
+  productCount = PRODUCTS.length,
+}: {
+  productCount?: number;
+}) {
+  const STATS = stats(productCount);
+
   return (
     <section
       id="company"

@@ -4,10 +4,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
-import { whatsappHref } from "@/lib/site";
+import { useWhatsAppHref } from "@/lib/use-whatsapp-href";
 import { WhatsAppIcon } from "@/components/WhatsAppIcon";
 
 export function CtaBand() {
+  /* Carries the page this was clicked from, so the portal can attribute the
+     inquiry rather than just counting it. */
+  const whatsapp = useWhatsAppHref();
+
   return (
     <section id="contact" className="relative overflow-hidden">
       <div className="absolute inset-0">
@@ -56,7 +60,7 @@ export function CtaBand() {
             {/* Was a "Recruitment entry" link pointing at this very section,
                 so it went nowhere even before Careers was removed. */}
             <a
-              href={whatsappHref()}
+              href={whatsapp}
               target="_blank"
               rel="noopener noreferrer"
               className="group flex items-center justify-between gap-6 rounded-full bg-white px-7 py-3.5 text-sm font-bold text-[#25D366] transition-transform duration-300 hover:-translate-y-0.5"

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import { CdnImage } from "@/components/CdnImage";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
@@ -8,19 +8,24 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { Reveal } from "@/components/Reveal";
 import { JsonLd } from "@/components/JsonLd";
 import { breadcrumbSchema, productSchema } from "@/lib/schema";
-import {
-  PRODUCTS,
-  getProduct,
-  inquiryHref,
-  productHref,
-} from "@/lib/products";
+import { getProduct, getProducts } from "@/services/content";
+import { inquiryHref, productHref } from "@/lib/products";
 
-/** The catalogue is fixed at build time, so anything else is a 404, not a
- *  render attempt. */
-export const dynamicParams = false;
+/**
+ * True now that the catalogue lives in the database. A product added in the
+ * Analytics Portal has to work the moment it is published -- with this false it
+ * would 404 until the site was rebuilt, which turns "add a product" back into a
+ * deploy and undoes the point of making it editable.
+ */
+export const dynamicParams = true;
 
-export function generateStaticParams() {
-  return PRODUCTS.map((product) => ({ slug: product.slug }));
+/* Pre-renders whatever is published at build time; anything added later is
+   rendered on first request and then cached. */
+export const revalidate = 300;
+
+export async function generateStaticParams() {
+  const products = await getProducts();
+  return products.map((product) => ({ slug: product.slug }));
 }
 
 export async function generateMetadata({
@@ -29,7 +34,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProduct(slug);
+  const product = await getProduct(slug);
 
   if (!product) return {};
 
@@ -60,14 +65,14 @@ export default async function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = getProduct(slug);
+  const products = await getProducts();
+  const product = products.find((item) => item.slug === slug);
 
   if (!product) notFound();
 
-  const others = PRODUCTS.filter((item) => item.slug !== product.slug).slice(
-    0,
-    3,
-  );
+  const others = products
+    .filter((item) => item.slug !== product.slug)
+    .slice(0, 3);
 
   return (
     <div className="relative w-full bg-[color:var(--brand-ink)]">
@@ -132,7 +137,7 @@ export default async function ProductPage({
           <div className="grid gap-10 md:gap-12 lg:grid-cols-12 lg:gap-16">
             <Reveal className="lg:col-span-7">
               <div className="relative aspect-4/3 w-full overflow-hidden rounded-2xl border border-white/12">
-                <Image
+                <CdnImage
                   src={product.image}
                   alt={product.title}
                   fill
@@ -145,14 +150,18 @@ export default async function ProductPage({
 
               {product.gallery.length > 0 && (
                 <div className="mt-4 grid grid-cols-3 gap-4">
-                  {product.gallery.map((src) => (
+                  {product.gallery.map((src, index) => (
                     <div
                       key={src}
                       className="relative aspect-4/3 overflow-hidden rounded-xl border border-white/12"
                     >
-                      <Image
+                      <CdnImage
                         src={src}
-                        alt=""
+                        /* Real alt text once the image comes from the media
+                           library, which stores a description against the
+                           photograph. Empty stays the honest answer for the
+                           legacy public-folder images, which have none. */
+                        alt={product.galleryAssets?.[index]?.alt ?? ""}
                         fill
                         sizes="(max-width: 1024px) 30vw, 18vw"
                         className="object-cover"
@@ -246,6 +255,49 @@ export default async function ProductPage({
           </div>
         </section>
 
+        {/* The catalogue page the specs above were read off. Only the products
+            the printed catalogue covers have one, so this whole section is
+            absent rather than empty for the rest. */}
+        {product.specSheet && (
+          <section className="relative mx-auto w-full max-w-[1280px] px-5 pb-20 sm:px-6 lg:px-10 lg:pb-28">
+            <Reveal>
+              <div className="border-b border-white/10 pb-8">
+                <span className="eyebrow text-white/45">Full specification</span>
+                <h2 className="mt-4 text-[clamp(1.5rem,3.4vw,2.25rem)] font-black leading-tight tracking-tight text-white">
+                  Every model, as published
+                </h2>
+                <p className="mt-4 max-w-xl text-sm font-light leading-relaxed text-white/55">
+                  The figures above are the range across the series. This is the
+                  catalogue page they come from, model by model.
+                </p>
+              </div>
+            </Reveal>
+
+            <Reveal delay={0.1}>
+              {/* Wide table artwork: it stays legible by being openable at full
+                  size, which matters more here than fitting the column. */}
+              <a
+                href={product.specSheet}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group mt-8 block overflow-hidden rounded-2xl border border-white/12 bg-white transition-colors duration-500 hover:border-white/30"
+              >
+                <CdnImage
+                  src={product.specSheet}
+                  alt={`Technical specification table for ${product.title}`}
+                  width={2360}
+                  height={1500}
+                  sizes="(max-width: 1280px) 100vw, 1280px"
+                  className="h-auto w-full"
+                />
+              </a>
+              <p className="mt-3 text-xs font-light text-white/40">
+                Open the sheet for the full table.
+              </p>
+            </Reveal>
+          </section>
+        )}
+
         {/* Cross-links */}
         <section className="relative mx-auto w-full max-w-[1280px] px-5 pb-24 sm:px-6 lg:px-10 lg:pb-32">
           <Reveal>
@@ -275,7 +327,7 @@ export default async function ProductPage({
                   className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/12 bg-white/[0.03] transition-colors duration-500 hover:border-white/30"
                 >
                   <div className="relative aspect-4/3 overflow-hidden">
-                    <Image
+                    <CdnImage
                       src={item.image}
                       alt={item.title}
                       fill

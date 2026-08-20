@@ -76,8 +76,34 @@ export const WHATSAPP = {
     "Hello Valnex Industries, I would like to inquire about your equipment.",
 } as const;
 
-/** Prefilled chat link. Pass a message to deep-link a specific product. */
-export function whatsappHref(message: string = WHATSAPP.message) {
+/**
+ * Prefilled chat link, routed through this site so the click is recorded.
+ *
+ * It used to return the wa.me URL directly. The problem with that is that the
+ * conversation then happens entirely inside Meta's app and the business has no
+ * record that anyone ever asked -- WhatsApp inquiries were invisible in a way
+ * form submissions never were. /go/whatsapp logs the intent and 307s on to the
+ * same wa.me URL, so nothing changes for the visitor.
+ *
+ * `product` is a catalogue slug, and the outgoing message is composed from it
+ * server-side rather than passed through, so a link cannot be crafted to send
+ * arbitrary text to the company number.
+ *
+ * `from` is the page the button was on, which is what makes "which product
+ * page produces inquiries" answerable.
+ */
+export function whatsappHref(options?: { product?: string; from?: string }) {
+  const params = new URLSearchParams();
+  if (options?.product) params.set("product", options.product);
+  if (options?.from) params.set("from", options.from);
+
+  const query = params.toString();
+  return query ? `/go/whatsapp?${query}` : "/go/whatsapp";
+}
+
+/** The raw wa.me URL, for places that must not go through a redirect --
+ *  structured data, and the plain-text fallbacks a crawler reads. */
+export function whatsappDirectHref(message: string = WHATSAPP.message) {
   return `https://wa.me/${WHATSAPP.number}?text=${encodeURIComponent(message)}`;
 }
 

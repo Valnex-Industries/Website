@@ -73,7 +73,22 @@ body {
   font-family: var(--font-exo2), ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  overflow-x: hidden;
+
+  /* `clip`, not `hidden`.
+
+     They look equivalent and are not. Per the CSS Overflow spec, when one axis
+     is `hidden` and the other is `visible`, the visible one computes to `auto`
+     — so `overflow-x: hidden` silently turned this into `overflow-y: auto` and
+     made <body> a scroll container. Two consequences here: any `position:
+     sticky` descendant then resolves against body's scrollport rather than the
+     viewport, which is the usual way a sticky header quietly stops sticking;
+     and Lenis, which drives the documentElement scroll, gains a second
+     scrollable box competing with it.
+
+     `clip` does the clipping without creating a scroll container, so the y-axis
+     is left alone. Supported everywhere this site targets (Chrome/Edge 90+,
+     Firefox 81+, Safari 16+ — the browser floor is already Safari 16.4). */
+  overflow-x: clip;
   /* No grey flash on tap, and no rubber-band bounce revealing the html bg. */
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior-y: none;
@@ -175,4 +190,85 @@ h1, h2, h3, h4, h5, h6, .display-type {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Rendered Markdown for news articles. Written by hand rather than pulling in
+   @tailwindcss/typography: lib/markdown.ts emits nine tags in total, and the
+   plugin's defaults would have to be overridden for a dark surface anyway. */
+.article-body > :first-child {
+  margin-top: 0;
+}
+.article-body p {
+  margin: 0 0 1.15em;
+  font-size: 1rem;
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.72);
+}
+.article-body h2,
+.article-body h3,
+.article-body h4 {
+  font-family: var(--font-orbitron), sans-serif;
+  font-weight: 700;
+  color: #fff;
+  margin: 2em 0 0.6em;
+  line-height: 1.25;
+}
+.article-body h2 {
+  font-size: 1.5rem;
+}
+.article-body h3 {
+  font-size: 1.2rem;
+}
+.article-body h4 {
+  font-size: 1.05rem;
+}
+.article-body ul,
+.article-body ol {
+  margin: 0 0 1.15em;
+  padding-left: 1.3em;
+  color: rgba(255, 255, 255, 0.72);
+}
+.article-body ul {
+  list-style: disc;
+}
+.article-body ol {
+  list-style: decimal;
+}
+.article-body li {
+  margin-bottom: 0.45em;
+  line-height: 1.7;
+}
+.article-body a {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(255, 255, 255, 0.4);
+  transition: text-decoration-color 0.2s;
+}
+.article-body a:hover {
+  text-decoration-color: #fff;
+}
+.article-body strong {
+  color: #fff;
+  font-weight: 700;
+}
+.article-body code {
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 0.9em;
+}
+.article-body blockquote {
+  margin: 0 0 1.15em;
+  padding-left: 1.1em;
+  border-left: 2px solid var(--brand-blue-bright);
+}
+.article-body blockquote p {
+  color: rgba(255, 255, 255, 0.85);
+  font-style: italic;
+}
+.article-body hr {
+  margin: 2em 0;
+  border: 0;
+  border-top: 1px solid var(--hairline);
 }

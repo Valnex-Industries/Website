@@ -15,6 +15,7 @@ import {
   siteUrl,
 } from "@/lib/site";
 import { productHref, type Product } from "@/lib/products";
+import { absoluteImageUrl } from "@/lib/imagekit";
 
 /** Stable @id so Product and Breadcrumb nodes can reference the same company. */
 const ORGANIZATION_ID = siteUrl("/#organization");
@@ -108,7 +109,9 @@ export function productSchema(product: Product) {
     name: product.title,
     description: product.summary,
     url: siteUrl(productHref(product.slug)),
-    image: siteUrl(product.image),
+    /* Not siteUrl(): the path may be an ImageKit one, which would resolve
+       against our own domain and 404 in the rich result. */
+    image: absoluteImageUrl(product.image),
     category: "Industrial Equipment",
     brand: { "@type": "Brand", name: SITE_NAME },
     manufacturer: { "@id": ORGANIZATION_ID },
