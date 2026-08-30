@@ -15,7 +15,8 @@
  * this, an editor's account would be a cross-site scripting vector.
  *
  * Supported: # ## ### headings, **bold**, _italic_, `code`, [links](url),
- * - bullet lists, 1. numbered lists, > quotes, --- rules, and paragraphs.
+ * ![alt](src) images, - bullet lists, 1. numbered lists, > quotes, --- rules,
+ * and paragraphs.
  */
 
 function escapeHtml(input: string): string {
@@ -39,9 +40,36 @@ function safeUrl(raw: string): string | null {
   return null;
 }
 
+/**
+ * Image sources are narrower than link hrefs: http(s) or site-relative only.
+ * No mailto, no javascript:. Same structural guarantee as safeUrl -- the input
+ * is already escaped, and only these two shapes are ever emitted as a src.
+ */
+function safeImageUrl(raw: string): string | null {
+  const url = raw.trim();
+  if (/^https?:/i.test(url)) return url;
+  if (url.startsWith("/") && !url.startsWith("//")) return url;
+  return null;
+}
+
+/** An <img> tag from an already-escaped alt and src. `max-width` is inline
+ *  rather than in a stylesheet because this same output is mailed, and an email
+ *  has no stylesheet -- without it a large image overflows the 600px column. */
+function imageTag(alt: string, rawSrc: string): string | null {
+  const url = safeImageUrl(rawSrc);
+  if (!url) return null;
+  return `<img src="${url}" alt="${alt}" loading="lazy" style="max-width:100%;height:auto;" />`;
+}
+
 /** Inline formatting. Input here is ALREADY escaped. */
 function inline(escaped: string): string {
   return escaped
+    /* Images first: their alt and src must not then be read as other
+       formatting, and the ![..](..) has to be consumed before the link rule
+       below sees the [..](..) nested inside it. */
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt: string, src: string) => {
+      return imageTag(alt, src) ?? alt;
+    })
     .replace(/`([^`]+)`/g, "<code>$1</code>")
     .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
     .replace(/(^|[\s(])_([^_]+)_/g, "$1<em>$2</em>")
@@ -104,6 +132,18 @@ export function renderMarkdown(source: string): string {
       continue;
     }
 
+    /* An image on a line of its own becomes a block figure rather than an image
+       wrapped in a paragraph -- that is how a picture reads in the copy. An
+       image mid-sentence is still handled inline() below. */
+    const standaloneImage = /^!\[([^\]]*)\]\(([^)]+)\)$/.exec(trimmed);
+    if (standaloneImage) {
+      closeParagraph();
+      closeBlock();
+      const tag = imageTag(standaloneImage[1], standaloneImage[2]);
+      out.push(tag ? `<figure>${tag}</figure>` : `<p>${standaloneImage[1]}</p>`);
+      continue;
+    }
+
     const bullet = /^[-*]\s+(.*)$/.exec(trimmed);
     if (bullet) {
       closeParagraph();
@@ -158,6 +198,9 @@ export function markdownToText(source: string): string {
     .replace(/^#{1,6}\s+/gm, "")
     .replace(/\*\*([^*]+)\*\*/g, "$1")
     .replace(/`([^`]+)`/g, "$1")
+    /* Images become their alt text (or nothing), stripped before links so the
+       leading "!" cannot survive as stray punctuation. */
+    .replace(/!\[([^\]]*)\]\([^)]*\)/g, "$1")
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, "$1")
     .replace(/^[-*]\s+/gm, "")
     .replace(/\n{2,}/g, " ")
