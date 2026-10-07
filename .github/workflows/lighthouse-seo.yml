@@ -1,0 +1,48 @@
+# Lighthouse SEO audit of every page in the sitemap, on every branch push.
+#
+# The build runs without secrets, so Supabase is unset and the site falls back
+# to the compile-time catalogue in src/lib/products.ts, with no news posts. That
+# makes this a check on the code -- templates, metadata, canonicals, robots.txt
+# -- not on what has been published through the portal. To check live content,
+# audit production instead:
+#
+#   npm run lighthouse:seo -- https://www.valnexindustries.com
+#
+# Settings and pass/fail rules: lighthouserc.cjs.
+
+name: Lighthouse SEO
+
+on:
+  push:
+    branches: ["**"]
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+  workflow_dispatch:
+
+jobs:
+  seo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+      - run: npm run lighthouse:seo
+
+      # Uploaded on failure too: a failing run is when the reports are needed.
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: lighthouse-seo-reports
+          path: .lighthouseci/reports
+          # The reports live under a dot-directory, which is skipped by default.
+          include-hidden-files: true
+          if-no-files-found: ignore
