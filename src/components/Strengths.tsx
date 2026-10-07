@@ -18,25 +18,25 @@ function cards(productCount: number) {
     n: "01",
     title: "Thermal, materials and automation under one roof",
     body: "Chillers, feeders and the automation around them are engineered by the same people, in the same building.",
-    image: "/assets/division_energy.png",
+    image: "/assets/strength-1.webp",
   },
   {
     n: "02",
     title: "Validated before it reaches your line",
     body: "Every system is proven against its duty cycle here, so the first time it runs is not the first time it has run.",
-    image: "/assets/division_materials.png",
+    image: "/assets/strength-2.webp",
   },
   {
     n: "03",
     title: `${productCount} lines of production equipment`,
-    body: "Chillers, flake cutters, hopper loaders, laser marking, volumetric feeders, mould temperature controllers and dehumidifiers.",
-    image: "/assets/division_robotics.png",
+    body: "Chillers, flake cutters, hopper loaders, laser marking, volumetric feeders, mould temperature controllers, dehumidifiers and hot air dryers.",
+    image: "/assets/strength-3.webp",
   },
   {
     n: "04",
     title: "An engineer reads every inquiry",
     body: "Send a drawing, a duty cycle, or just the problem. It reaches a person who can answer it, not a queue.",
-    image: "/assets/hero_bg.png",
+    image: "/assets/strength-4.webp",
   },
   ] as const;
 }
