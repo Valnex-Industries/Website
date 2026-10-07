@@ -15,12 +15,16 @@ export function CtaBand() {
   return (
     <section id="contact" className="relative overflow-hidden">
       <div className="absolute inset-0">
+        {/* The machines run down the right of this image and the left is
+            empty floor for the headline. On a phone the band is taller than
+            the image, so it crops sideways; anchoring right of centre keeps
+            the machines in frame instead of an empty corridor. */}
         <Image
-          src="/assets/hero_bg.png"
+          src="/assets/cta-background.webp"
           alt=""
           fill
           sizes="100vw"
-          className="object-cover"
+          className="object-cover object-[65%_center]"
         />
         <div className="absolute inset-0 bg-[rgba(0,71,225,0.78)] mix-blend-multiply" />
         <div className="absolute inset-0 bg-linear-to-r from-[#02102e] via-[rgba(2,16,46,0.6)] to-transparent" />
