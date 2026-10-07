@@ -120,6 +120,9 @@ field is accepted-and-dropped.
   PerplexityBot, Google-Extended, …) as an explicit statement of intent.
 - Per-product static pages so a product can be a direct answer, not just a grid
   cell.
+- `scripts/lighthouse-seo.mjs` + `lighthouserc.cjs` — Lighthouse SEO gate over
+  every sitemap URL. A page in the sitemap must be indexable and score 100;
+  a `noindex` page belongs out of the sitemap, not in an exception list.
 
 Touching any of this: the goal is that "who makes industrial chillers in
 Gujarat" is answerable from what's actually published, not an SEO trick.
@@ -152,6 +155,14 @@ npx tsc --noEmit
 npm run lint
 npm run build      # closest thing to a full test suite; also catches silent Tailwind misses
 ```
+
+For a change touching metadata, routes, links, images, `robots.ts` or
+`sitemap.ts`, also run `npm run lighthouse:seo` after the build. It starts the
+production server on :3100, audits every URL in `/sitemap.xml` with Lighthouse's
+SEO category (rules in `lighthouserc.cjs`, every audit must pass), and stops the
+server. CI runs the same on every branch push. Pass a URL
+(`npm run lighthouse:seo -- https://www.valnexindustries.com`) to audit a live
+deployment instead.
 
 `npm run dev` for local work (http://localhost:3000). For a layout change, do an
 actual pass at the four widths above — type-checking won't catch it.

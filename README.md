@@ -102,6 +102,7 @@ Open [http://localhost:3000](http://localhost:3000).
 npm run build   # production build, also the closest thing to a full test suite this repo has
 npm run lint     # ESLint
 npx tsc --noEmit # TypeScript, no test runner configured: this + build + lint is the verification loop
+npm run lighthouse:seo  # after a build: Lighthouse SEO audit of every page in the sitemap
 ```
 
 ### Environment variables
@@ -135,6 +136,12 @@ a browser:
   Google-Extended) rather than leaving them to a default that might block them.
 - **Per-product static pages** (`/products/[slug]`) with their own metadata, so a product can be a direct
   answer to a search query instead of only reachable by browsing a grid.
+- **Lighthouse SEO audit** (`npm run lighthouse:seo`, `lighthouserc.cjs`): runs Lighthouse's SEO category
+  against every URL in `/sitemap.xml` and fails unless each page scores 100. It runs on every branch push
+  (`.github/workflows/lighthouse-seo.yml`) against a secret-less build, which checks the code. To check
+  what's actually published, point it at production:
+  `npm run lighthouse:seo -- https://www.valnexindustries.com`. Reports land in `.lighthouseci/reports/`.
+  Lighthouse no longer validates JSON-LD, so this does not cover the structured data.
 
 If you're touching any of this, the goal in one sentence: a visitor asking ChatGPT "who makes industrial
 chillers in Gujarat" should be answerable from what's actually published here, not from an SEO trick that
