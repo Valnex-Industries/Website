@@ -108,8 +108,14 @@ export const PRODUCTS: Product[] = [
       "Industrial cooling systems designed for precision temperature control and maximum uptime.",
     description:
       "Fourteen air-cooled models from 2 to 59 TR, each pairing a scroll compressor with an integrated process pump and buffer tank, so the machine arrives as one skid rather than as a chiller plus a pump set to be matched on site. Every model runs on R-22, R-407C or R-410. The figures below describe the air-cooled range; the water-cooled series is built to order and is not specified in the printed catalogue.",
-    image: "/catalog/photos/air-cooled-chiller.webp",
-    gallery: ["/catalog/photos/air-cooled-chiller-alt.webp"],
+    /* Studio render of the catalogue unit for the grid; the photos of the
+       real machine stay first in the gallery so the product page still
+       shows what actually ships. */
+    image: "/assets/product-chillers.webp",
+    gallery: [
+      "/catalog/photos/air-cooled-chiller.webp",
+      "/catalog/photos/air-cooled-chiller-alt.webp",
+    ],
     tags: ["Air Cooled", "Water Cooled", "Thermal"],
     specs: [
       { label: "Air-cooled models", value: "VI 02A – VI060A (14)" },
@@ -136,8 +142,8 @@ export const PRODUCTS: Product[] = [
       "High-performance size reduction equipment for consistent, clean flake processing.",
     description:
       "Ten models across two series: seven sized by grinding chamber, from a 230 × 200 mm beside-the-press unit to a 960 × 610 mm central granulator, and three rated by motor. Throughput runs from 100 to 1000 kg/h against a 8 – 12 mm screen, so runners and rejects come back as regrind at a size the machine that made them can take.",
-    image: "/catalog/photos/flake-cutter.webp",
-    gallery: [],
+    image: "/assets/product-flake-cutter.webp",
+    gallery: ["/catalog/photos/flake-cutter.webp"],
     tags: ["Size Reduction", "Processing"],
     specs: [
       { label: "Models", value: "VAL-230 – VAL-960, VAL-10/15/20 HP (10)" },
