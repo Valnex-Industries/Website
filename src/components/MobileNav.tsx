@@ -394,13 +394,16 @@ function DrawerRow({
                   >
                     {child.image ? (
                       <>
-                        <span className="relative h-14 w-24 shrink-0 overflow-hidden rounded-md bg-[color:var(--brand-ink)]/5">
+                        {/* Contain on the renders' backdrop colour, as in the
+                            desktop mega menu: a cover crop at this ratio cut
+                            the machines' tops and feet off. */}
+                        <span className="relative h-14 w-24 shrink-0 overflow-hidden rounded-md bg-[#08131f]">
                           <Image
                             src={child.image}
                             alt=""
                             fill
                             sizes="96px"
-                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                            className="object-contain transition-transform duration-500 group-hover:scale-105"
                           />
                         </span>
                         <span className="leading-snug">{child.label}</span>

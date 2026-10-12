@@ -74,12 +74,17 @@ export function ProductsMegaMenu({ onClose }: { onClose?: () => void }) {
                   onClick={(e) => navigate(e, product.href, onClose)}
                   className="group flex flex-col gap-3"
                 >
-                  <div className="relative w-full overflow-hidden rounded-lg bg-black/5 aspect-video">
+                  {/* Contain, not cover: product images are square studio
+                      shots, and a 16:9 cover crop cut the top and feet off
+                      every machine. The tile is filled with the renders'
+                      own backdrop colour so the side bands read as more
+                      studio rather than as letterboxing. */}
+                  <div className="relative w-full overflow-hidden rounded-lg bg-[#08131f] aspect-video">
                     <Image
                       src={product.image}
                       alt={product.label}
                       fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="object-contain transition-transform duration-500 group-hover:scale-105"
                       sizes="(max-width: 1280px) 20vw, 16vw"
                     />
                     <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/5" />
