@@ -50,6 +50,7 @@ interface ProductRow {
   specs: { label: string; value: string }[] | null;
   applications: string[] | null;
   spec_sheet: string | null;
+  updated_at: string;
   image_asset: MediaAsset | null;
   product_media:
     | { position: number; alt: string | null; media_assets: MediaAsset | null }[]
@@ -103,11 +104,12 @@ function toProduct(row: ProductRow, ordinal: number): Product {
        `product.specSheet && ...` guard reads the same for a database product
        as for one still coming from the compile-time catalogue. */
     specSheet: row.spec_sheet ?? undefined,
+    updatedAt: row.updated_at,
   };
 }
 
 const PRODUCT_SELECT =
-  "select=slug,position,title,summary,description,image,gallery,tags,specs,applications,spec_sheet," +
+  "select=slug,position,title,summary,description,image,gallery,tags,specs,applications,spec_sheet,updated_at," +
   "image_asset:media_assets!products_image_id_fkey(file_path,alt,width,height)," +
   "product_media(position,alt,media_assets(file_path,alt,width,height))";
 
