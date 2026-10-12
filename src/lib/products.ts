@@ -82,6 +82,12 @@ export interface Product {
    * cover; see docs/catalog-source/README.md.
    */
   specSheet?: string;
+  /**
+   * When the portal last saved this product's row (ISO 8601). Absent for the
+   * compile-time catalogue, which has no honest edit date — the sitemap omits
+   * `lastmod` rather than claiming one.
+   */
+  updatedAt?: string;
 }
 
 /**
