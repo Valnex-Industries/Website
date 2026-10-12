@@ -35,8 +35,25 @@ export const SITE_NAME = "Valnex Industries";
 
 export const SITE_TAGLINE = "Precision That Powers Progress";
 
+/**
+ * The entity statement: who, what, where, in one quotable sentence. It feeds
+ * the Organization/WebSite JSON-LD, llms.txt and the web manifest, so it names
+ * every product line and the place they are made rather than a slogan.
+ * "Manufactures" is owner-confirmed for all eight lines.
+ */
 export const SITE_DESCRIPTION =
-  "Valnex Industries engineers advanced chillers, flake cutters, hopper loaders, laser marking machines, volumetric feeders, mould temperature controllers, and dehumidifiers for the world's most demanding production lines.";
+  "Valnex Industries manufactures industrial chillers, mould temperature controllers, hot air dryers, flake cutters and granulators, hopper loaders, volumetric feeders, dehumidifiers and laser marking machines in Ahmedabad, Gujarat, India.";
+
+/** The homepage `<title>`: the search query first, the brand last. Google
+ *  truncates around 60 characters, so the words that match a query sit in
+ *  the first 50. */
+export const SITE_TITLE =
+  "Industrial Chillers & Plastics Auxiliaries, Ahmedabad | Valnex";
+
+/** The homepage meta description: SITE_DESCRIPTION is too long for a snippet
+ *  (~155 characters before Google cuts it), so this is the short form. */
+export const SITE_META_DESCRIPTION =
+  "Valnex Industries makes industrial chillers, mould temperature controllers, hot air dryers, granulators and laser markers in Ahmedabad, Gujarat. Get a quote.";
 
 /**
  * Facts that tie the website to the Google Business Profile / Maps listing.

@@ -9,7 +9,7 @@ import { Reveal } from "@/components/Reveal";
 import { JsonLd } from "@/components/JsonLd";
 import { breadcrumbSchema, productSchema } from "@/lib/schema";
 import { getProduct, getProducts } from "@/services/content";
-import { inquiryHref, productHref } from "@/lib/products";
+import { PRODUCT_SEO, inquiryHref, productHref } from "@/lib/products";
 
 /**
  * True now that the catalogue lives in the database. A product added in the
@@ -39,22 +39,25 @@ export async function generateMetadata({
   if (!product) return {};
 
   const path = productHref(product.slug);
+  const seo = PRODUCT_SEO[product.slug];
+  const description = seo?.description ?? product.summary;
 
   return {
-    /* The root layout's template appends "| Valnex Industries". */
-    title: product.title,
-    description: product.summary,
+    /* A search title already names the brand, so it bypasses the root
+       layout's "| Valnex Industries" template; the fallback still uses it. */
+    title: seo ? { absolute: seo.title } : product.title,
+    description,
     alternates: { canonical: path },
     openGraph: {
       type: "website",
-      title: product.title,
-      description: product.summary,
+      title: seo?.title ?? product.title,
+      description,
       url: path,
     },
     twitter: {
       card: "summary_large_image",
-      title: product.title,
-      description: product.summary,
+      title: seo?.title ?? product.title,
+      description,
     },
   };
 }

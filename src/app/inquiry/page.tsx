@@ -5,22 +5,25 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { Reveal } from "@/components/Reveal";
 import { InquiryForm } from "@/components/InquiryForm";
 
+const TITLE = "Request a Quote | Valnex Industries, Ahmedabad";
+
 const DESCRIPTION =
-  "Send Valnex Industries a drawing, a duty cycle, or just the problem. An engineer reads every inquiry that arrives.";
+  "Request a quote from Valnex Industries, Ahmedabad. Send a drawing, a duty cycle or just the problem: an engineer reads every inquiry that arrives.";
 
 export const metadata: Metadata = {
-  title: "Inquiry",
+  /* "Request a quote" is what a buyer searches for; "Inquiry" names nothing. */
+  title: { absolute: TITLE },
   description: DESCRIPTION,
   alternates: { canonical: "/inquiry" },
   openGraph: {
     type: "website",
-    title: "Inquiry",
+    title: TITLE,
     description: DESCRIPTION,
     url: "/inquiry",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Inquiry",
+    title: TITLE,
     description: DESCRIPTION,
   },
 };
