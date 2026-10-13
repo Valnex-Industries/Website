@@ -85,6 +85,17 @@ export const metadata: Metadata = {
     title: `${SITE_NAME} | ${SITE_TAGLINE}`,
     description: SITE_DESCRIPTION,
   },
+  /* Ownership proof for Google Search Console and Bing Webmaster Tools, which
+     is what lets the sitemap be submitted and pages be requested for
+     indexing. A DNS TXT record (a Search Console "Domain" property) is the
+     better route and needs no deploy; these exist for when DNS is not to
+     hand. Each tag is emitted only when its variable is set. */
+  verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
+    other: process.env.BING_SITE_VERIFICATION
+      ? { "msvalidate.01": process.env.BING_SITE_VERIFICATION }
+      : undefined,
+  },
   robots: {
     index: true,
     follow: true,
