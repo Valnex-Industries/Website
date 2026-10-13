@@ -125,9 +125,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    /* suppressHydrationWarning: the Preloader's inline script may set
+       data-intro on <html> before React hydrates. It covers this element's own
+       attributes only, not its children. */
     <html
       lang="en"
       className={`${exo2.variable} ${orbitron.variable} ${bitcount.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
         {/* Site-wide identity, carried on every route so any page can be the
@@ -138,8 +142,7 @@ export default function RootLayout({
         <SmoothScroll>{children}</SmoothScroll>
         {/* Both inject nothing in dev and no-op off Vercel, so they are safe to
             leave mounted everywhere. Speed Insights reports field Core Web
-            Vitals from real visitors — the number to watch is LCP, which the
-            two-second preloader inflates by design. */}
+            Vitals from real visitors — the number to watch is LCP. */}
         <Analytics />
         <SpeedInsights />
         {/* The first-party beacon that feeds the Analytics Portal. It does not

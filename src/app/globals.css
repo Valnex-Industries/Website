@@ -39,6 +39,12 @@
   font-style: normal;
 }
 
+/* Set by the inline script in Preloader.tsx before the first paint, for a
+   repeat visit in the same session or a reduced-motion visitor. */
+html[data-intro="skip"] .vx-preloader {
+  display: none;
+}
+
 .font-bitcount {
   font-family: var(--font-bitcount);
   font-optical-sizing: auto;
