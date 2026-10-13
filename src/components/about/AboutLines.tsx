@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
 import { productHref, type Product } from "@/lib/products";
+import { ABOUT_LINES_LEDE } from "@/lib/about";
 
 /** The spec that sizes a machine for a buyer, in the order worth trying. */
 const SIZING_SPECS = [
@@ -36,6 +37,9 @@ export function AboutLines({ products }: { products: Product[] }) {
           <h2 className="max-w-3xl text-[clamp(1.9rem,4.2vw,3.25rem)] font-black leading-[1.02] tracking-tight text-white">
             {products.length} lines, one plant.
           </h2>
+          <p className="mt-6 max-w-[60ch] text-base font-light leading-relaxed text-white/70 md:text-lg">
+            {ABOUT_LINES_LEDE}
+          </p>
         </Reveal>
 
         <Reveal delay={0.08}>

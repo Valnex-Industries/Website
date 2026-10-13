@@ -59,8 +59,10 @@ export function Preloader() {
               />
             </div>
 
-            {/* Valnex over Industries, stacked */}
-            <motion.h1
+            {/* Valnex over Industries, stacked. A <p>, not an <h1>: this sits
+                in the root layout, so as an h1 it gave every page two, and
+                it came first, ahead of the page's real headline. */}
+            <motion.p
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1], delay: 0.3 }}
@@ -69,7 +71,7 @@ export function Preloader() {
               Valnex
               <br />
               Industries
-            </motion.h1>
+            </motion.p>
 
             {/* Progress counter */}
             <motion.p

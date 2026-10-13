@@ -170,5 +170,12 @@ export function aboutPageSchema() {
     name: `About ${SITE_NAME}`,
     about: { "@id": ORGANIZATION_ID },
     mainEntity: { "@id": ORGANIZATION_ID },
+    primaryImageOfPage: {
+      "@type": "ImageObject",
+      url: siteUrl("/assets/about/team-group.webp"),
+      width: 1600,
+      height: 1062,
+      caption: "The Valnex Industries team in Ahmedabad",
+    },
   };
 }

@@ -8,6 +8,8 @@ import { AboutStory } from "@/components/about/AboutStory";
 import { PeopleCollage } from "@/components/about/PeopleCollage";
 import { AboutVision } from "@/components/about/AboutVision";
 import { AboutLines } from "@/components/about/AboutLines";
+import { AboutProcesses } from "@/components/about/AboutProcesses";
+import { AboutQuestions } from "@/components/about/AboutQuestions";
 import { aboutPageSchema, breadcrumbSchema } from "@/lib/schema";
 import { getProducts } from "@/services/content";
 
@@ -20,6 +22,16 @@ const TITLE = "About Valnex Industries | Manufacturer in Ahmedabad Since 2021";
 const DESCRIPTION =
   "Valnex Industries has designed and manufactured process equipment for plastics plants in Ahmedabad, Gujarat since 2021. Meet the founders and crew.";
 
+/* The team photo, whole, on brand-ink side panels. Set explicitly because a
+   page-level openGraph object replaces the root one rather than merging
+   with it, which left /about with no share image at all. */
+const SHARE_IMAGE = {
+  url: "/assets/about/og-team.jpg",
+  width: 1200,
+  height: 630,
+  alt: "The Valnex Industries team in Ahmedabad",
+};
+
 export const metadata: Metadata = {
   title: { absolute: TITLE },
   description: DESCRIPTION,
@@ -29,11 +41,13 @@ export const metadata: Metadata = {
     title: TITLE,
     description: DESCRIPTION,
     url: "/about",
+    images: [SHARE_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
     title: TITLE,
     description: DESCRIPTION,
+    images: [SHARE_IMAGE.url],
   },
 };
 
@@ -57,8 +71,10 @@ export default async function AboutPage() {
         <AboutHero />
         <AboutStory productCount={products.length} />
         <PeopleCollage />
+        <AboutProcesses products={products} />
         <AboutVision />
         <AboutLines products={products} />
+        <AboutQuestions products={products} />
         <CtaBand />
       </main>
 
