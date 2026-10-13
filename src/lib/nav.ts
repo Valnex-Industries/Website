@@ -30,16 +30,19 @@ export const PRODUCT_LINKS: ProductLink[] = PRODUCTS.map((product) => ({
   image: product.image,
 }));
 
+/* These all pointed at "/#company", one homepage section, so four labels led
+   to the same place and "Leadership" and "Sustainability" promised pages that
+   did not exist. Each now lands on a real section of /about. */
 export const COMPANY_LINKS: NavChild[] = [
-  { label: "Company profile", href: "/#company" },
-  { label: "Leadership", href: "/#company" },
-  { label: "Plants & facilities", href: "/#company" },
-  { label: "Sustainability", href: "/#company" },
+  { label: "About Valnex", href: "/about" },
+  { label: "Our story", href: "/about#story" },
+  { label: "Founders & crew", href: "/about#team" },
+  { label: "Vision", href: "/about#vision" },
 ];
 
 export const NAV_ITEMS: NavItem[] = [
   { label: "Products", href: "/#products", children: PRODUCT_LINKS },
-  { label: "Company Profile", href: "/#company", children: COMPANY_LINKS },
+  { label: "Company Profile", href: "/about", children: COMPANY_LINKS },
   /* Was "/#news", an anchor to a section that never existed, so the link went
      nowhere. It is a real page now. */
   { label: "News", href: "/news" },

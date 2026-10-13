@@ -3,13 +3,14 @@
  *
  * Kept apart from the components so every route describes the company the same
  * way, and so the shapes are reviewable in one place. Fields the company has
- * not confirmed (foundingDate, numberOfEmployees, aggregateRating) are omitted
- * on purpose — see the note in `lib/site.ts`.
+ * not confirmed (numberOfEmployees, aggregateRating) are omitted on purpose —
+ * see the note in `lib/site.ts`.
  */
 
 import {
   BUSINESS,
   CONTACT,
+  FOUNDING_DATE,
   SITE_DESCRIPTION,
   SITE_NAME,
   siteUrl,
@@ -42,6 +43,7 @@ export function organizationSchema() {
     url: siteUrl("/"),
     description: SITE_DESCRIPTION,
     slogan: "Precision That Powers Progress",
+    foundingDate: FOUNDING_DATE,
     email: CONTACT.email,
     telephone: CONTACT.phones[0],
     /* Google wants an image on a LocalBusiness; the generated OG card is a
@@ -155,5 +157,18 @@ export function productListSchema(products: Product[]) {
       name: product.title,
       url: siteUrl(productHref(product.slug)),
     })),
+  };
+}
+
+/** /about, tied to the same company node every other page describes. */
+export function aboutPageSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "@id": siteUrl("/about#webpage"),
+    url: siteUrl("/about"),
+    name: `About ${SITE_NAME}`,
+    about: { "@id": ORGANIZATION_ID },
+    mainEntity: { "@id": ORGANIZATION_ID },
   };
 }

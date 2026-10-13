@@ -272,3 +272,30 @@ h1, h2, h3, h4, h5, h6, .display-type {
   border: 0;
   border-top: 1px solid var(--hairline);
 }
+
+/* ── The /about photo window ───────────────────────────────────────────────
+   The resting shape of the crew photo under the About headline. Like
+   .hero-window it is held in CSS so first paint is already right; GSAP only
+   scrubs these insets to zero. Every value is a percentage plus a px radius
+   so the interpolation to `inset(0% 0% 0% 0% round 0px)` lines up term for
+   term.
+
+   Phones: a wide card in the lower half, under the headline and lede.
+   Tablet portrait: the same, with more side margin.
+   Desktop: pushed off-centre to the right, so the headline keeps the left of
+   the screen and the photo reads as the answer to it. */
+.about-window {
+  clip-path: inset(52% 5% 6% 5% round 18px);
+}
+
+@media (min-width: 768px) {
+  .about-window {
+    clip-path: inset(48% 8% 7% 8% round 22px);
+  }
+}
+
+@media (min-width: 1024px) {
+  .about-window {
+    clip-path: inset(46% 5% 8% 34% round 24px);
+  }
+}

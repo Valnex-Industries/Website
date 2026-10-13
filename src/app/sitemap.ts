@@ -21,6 +21,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     { url: siteUrl("/") },
+    { url: siteUrl("/about") },
     { url: siteUrl("/inquiry") },
     /* Listed only once something is published. An empty "Nothing published
        yet" page is thin content, and the sitemap is a list of pages worth

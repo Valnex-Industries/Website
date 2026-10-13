@@ -40,6 +40,9 @@ function build(): string {
   lines.push("");
   lines.push(`- [Home](${siteUrl("/")}): Company overview and full product range.`);
   lines.push(
+    `- [About](${siteUrl("/about")}): Company history (founded 2021 in Ahmedabad), founders and crew, and vision.`,
+  );
+  lines.push(
     `- [Inquiry](${siteUrl("/inquiry")}): Technical inquiry form. Accepts a drawing link, duty cycle, target volume and timeline.`,
   );
   lines.push("");

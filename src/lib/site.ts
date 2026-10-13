@@ -5,8 +5,8 @@
  * Everything here is verified. Nothing on this page may be a placeholder:
  * structured data is consumed verbatim by search engines, answer engines and
  * LLM crawlers, so an invented figure here is republished as fact. Claims the
- * company has not confirmed (founding year, headcount, plant count) are
- * deliberately absent rather than guessed.
+ * company has not confirmed (headcount, plant count) are deliberately absent
+ * rather than guessed.
  */
 
 /**
@@ -32,6 +32,10 @@ export function siteUrl(path = "/"): string {
 }
 
 export const SITE_NAME = "Valnex Industries";
+
+/** Incorporation date of Valnex Industries Private Limited, from the public
+ *  company record; the owner confirms 2021 as the year the company started. */
+export const FOUNDING_DATE = "2021-08-05";
 
 export const SITE_TAGLINE = "Precision That Powers Progress";
 
