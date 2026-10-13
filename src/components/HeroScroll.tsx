@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
+import { preload } from "react-dom";
 import {
   motion,
   useAnimationFrame,
@@ -17,6 +18,16 @@ const MARQUEE_TEXT = "Precision That Powers Progress";
 /** Seconds for one full copy of the marquee to pass. */
 const MARQUEE_CYCLE_MS = 22000;
 
+/* The poster is the page's LCP element; the video is decoration over it.
+   The poster is the video's own first frame, so there is no jump when
+   playback starts. The footage is a 720p/30fps re-encode (2.3 MB, was a
+   6.2 MB 1080p60 master). Regenerate both from a new master with:
+     ffmpeg -i master.mp4 -an -vf "scale=1280:-2,fps=30" -c:v libx264 \
+       -preset veryslow -crf 30 -pix_fmt yuv420p -movflags +faststart movie.mp4
+     ffmpeg -i movie.mp4 -frames:v 1 -c:v libwebp -quality 72 hero-poster.webp */
+const HERO_POSTER = "/assets/hero-poster.webp";
+const HERO_VIDEO = "/videos/movie.mp4";
+
 /** Scroll choreography: every value below is a fraction of hero progress.
  *  The video only ever grows: it opens from the centre card to full bleed by
  *  EXPAND[1] and stays there. The short tail after that is the closing
@@ -28,6 +39,47 @@ const PAYOFF_IN = [0.8, 0.95] as const; // closing statement fades in
 
 export function HeroScroll() {
   const containerRef = useRef<HTMLElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  /* Hoisted into <head> during SSR so the poster is fetched with the HTML
+     rather than after hydration. */
+  preload(HERO_POSTER, { as: "image", fetchPriority: "high" });
+
+  /* The video is attached only after the window's load event. Rendered with a
+     src and autoplay, it started a multi-megabyte download that competed with
+     the poster, fonts and scripts for a phone's bandwidth, and that contention
+     is what pushed mobile LCP to 9.4s. Data-saver and reduced-motion visitors
+     keep the poster and never download the video at all. */
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const connection = (navigator as Navigator & {
+      connection?: { saveData?: boolean };
+    }).connection;
+    if (
+      connection?.saveData ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return;
+    }
+
+    const start = () => {
+      /* Set as a property too: iOS only autoplays a muted video, and React
+         does not always reflect `muted` into the attribute. */
+      video.muted = true;
+      video.src = HERO_VIDEO;
+      /* Rejected when the browser refuses autoplay; the poster stays up. */
+      video.play().catch(() => {});
+    };
+
+    if (document.readyState === "complete") {
+      start();
+      return;
+    }
+    window.addEventListener("load", start, { once: true });
+    return () => window.removeEventListener("load", start);
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -206,13 +258,12 @@ export function HeroScroll() {
               refuse autoplay. Without a poster the window opens onto a blank
               rectangle in those cases. */}
           <video
-            autoPlay
+            ref={videoRef}
             muted
             loop
             playsInline
-            preload="auto"
-            poster="/assets/hero_bg.png"
-            src="/videos/movie.mp4"
+            preload="none"
+            poster={HERO_POSTER}
             aria-hidden="true"
             className="absolute inset-0 h-full w-full object-cover"
           />

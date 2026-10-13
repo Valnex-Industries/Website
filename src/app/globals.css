@@ -1,10 +1,9 @@
-/* Orbitron is loaded through next/font in app/layout.tsx, not imported from
-   fonts.googleapis.com. A CSS @import of a third-party stylesheet blocks the
-   first render behind a DNS lookup, a TLS handshake and two round trips — and
+/* Orbitron and Bitcount are loaded through next/font in app/layout.tsx, not
+   imported from fonts.googleapis.com. A CSS @import of a third-party
+   stylesheet blocks the first render behind a DNS lookup, a TLS handshake and two round trips — and
    Orbitron sets every heading including the hero marquee, so it sat directly
    on the largest-contentful-paint path. Lexend was declared here but never
    used by any component, so it was a download for nothing. */
-@import url('https://fonts.googleapis.com/css2?family=Bitcount+Prop+Single:wght@100..900&display=swap');
 @import "tailwindcss";
 
 /* ── Brand tokens (ported from the Modern Industrial design system) ────────── */
@@ -41,7 +40,7 @@
 }
 
 .font-bitcount {
-  font-family: "Bitcount Prop Single", system-ui;
+  font-family: var(--font-bitcount);
   font-optical-sizing: auto;
   font-weight: 300;
   font-style: normal;

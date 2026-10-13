@@ -60,7 +60,10 @@ export function Preloader() {
             </div>
 
             {/* Valnex over Industries, stacked */}
-            <motion.h1
+            {/* A <p>, not an <h1>: this overlay is in the server HTML of every
+                route, so as a heading it gave each page a second H1 ahead of
+                the page's real one. */}
+            <motion.p
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1], delay: 0.3 }}
@@ -69,7 +72,7 @@ export function Preloader() {
               Valnex
               <br />
               Industries
-            </motion.h1>
+            </motion.p>
 
             {/* Progress counter */}
             <motion.p

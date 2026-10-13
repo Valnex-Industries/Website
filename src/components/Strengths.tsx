@@ -19,24 +19,28 @@ function cards(productCount: number) {
     title: "Thermal, materials and automation under one roof",
     body: "Chillers, feeders and the automation around them are engineered by the same people, in the same building.",
     image: "/assets/strength-1.webp",
+    alt: "A chiller, hopper loader and control cabinet installed together on a plant floor",
   },
   {
     n: "02",
     title: "Validated before it reaches your line",
     body: "Every system is proven against its duty cycle here, so the first time it runs is not the first time it has run.",
     image: "/assets/strength-2.webp",
+    alt: "A gloved hand adjusting a valve on insulated chiller pipework with pressure gauges",
   },
   {
     n: "03",
     title: `${productCount} lines of production equipment`,
     body: "Chillers, flake cutters, hopper loaders, laser marking, volumetric feeders, mould temperature controllers, dehumidifiers and hot air dryers.",
     image: "/assets/strength-3.webp",
+    alt: "A row of plastics auxiliary machines lined up on a showroom floor",
   },
   {
     n: "04",
     title: "An engineer reads every inquiry",
     body: "Send a drawing, a duty cycle, or just the problem. It reaches a person who can answer it, not a queue.",
     image: "/assets/strength-4.webp",
+    alt: "An engineer marking up a machine drawing beside a laptop",
   },
   ] as const;
 }
@@ -232,7 +236,7 @@ export function Strengths({
                 <div className="relative mx-2.5 mb-2.5 aspect-9/7 overflow-hidden rounded">
                   <Image
                     src={card.image}
-                    alt=""
+                    alt={card.alt}
                     fill
                     sizes="(max-width: 768px) 90vw, 360px"
                     className="object-cover"
