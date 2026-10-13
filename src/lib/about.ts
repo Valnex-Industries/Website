@@ -20,24 +20,33 @@ export interface AboutPhoto {
 }
 
 /**
- * TODO(photos): every entry below is a STAND-IN taken from the existing site
- * artwork, so the page can be built and reviewed before the real photographs
- * arrive. Replace them with the founders' and crew's own photos (drop the
- * files in public/assets/about/) before this page is merged.
+ * `group` is the real team photograph and the climax of `PeopleCollage`: it
+ * pops in last, largest and in the middle. `machines` frame it, popping in
+ * first around the edges, so the section reads as the people at the centre
+ * of the machines.
  *
- *  - `hero`: one wide group photo, landscape, at least 2000px on the long
- *    side. It opens up to fill the screen, so the crew should sit near the
- *    centre of the frame.
- *  - `people`: 4-6 photos (portraits of each founder, the crew at work).
- *    Mixed portrait and landscape is fine; they are cropped to the shapes in
- *    `PeopleCollage`. The first two are drawn largest: put the founders there.
+ * TODO(photos): `hero` and most of `machines` are still STAND-INS from the
+ * existing site artwork (renders, not photographs of the Valnex floor). Swap
+ * in real shop-floor photos when they exist, in public/assets/about/.
+ *  - `hero`: a wide landscape shot, at least 2000px on the long side. It
+ *    opens up to fill the screen, so the subject should sit near the centre.
+ *  - `machines`: four shots of the plant and the machines. The first two are
+ *    portrait-cropped (4:5), the last two landscape (4:3).
  */
-export const ABOUT_PHOTOS: { hero: AboutPhoto; people: AboutPhoto[] } = {
+export const ABOUT_PHOTOS: {
+  hero: AboutPhoto;
+  group: AboutPhoto;
+  machines: AboutPhoto[];
+} = {
   hero: {
     src: "/assets/cta-background.webp",
     alt: "The Valnex machine hall in Dhamatvan, Ahmedabad",
   },
-  people: [
+  group: {
+    src: "/assets/about/team-group.webp",
+    alt: "The Valnex Industries team standing together outdoors, most in Valnex polo shirts",
+  },
+  machines: [
     {
       src: "/catalog/brand/valnex-machines.jpg",
       alt: "Valnex machines lined up on the shop floor",
@@ -53,10 +62,6 @@ export const ABOUT_PHOTOS: { hero: AboutPhoto; people: AboutPhoto[] } = {
     {
       src: "/assets/strength-2.webp",
       alt: "A technician fitting the pipework on a chiller",
-    },
-    {
-      src: "/assets/strength-1.webp",
-      alt: "A Valnex chiller and hopper dryer under test",
     },
   ],
 };

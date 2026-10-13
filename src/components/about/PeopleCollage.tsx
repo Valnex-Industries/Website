@@ -8,51 +8,49 @@ import { ABOUT_PEOPLE, ABOUT_PHOTOS } from "@/lib/about";
 import { cn } from "@/utils/cn";
 
 /**
- * Where each photo lands, in order. The first two are the largest and sit
- * highest, which is why the founders go first in `ABOUT_PHOTOS.people`.
+ * Where the machine shots land, in pop order. They frame the team photo:
+ * the first two flank it from behind on wide screens, the last two sit in
+ * the band below it on every width. The headline owns the top of the screen,
+ * so nothing is ever placed over it or over a face.
  *
- * Every slot is placed against the edges so the headline keeps the middle of
- * the screen on every width, and the top row starts below the fixed header
- * (about 12% of a short landscape screen). Phones show four photos (top pair, bottom pair)
- * with the headline in the band between them; the fifth slot is md and up.
- * `tilt` is the resting rotation in degrees; photos pop in from twice that.
+ * `tilt` is the resting rotation in degrees; each shot pops in from three
+ * times that. Tablets in portrait and phones skip the flanking pair, which
+ * would sit almost entirely behind the team photo there.
  */
-const SLOTS = [
+const MACHINE_SLOTS = [
   {
     className:
-      "left-[4%] top-[13%] w-[40vw] aspect-[4/5] md:left-[5%] md:top-[14%] md:w-[30vw] lg:w-[20vw]",
-    tilt: -4,
-    sizes: "(max-width: 768px) 40vw, 30vw",
+      "hidden lg:block lg:left-[4%] lg:top-[36%] lg:w-[17vw] aspect-[4/5]",
+    tilt: -5,
+    sizes: "17vw",
   },
   {
     className:
-      "right-[4%] top-[16%] w-[40vw] aspect-[4/5] md:right-[5%] md:top-[12%] md:w-[30vw] lg:w-[20vw]",
+      "hidden lg:block lg:right-[4%] lg:top-[32%] lg:w-[17vw] aspect-[4/5]",
+    tilt: 4,
+    sizes: "17vw",
+  },
+  {
+    className:
+      "left-[4%] bottom-[5%] w-[46vw] aspect-[4/3] md:left-[6%] md:bottom-[4%] md:w-[40vw] lg:left-[12%] lg:bottom-[5%] lg:w-[15vw]",
     tilt: 3,
-    sizes: "(max-width: 768px) 40vw, 30vw",
+    sizes: "(max-width: 1024px) 46vw, 15vw",
   },
   {
     className:
-      "left-[6%] bottom-[7%] w-[44vw] aspect-[4/3] md:left-[12%] md:bottom-[6%] md:w-[26vw] lg:left-[20%] lg:w-[16vw]",
-    tilt: 2,
-    sizes: "(max-width: 768px) 44vw, 26vw",
-  },
-  {
-    className:
-      "right-[5%] bottom-[12%] w-[38vw] aspect-[4/3] md:right-[10%] md:bottom-[9%] md:w-[26vw] lg:right-[19%] lg:w-[17vw]",
+      "right-[4%] bottom-[11%] w-[42vw] aspect-[4/3] md:right-[6%] md:bottom-[7%] md:w-[36vw] lg:right-[11%] lg:bottom-[4%] lg:w-[15vw]",
     tilt: -3,
-    sizes: "(max-width: 768px) 38vw, 26vw",
-  },
-  {
-    className:
-      "hidden md:block md:left-[42%] md:top-[12%] md:w-[15vw] lg:w-[13vw] aspect-square",
-    tilt: 1.5,
-    sizes: "15vw",
+    sizes: "(max-width: 1024px) 42vw, 15vw",
   },
 ] as const;
 
+/** The team photo's resting tilt. Small, so ten faces still read level. */
+const GROUP_TILT = -1.5;
+
 export function PeopleCollage() {
   const root = useRef<HTMLElement>(null);
-  const photos = ABOUT_PHOTOS.people.slice(0, SLOTS.length);
+  const machines = ABOUT_PHOTOS.machines.slice(0, MACHINE_SLOTS.length);
+  const group = ABOUT_PHOTOS.group;
 
   useLenis(() => ScrollTrigger.update());
 
@@ -60,53 +58,70 @@ export function PeopleCollage() {
     () => {
       const mm = gsap.matchMedia();
       mm.add(MOTION_OK, () => {
-        const cards = gsap.utils.toArray<HTMLElement>(".people-card");
+        /* Only the shots actually displayed at this width; a `hidden` slot
+           would otherwise spend a beat of scroll popping nothing. */
+        const shots = gsap.utils
+          .toArray<HTMLElement>(".machine-card")
+          .filter((el) => el.offsetParent !== null);
 
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: root.current,
             start: "top top",
-            /* About a third of a screen of scroll per photo, so each one
-               lands on its own beat instead of all five arriving at once. */
-            end: () => `+=${Math.max(cards.length, 3) * 34}%`,
+            /* A third of a screen per machine shot, then a longer beat for
+               the team photo, so it lands as the payoff and not as one more
+               card. */
+            end: () => `+=${shots.length * 30 + 90}%`,
             pin: true,
             scrub: 0.5,
+            invalidateOnRefresh: true,
           },
         });
 
         tl.fromTo(
           ".people-copy",
-          { autoAlpha: 0.25, scale: 0.94 },
-          { autoAlpha: 1, scale: 1, ease: "power2.out", duration: 0.8 },
+          { autoAlpha: 0.25, y: 24 },
+          { autoAlpha: 1, y: 0, ease: "power2.out", duration: 0.8 },
           0,
         );
 
-        cards.forEach((card, i) => {
-          const tilt = Number(card.dataset.tilt ?? 0);
+        shots.forEach((shot, i) => {
+          const tilt = Number(shot.dataset.tilt ?? 0);
           tl.fromTo(
-            card,
-            {
-              autoAlpha: 0,
-              scale: 0.35,
-              yPercent: 40,
-              rotation: tilt * 3,
-            },
+            shot,
+            { autoAlpha: 0, scale: 0.35, yPercent: 40, rotation: tilt * 3 },
             {
               autoAlpha: 1,
               scale: 1,
               yPercent: 0,
               rotation: tilt,
-              /* The overshoot is the "pop": each photo lands slightly past
-                 full size and settles, like a print slapped onto a board. */
+              /* The overshoot is the "pop": each print lands slightly past
+                 full size and settles, as if slapped onto a board. */
               ease: "back.out(1.7)",
               duration: 1,
             },
-            0.3 + i * 0.75,
+            0.3 + i * 0.7,
           );
         });
 
-        /* A short hold with everything on screen before the pin releases. */
-        tl.to({}, { duration: 0.6 });
+        /* The team arrives last, from small and turned, with a softer and
+           longer overshoot than the machine shots so it reads heavier. */
+        tl.fromTo(
+          ".group-card",
+          { autoAlpha: 0, scale: 0.2, yPercent: 30, rotation: -10 },
+          {
+            autoAlpha: 1,
+            scale: 1,
+            yPercent: 0,
+            rotation: GROUP_TILT,
+            ease: "back.out(1.3)",
+            duration: 1.6,
+          },
+          0.4 + shots.length * 0.7,
+        );
+
+        /* Everything on screen for a moment before the pin releases. */
+        tl.to({}, { duration: 0.8 });
       });
     },
     { scope: root },
@@ -117,16 +132,28 @@ export function PeopleCollage() {
       ref={root}
       id="team"
       aria-labelledby="people-heading"
-      className="relative h-[100dvh] min-h-[620px] overflow-hidden bg-[color:var(--brand-ink)]"
+      className="relative h-[100dvh] min-h-[640px] overflow-hidden bg-[color:var(--brand-ink)]"
     >
       <div
         aria-hidden="true"
         className="blueprint-grid pointer-events-none absolute inset-0 opacity-[0.07]"
       />
 
-      <ul className="absolute inset-0">
-        {photos.map((photo, i) => {
-          const slot = SLOTS[i];
+      <div className="people-copy relative z-20 mx-auto max-w-[min(40rem,90vw)] px-6 pt-[13vh] text-center md:pt-[12vh]">
+        <h2
+          id="people-heading"
+          className="text-[clamp(1.6rem,4vw,3rem)] font-black leading-[1.05] tracking-tight text-white"
+        >
+          {ABOUT_PEOPLE.heading}
+        </h2>
+        <p className="mx-auto mt-3 max-w-md text-sm font-light leading-relaxed text-white/65 md:text-base">
+          {ABOUT_PEOPLE.lede}
+        </p>
+      </div>
+
+      <ul aria-label="Valnex machines" className="absolute inset-0">
+        {machines.map((photo, i) => {
+          const slot = MACHINE_SLOTS[i];
           return (
             <li
               key={photo.src}
@@ -135,47 +162,39 @@ export function PeopleCollage() {
                  and the two would otherwise stack into a double tilt. This is
                  also the resting state a reduced-motion visitor sees. */
               style={{ transform: `rotate(${slot.tilt}deg)` }}
-              className={cn("people-card absolute", slot.className)}
+              className={cn("machine-card absolute", slot.className)}
             >
-              <figure className="flex h-full flex-col">
-                <div className="relative min-h-0 flex-1 overflow-hidden rounded-2xl border border-white/15 shadow-[0_24px_60px_-20px_rgba(0,8,30,0.8)]">
-                  <Image
-                    src={photo.src}
-                    alt={photo.alt}
-                    fill
-                    sizes={slot.sizes}
-                    className="object-cover"
-                  />
-                </div>
-                {photo.name && (
-                  <figcaption className="mt-2 text-xs leading-snug text-white/75 md:text-sm">
-                    <span className="font-semibold text-white">
-                      {photo.name}
-                    </span>
-                    {photo.role && (
-                      <span className="block text-white/55">{photo.role}</span>
-                    )}
-                  </figcaption>
-                )}
-              </figure>
+              <div className="relative h-full w-full overflow-hidden rounded-2xl border border-white/15 shadow-[0_24px_60px_-20px_rgba(0,8,30,0.8)]">
+                <Image
+                  src={photo.src}
+                  alt={photo.alt}
+                  fill
+                  sizes={slot.sizes}
+                  className="object-cover"
+                />
+              </div>
             </li>
           );
         })}
       </ul>
 
-      {/* Above the photos, so a photo can never sit over the words. */}
-      <div className="people-copy pointer-events-none absolute inset-0 z-10 flex items-center justify-center px-6">
-        <div className="max-w-[min(34rem,90vw)] text-center">
-          <h2
-            id="people-heading"
-            className="text-[clamp(1.6rem,4.2vw,3.25rem)] font-black leading-[1.05] tracking-tight text-white [text-shadow:0_2px_24px_rgba(2,16,46,0.9)]"
-          >
-            {ABOUT_PEOPLE.heading}
-          </h2>
-          <p className="mx-auto mt-4 max-w-sm text-sm font-light leading-relaxed text-white/70 [text-shadow:0_1px_12px_rgba(2,16,46,0.9)] md:text-base">
-            {ABOUT_PEOPLE.lede}
-          </p>
-        </div>
+      {/* Centred by the flex wrapper rather than by a translate on the card,
+          so GSAP owns the card's whole transform without fighting it. */}
+      <div className="pointer-events-none absolute inset-x-0 top-[36%] z-10 flex justify-center px-[4vw] md:top-[30%] lg:top-[33%]">
+        <figure
+          style={{ transform: `rotate(${GROUP_TILT}deg)` }}
+          className="group-card pointer-events-auto w-full max-w-[46rem] md:w-[84vw] lg:w-[46vw]"
+        >
+          <div className="relative aspect-[3/2] overflow-hidden rounded-2xl border-[6px] border-white bg-white shadow-[0_40px_90px_-24px_rgba(0,8,30,0.95)] md:border-8">
+            <Image
+              src={group.src}
+              alt={group.alt}
+              fill
+              sizes="(max-width: 768px) 92vw, (max-width: 1024px) 84vw, 46vw"
+              className="object-cover"
+            />
+          </div>
+        </figure>
       </div>
     </section>
   );
