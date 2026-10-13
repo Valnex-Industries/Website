@@ -7,24 +7,25 @@ import { gsap, MOTION_OK, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { ABOUT_HERO, ABOUT_PHOTOS } from "@/lib/about";
 
 /**
- * The opening of /about: the team photo sits in a rounded window under the
- * headline, then opens to full screen as the section is scrolled.
+ * The opening of /about: the team photo sits behind a rounded window under
+ * the headline, then the window opens to full bleed while the photo zooms
+ * out (1.18x to 1x) as the section is scrolled.
  *
  * It borrows the homepage hero's idea (a framed window that grows until it
  * owns the screen) so the two pages read as one site, but the window here is
  * a still photograph and the scroll is pinned, so the reveal is the whole
  * moment rather than a transition into the next section.
  *
- * The photograph is never cropped. The window is a real box whose edges move
- * (not a clip over a fixed full-screen image), and the photo inside it is
- * `object-contain`, so all ten people are in shot at every width and at every
- * point of the opening. Whatever the window has beyond the photo's 3:2 is
- * filled by a blurred, darkened copy of the same photo, which reads as depth
- * rather than as letterboxing.
+ * The resting window shape lives in CSS (`.about-window` in globals.css), not
+ * here, so first paint is already the right composition on every width and a
+ * reduced-motion visitor simply keeps it. GSAP only animates *from* that
+ * computed clip-path *to* full bleed.
  *
- * The resting window lives in CSS (`.about-window` in globals.css), so first
- * paint is already the right composition on every width and a reduced-motion
- * visitor simply keeps it. GSAP only moves those edges to the screen's.
+ * How the photo fills the screen differs by shape. On lg and up it covers,
+ * anchored low (the row of people is in the lower three quarters of the
+ * frame; the top is trees). On an upright screen covering would keep only
+ * the middle three people, so there it is contained, whole, on a blurred
+ * copy of itself, and sits low enough that the resting window shows faces.
  */
 export function AboutHero() {
   const root = useRef<HTMLElement>(null);
@@ -36,6 +37,25 @@ export function AboutHero() {
 
   useGSAP(
     () => {
+      /* On lg the photo covers the screen and the window is its lower
+         right, which on its own would frame torsos: the faces are a third
+         of the way down the photo. So at rest the photo is also lowered
+         until the faces sit just inside the window's top edge, and it glides
+         up as it zooms out. Measured, not hard-coded, because how much of
+         the photo the cover crop keeps depends on the screen's shape. */
+      const restingDrop = () => {
+        if (window.innerWidth < 1024) return 0;
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+        const ratio = (photo.width ?? 3) / (photo.height ?? 2);
+        const imgH = Math.max(vh, vw / ratio);
+        const top = -(imgH - vh) * 0.8; /* object-position y: 80% */
+        const faces = top + imgH * 0.33;
+        const zoomed = vh / 2 + (faces - vh / 2) * 1.18;
+        const windowTop = vh * 0.46;
+        return Math.max(0, windowTop + vh * 0.07 - zoomed);
+      };
+
       const mm = gsap.matchMedia();
       mm.add(MOTION_OK, () => {
         const tl = gsap.timeline({
@@ -48,18 +68,17 @@ export function AboutHero() {
             end: "+=110%",
             pin: true,
             scrub: 0.6,
-            /* The resting edges differ per breakpoint; re-read them from CSS
-               after a resize rather than keep the old screen's numbers. */
             invalidateOnRefresh: true,
           },
         });
 
-        tl.to(
-          ".about-window",
-          { top: 0, right: 0, bottom: 0, left: 0, borderRadius: 0 },
-          0,
-        )
-          .fromTo(".about-backdrop", { scale: 1.25 }, { scale: 1.08 }, 0)
+        tl.to(".about-window", { clipPath: "inset(0% 0% 0% 0% round 0px)" }, 0)
+          .fromTo(
+            ".about-photo",
+            { scale: 1.18, y: () => restingDrop() },
+            { scale: 1, y: 0 },
+            0,
+          )
           .to(".about-copy", { yPercent: -35, autoAlpha: 0 }, 0)
           .to(".about-shade", { autoAlpha: 1 }, 0.35)
           .fromTo(
@@ -96,32 +115,34 @@ export function AboutHero() {
         </p>
       </div>
 
-      <div className="about-window absolute overflow-hidden border border-white/12 bg-[color:var(--brand-ink)]">
-        {/* Fill for whatever the window has beyond 3:2: the same photo,
-            blurred and darkened, so the edges read as depth. Decorative, so
-            hidden from assistive tech; the sharp copy below carries the alt. */}
-        <Image
-          src={photo.src}
-          alt=""
-          aria-hidden="true"
-          fill
-          sizes="40vw"
-          className="about-backdrop scale-125 object-cover opacity-60 blur-2xl brightness-50"
-        />
-        <Image
-          src={photo.src}
-          alt={photo.alt}
-          fill
-          priority
-          sizes="100vw"
-          className="object-contain"
-        />
+      <div className="about-window absolute inset-0 overflow-hidden">
+        <div className="about-photo absolute inset-0">
+          {/* Fill for an upright screen, where the photo is contained: the
+              same photo, blurred and darkened, so the bands read as depth.
+              Hidden on lg, where the sharp photo covers the screen. */}
+          <Image
+            src={photo.src}
+            alt=""
+            aria-hidden="true"
+            fill
+            sizes="50vw"
+            className="scale-110 object-cover opacity-60 blur-2xl brightness-50 lg:hidden"
+          />
+          <Image
+            src={photo.src}
+            alt={photo.alt}
+            fill
+            priority
+            sizes="100vw"
+            className="object-contain object-[50%_72%] lg:object-cover lg:object-[50%_80%]"
+          />
+        </div>
         {/* Brand tint, as on the inquiry band, so a daylight photo sits in
             the same colour world as the rest of the site. */}
         <div className="absolute inset-0 bg-[rgba(0,71,225,0.14)] mix-blend-multiply" />
-        <div className="about-shade invisible absolute inset-0 bg-linear-to-t from-[#02102e] via-transparent to-transparent opacity-0" />
+        <div className="about-shade invisible absolute inset-0 bg-linear-to-t from-[#02102e] via-[rgba(2,16,46,0.25)] to-transparent opacity-0" />
 
-        <p className="about-caption invisible absolute inset-x-0 bottom-0 mx-auto w-full max-w-[1280px] px-5 pb-8 text-sm font-light leading-relaxed text-white/90 opacity-0 sm:px-6 md:pb-12 md:text-lg lg:px-10">
+        <p className="about-caption invisible absolute inset-x-0 bottom-0 mx-auto w-full max-w-[1280px] px-5 pb-10 text-base font-light leading-relaxed text-white/90 opacity-0 sm:px-6 md:pb-14 md:text-xl lg:px-10">
           <span className="block max-w-xl">{ABOUT_HERO.caption}</span>
         </p>
       </div>
