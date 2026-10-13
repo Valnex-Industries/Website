@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
-import { Exo_2, Orbitron } from "next/font/google";
+import { Bitcount_Prop_Single, Exo_2, Orbitron } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
@@ -30,6 +30,19 @@ const orbitron = Orbitron({
   variable: "--font-orbitron",
   subsets: ["latin"],
   display: "swap",
+});
+
+/* The hero's corner statements. Same reasoning as Orbitron: it used to be a
+   render-blocking @import of fonts.googleapis.com in globals.css, worth about
+   0.9s of mobile first paint. Only the wght axis is loaded, as before, so the
+   extra axes named in `.font-bitcount` keep their defaults. */
+const bitcount = Bitcount_Prop_Single({
+  variable: "--font-bitcount",
+  subsets: ["latin"],
+  display: "swap",
+  /* next/font has no metrics to size-match a fallback for this face. */
+  adjustFontFallback: false,
+  fallback: ["system-ui"],
 });
 
 export const metadata: Metadata = {
@@ -103,7 +116,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${exo2.variable} ${orbitron.variable} h-full antialiased`}
+      className={`${exo2.variable} ${orbitron.variable} ${bitcount.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         {/* Site-wide identity, carried on every route so any page can be the
