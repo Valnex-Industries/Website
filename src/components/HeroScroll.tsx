@@ -216,6 +216,23 @@ export function HeroScroll() {
             cornerBox,
           )}
         >
+          {/* The page's H1: what Valnex makes and where, in plain words and
+              visible on first paint. Every other line on the opening screen is
+              brand voice, so a visitor arriving from a search for "chiller
+              manufacturer Ahmedabad" had nothing confirming they had landed in
+              the right place, and the old H1 sat at opacity 0 until the end of
+              the scroll.
+
+              Above the statement, never below it, which ran into the filled
+              marquee. Phones and portrait tablets have room to spare, so there
+              it sits in flow and nudges the statement down. A landscape screen
+              has none: "new value" already ends just above the marquee's
+              letters, so from lg the line lifts out of flow into the gap under
+              the nav, on one line, and the statement keeps its old place. */}
+          <h1 className="mb-4 max-w-[min(88vw,46rem)] text-balance text-[clamp(0.7rem,0.95vw,0.82rem)] font-semibold uppercase leading-relaxed tracking-[0.18em] text-white/75 sm:mb-5 lg:absolute lg:bottom-full lg:left-0 lg:mb-3 lg:max-w-none lg:whitespace-nowrap">
+            Industrial chillers and plastics auxiliary equipment, made in
+            Ahmedabad, India.
+          </h1>
           {/* Broken deliberately, not by wrapping: "Creating" over "new value"
               is the stacked, two-beat reading the reference design uses. */}
           <p className={cornerType}>
@@ -298,13 +315,15 @@ export function HeroScroll() {
           <span className="eyebrow font-orbitron text-white/60">
             Valnex Industries
           </span>
-          <h1 className="mt-4 max-w-4xl text-[clamp(1.65rem,5.4vw,4.5rem)] font-black leading-[1.02] tracking-tight text-white sm:leading-[0.95]">
+          {/* h2, not h1: the descriptive line in the opening corner is the
+              page's H1, because this one is invisible until the scroll ends. */}
+          <h2 className="mt-4 max-w-4xl text-[clamp(1.65rem,5.4vw,4.5rem)] font-black leading-[1.02] tracking-tight text-white sm:leading-[0.95]">
             Engineered for the lines
             <br className="hidden sm:block" />{" "}
             that cannot stop.
-          </h1>
+          </h2>
           <p className="mt-5 max-w-xl text-[13px] font-light leading-relaxed text-white/70 sm:mt-6 sm:text-sm md:text-base">
-            Advanced chillers, flake cutters, hopper loaders, laser marking machines, volumetric feeders, mould temperature controllers, and dehumidifiers engineered for the
+            Advanced chillers, flake cutters, hopper loaders, laser marking machines, volumetric feeders, mould temperature controllers, dehumidifiers and hot air dryers engineered for the
             world&apos;s most demanding production lines.
           </p>
         </motion.div>
