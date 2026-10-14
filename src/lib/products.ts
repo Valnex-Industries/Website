@@ -282,6 +282,62 @@ export const PRODUCTS: Product[] = [
   },
 ];
 
+/**
+ * Search-result text for each product page: the `<title>` and meta
+ * description, kept apart from `title`/`summary` because those also drive the
+ * H1, cards and menus, where "Industrial Chiller Manufacturer, Ahmedabad" would
+ * read as clutter.
+ *
+ * Every figure is copied from that product's confirmed `specs`; change them
+ * together. The three products without specs get a title and a plain
+ * description only. A product with no entry here (one added in the portal
+ * later) falls back to its `title` and `summary`.
+ */
+export const PRODUCT_SEO: Partial<
+  Record<ProductSlug, { title: string; description: string }>
+> = {
+  chillers: {
+    title: "Industrial Chiller Manufacturer, Ahmedabad (2–59 TR) | Valnex",
+    description:
+      "Air-cooled industrial chillers from 2 to 59 TR, 14 models, for injection moulding, blow moulding and extrusion. Made by Valnex Industries, Ahmedabad.",
+  },
+  "mould-temp": {
+    title: "Mould Temperature Controller, Oil & Water | Valnex Ahmedabad",
+    description:
+      "Oil (to 180 °C) and water (to 95 °C) mould temperature controllers, 3–18 kW heating, 9 models. Made by Valnex Industries in Ahmedabad, Gujarat.",
+  },
+  "hot-air-dryer": {
+    title: "Hot Air Dryer for Plastics, 60–600 L | Valnex Ahmedabad",
+    description:
+      "Hopper hot air dryers from 60 to 600 litres, 2.7–18 kW heaters, 7 models, for pre-drying resin before moulding or extrusion. Valnex Industries, Ahmedabad.",
+  },
+  "flake-cutter": {
+    title: "Flake Cutter & Granulator, 100–1000 kg/h | Valnex Ahmedabad",
+    description:
+      "Flake cutter granulators for beside-the-press regrind and central granulation: 100–1000 kg/h, 4–57 kW, 10 models. Made by Valnex Industries, Ahmedabad.",
+  },
+  "laser-marking": {
+    title: "Fibre Laser Marking Machine, 30 W & 50 W | Valnex Ahmedabad",
+    description:
+      "30 W and 50 W pulsed fibre laser marking machines with on-the-fly marking for batch and traceability codes. Made by Valnex Industries, Ahmedabad.",
+  },
+  "hopper-loader": {
+    title: "Hopper Loader Manufacturer, Ahmedabad | Valnex Industries",
+    description:
+      "Hopper loaders for automatic material conveying, manufactured by Valnex Industries in Ahmedabad, Gujarat. Send your line details for a quote.",
+  },
+  "volumetric-feeder": {
+    title: "Volumetric Feeder Manufacturer, Ahmedabad | Valnex Industries",
+    description:
+      "Volumetric feeders for accurate dosing and recipe control, manufactured by Valnex Industries in Ahmedabad, Gujarat. Send your line details for a quote.",
+  },
+  dehumidifier: {
+    title: "Industrial Dehumidifier Manufacturer, Ahmedabad | Valnex",
+    description:
+      "Industrial dehumidifiers that keep moisture out of sensitive materials and processes, manufactured by Valnex Industries in Ahmedabad, Gujarat.",
+  },
+};
+
 export function productHref(slug: ProductSlug): string {
   return `/products/${slug}`;
 }

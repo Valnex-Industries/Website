@@ -9,7 +9,7 @@ import { Reveal } from "@/components/Reveal";
 import { JsonLd } from "@/components/JsonLd";
 import { breadcrumbSchema, productSchema } from "@/lib/schema";
 import { getProduct, getProducts } from "@/services/content";
-import { inquiryHref, productHref } from "@/lib/products";
+import { PRODUCT_SEO, inquiryHref, productHref } from "@/lib/products";
 
 /**
  * True now that the catalogue lives in the database. A product added in the
@@ -39,14 +39,17 @@ export async function generateMetadata({
   if (!product) return {};
 
   const path = productHref(product.slug);
-  /* Buyers search "hopper loader Ahmedabad", not a bare product name, and the
-     bare name competes with every supplier in the country. The root layout's
-     template appends "| Valnex Industries". */
-  const title = `${product.title} in Ahmedabad, Gujarat`;
-  const description = metaDescription(product.summary);
+  /* PRODUCT_SEO holds a hand-written, query-first title and spec-based
+     description for each catalogue product; those titles already name the
+     brand, so they bypass the root layout's "| Valnex Industries" template.
+     A product added in the portal later has no entry, and falls back to a
+     derived title that still carries the place buyers search with. */
+  const seo = PRODUCT_SEO[product.slug];
+  const title = seo?.title ?? `${product.title} in Ahmedabad, Gujarat`;
+  const description = seo?.description ?? metaDescription(product.summary);
 
   return {
-    title,
+    title: seo ? { absolute: title } : title,
     description,
     alternates: { canonical: path },
     openGraph: {
