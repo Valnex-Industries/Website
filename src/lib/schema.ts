@@ -107,7 +107,9 @@ export function productSchema(product: Product) {
     "@type": "Product",
     "@id": siteUrl(`${productHref(product.slug)}#product`),
     name: product.title,
-    description: product.summary,
+    /* The page's own body copy when there is one, which is what a buyer reads
+       on the page; the one-line summary otherwise. */
+    description: product.description || product.summary,
     url: siteUrl(productHref(product.slug)),
     /* Not siteUrl(): the path may be an ImageKit one, which would resolve
        against our own domain and 404 in the rich result. */

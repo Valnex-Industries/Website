@@ -10,10 +10,10 @@ import { Preloader } from "@/components/Preloader";
 import { JsonLd } from "@/components/JsonLd";
 import { organizationSchema, webSiteSchema } from "@/lib/schema";
 import {
-  SITE_DESCRIPTION,
+  SITE_HEADLINE,
+  SITE_META_DESCRIPTION,
   SITE_NAME,
   SITE_ORIGIN,
-  SITE_TAGLINE,
 } from "@/lib/site";
 
 const exo2 = Exo_2({
@@ -50,11 +50,11 @@ export const metadata: Metadata = {
      and still emit absolute ones, which is what crawlers require. */
   metadataBase: new URL(SITE_ORIGIN),
   title: {
-    default: `${SITE_NAME} | ${SITE_TAGLINE}`,
+    default: `${SITE_HEADLINE} | ${SITE_NAME}`,
     /* Child routes set only their own name and inherit the suffix. */
     template: `%s | ${SITE_NAME}`,
   },
-  description: SITE_DESCRIPTION,
+  description: SITE_META_DESCRIPTION,
   applicationName: SITE_NAME,
   alternates: { canonical: "/" },
   keywords: [
@@ -75,15 +75,26 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: SITE_NAME,
-    title: `${SITE_NAME} | ${SITE_TAGLINE}`,
-    description: SITE_DESCRIPTION,
+    title: `${SITE_HEADLINE} | ${SITE_NAME}`,
+    description: SITE_META_DESCRIPTION,
     url: "/",
     locale: "en_IN",
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_NAME} | ${SITE_TAGLINE}`,
-    description: SITE_DESCRIPTION,
+    title: `${SITE_HEADLINE} | ${SITE_NAME}`,
+    description: SITE_META_DESCRIPTION,
+  },
+  /* Ownership proof for Google Search Console and Bing Webmaster Tools, which
+     is what lets the sitemap be submitted and pages be requested for
+     indexing. A DNS TXT record (a Search Console "Domain" property) is the
+     better route and needs no deploy; these exist for when DNS is not to
+     hand. Each tag is emitted only when its variable is set. */
+  verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
+    other: process.env.BING_SITE_VERIFICATION
+      ? { "msvalidate.01": process.env.BING_SITE_VERIFICATION }
+      : undefined,
   },
   robots: {
     index: true,
@@ -114,9 +125,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    /* suppressHydrationWarning: the Preloader's inline script may set
+       data-intro on <html> before React hydrates. It covers this element's own
+       attributes only, not its children. */
     <html
       lang="en"
       className={`${exo2.variable} ${orbitron.variable} ${bitcount.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
         {/* Site-wide identity, carried on every route so any page can be the
@@ -127,8 +142,7 @@ export default function RootLayout({
         <SmoothScroll>{children}</SmoothScroll>
         {/* Both inject nothing in dev and no-op off Vercel, so they are safe to
             leave mounted everywhere. Speed Insights reports field Core Web
-            Vitals from real visitors — the number to watch is LCP, which the
-            two-second preloader inflates by design. */}
+            Vitals from real visitors — the number to watch is LCP. */}
         <Analytics />
         <SpeedInsights />
         {/* The first-party beacon that feeds the Analytics Portal. It does not

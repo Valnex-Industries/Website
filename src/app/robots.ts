@@ -44,8 +44,13 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: "*",
         allow: "/",
         /* Query-string variants of the inquiry form are the same page with a
-           chip preselected; let the canonical carry the weight. */
-        disallow: ["/api/", "/_next/"],
+           chip preselected; let the canonical carry the weight.
+
+           /_next/ must stay crawlable. It serves every page's CSS, JS and
+           fonts (/_next/static) and every optimised image (/_next/image).
+           Blocked, Googlebot renders each page unstyled and imageless, and
+           no product image can reach Google Images. */
+        disallow: ["/api/"],
       },
       ...ASSISTANT_AGENTS.map((userAgent) => ({
         userAgent,
