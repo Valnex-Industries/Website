@@ -35,11 +35,13 @@ export const SITE_NAME = "Valnex Industries";
 
 export const SITE_TAGLINE = "Precision That Powers Progress";
 
-/** The long form: structured data, the web manifest and llms.txt. It names
- *  every product line, so it changes when the catalogue gains one; it used to
- *  list seven and miss the hot air dryer. */
+/** The entity statement: who, what, where, in one quotable sentence. It feeds
+ *  the Organization/WebSite JSON-LD, llms.txt and the web manifest, so it names
+ *  every product line and the place they are made rather than a slogan.
+ *  "Manufactures" is owner-confirmed for all eight lines, and the owner wants
+ *  both "flake cutter" and "granulator" used. */
 export const SITE_DESCRIPTION =
-  "Valnex Industries is an industrial equipment manufacturer in Ahmedabad, Gujarat, India, making air and water cooled chillers, mould temperature controllers, hot air dryers, dehumidifiers, hopper loaders, volumetric feeders, flake cutters and laser marking machines for plastics processing and production lines.";
+  "Valnex Industries manufactures air and water cooled industrial chillers, mould temperature controllers, hot air dryers, flake cutters and granulators, hopper loaders, volumetric feeders, dehumidifiers and laser marking machines in Ahmedabad, Gujarat, India, for plastics processing and production lines.";
 
 /** What the home page is, in the words a buyer searches with. The search
  *  result title, ahead of the brand. The tagline says nothing a search
