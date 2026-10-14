@@ -46,7 +46,8 @@ src/
     inquiry/               Contact form page + its server action (actions.ts)
     products/[slug]/       One static page per product (generateStaticParams)
     sitemap.ts robots.ts manifest.ts   Generated metadata routes
-    llms.txt/route.ts      /llms.txt, generated from the catalogue
+    llms.txt/route.ts      /llms.txt, generated from the catalogue (text in lib/llms.ts)
+    llms-full.txt/route.ts /llms-full.txt, every product's full text in one file
     opengraph-image.tsx    Generated OG card
   components/              UI components — PascalCase, one export per file
   lib/                     Data + business logic (the sources of truth, below)
@@ -114,8 +115,11 @@ field is accepted-and-dropped.
 ## Discoverability layer (built to be read by machines)
 
 - `src/components/JsonLd.tsx` + `src/lib/schema.ts` — JSON-LD on every route.
-- `src/app/llms.txt/route.ts` — the llmstxt.org convention, generated from the
-  catalogue so it can't drift. Ends with an explicit "do not infer specs" note.
+- `src/app/llms.txt/route.ts` + `src/app/llms-full.txt/route.ts` — the
+  llmstxt.org convention: a short index and the full catalogue as plain text,
+  both built in `src/lib/llms.ts` from `getProducts()` (the database the pages
+  read) so they can't drift. Both state which products have published specs
+  and which don't, and that no prices are published.
 - `src/app/robots.ts` — names ~18 assistant crawlers (GPTBot, ClaudeBot,
   PerplexityBot, Google-Extended, …) as an explicit statement of intent.
 - Per-product static pages so a product can be a direct answer, not just a grid

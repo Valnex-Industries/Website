@@ -10,10 +10,10 @@ import { Preloader } from "@/components/Preloader";
 import { JsonLd } from "@/components/JsonLd";
 import { organizationSchema, webSiteSchema } from "@/lib/schema";
 import {
-  SITE_DESCRIPTION,
+  SITE_HEADLINE,
+  SITE_META_DESCRIPTION,
   SITE_NAME,
   SITE_ORIGIN,
-  SITE_TAGLINE,
 } from "@/lib/site";
 
 const exo2 = Exo_2({
@@ -50,11 +50,11 @@ export const metadata: Metadata = {
      and still emit absolute ones, which is what crawlers require. */
   metadataBase: new URL(SITE_ORIGIN),
   title: {
-    default: `${SITE_NAME} | ${SITE_TAGLINE}`,
+    default: `${SITE_HEADLINE} | ${SITE_NAME}`,
     /* Child routes set only their own name and inherit the suffix. */
     template: `%s | ${SITE_NAME}`,
   },
-  description: SITE_DESCRIPTION,
+  description: SITE_META_DESCRIPTION,
   applicationName: SITE_NAME,
   alternates: { canonical: "/" },
   keywords: [
@@ -75,15 +75,15 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: SITE_NAME,
-    title: `${SITE_NAME} | ${SITE_TAGLINE}`,
-    description: SITE_DESCRIPTION,
+    title: `${SITE_HEADLINE} | ${SITE_NAME}`,
+    description: SITE_META_DESCRIPTION,
     url: "/",
     locale: "en_IN",
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_NAME} | ${SITE_TAGLINE}`,
-    description: SITE_DESCRIPTION,
+    title: `${SITE_HEADLINE} | ${SITE_NAME}`,
+    description: SITE_META_DESCRIPTION,
   },
   /* Ownership proof for Google Search Console and Bing Webmaster Tools, which
      is what lets the sitemap be submitted and pages be requested for

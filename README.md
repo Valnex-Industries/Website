@@ -65,6 +65,7 @@ src/
     robots.ts             Crawler rules, see "Built to be read by AI" below
     manifest.ts           PWA manifest
     llms.txt/             The llms.txt convention, for AI agents that read it
+    llms-full.txt/        The same, with every product's full text
   components/             UI components (PascalCase, one per file)
   lib/                    Business logic, data, and the "single source of truth" files:
     products.ts             the product catalogue (nav, cards, pages all derive from this)
@@ -130,8 +131,9 @@ a browser:
 - **Structured data** (`src/components/JsonLd.tsx`, `src/lib/schema.ts`): Organization, LocalBusiness,
   WebSite, Product, and BreadcrumbList schema, so a search engine or an LLM doesn't have to guess what the
   page is about.
-- **`llms.txt`** (`src/app/llms.txt/route.ts`): the emerging convention for telling an AI agent what a site
-  is and where to find the parts that matter.
+- **`llms.txt`** and **`llms-full.txt`** (`src/lib/llms.ts`): the emerging convention for telling an AI
+  agent what a site is and where to find the parts that matter. The full file carries every product's
+  description, specifications and applications, so an assistant can read the catalogue in one fetch.
 - **`robots.ts`**: explicitly allows the known AI crawlers (GPTBot, ClaudeBot, PerplexityBot,
   Google-Extended) rather than leaving them to a default that might block them.
 - **Per-product static pages** (`/products/[slug]`) with their own metadata, so a product can be a direct

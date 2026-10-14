@@ -39,24 +39,43 @@ export async function generateMetadata({
   if (!product) return {};
 
   const path = productHref(product.slug);
+  /* Buyers search "hopper loader Ahmedabad", not a bare product name, and the
+     bare name competes with every supplier in the country. The root layout's
+     template appends "| Valnex Industries". */
+  const title = `${product.title} in Ahmedabad, Gujarat`;
+  const description = metaDescription(product.summary);
 
   return {
-    /* The root layout's template appends "| Valnex Industries". */
-    title: product.title,
-    description: product.summary,
+    title,
+    description,
     alternates: { canonical: path },
     openGraph: {
       type: "website",
-      title: product.title,
-      description: product.summary,
+      title,
+      description,
       url: path,
     },
     twitter: {
       card: "summary_large_image",
-      title: product.title,
-      description: product.summary,
+      title,
+      description,
     },
   };
+}
+
+/** Google shows about 155 characters. The summaries alone run 70-90, which
+ *  left the snippet without the company or the place; each extra clause is
+ *  added only while it still fits. */
+const META_LIMIT = 155;
+function metaDescription(summary: string): string {
+  return [
+    "From Valnex Industries, Ahmedabad, Gujarat.",
+    "Send an inquiry or chat on WhatsApp.",
+  ].reduce(
+    (text, clause) =>
+      text.length + 1 + clause.length <= META_LIMIT ? `${text} ${clause}` : text,
+    summary,
+  );
 }
 
 export default async function ProductPage({
