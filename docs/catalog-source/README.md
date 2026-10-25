@@ -51,11 +51,45 @@ catalogue documents **five** machines:
 | Mould Temperature Controller | 9 (`VAL-O-3` → `VAL-W-18`) | `mould-temp` |
 | Laser Marking Machine | 2 (`VAL-30`, `VAL-50`) | `laser-marking` |
 
-There is **no catalogue data at all** for the water-cooled chiller, the hopper
-loader, the volumetric feeder or the dehumidifier. Those four products keep
-empty `specs` and `applications`, which the product page renders as an absent
-block rather than as filler. That remains the honest state until the company
-supplies their pages.
+There is **no data in the scans** for the water-cooled chiller, the hopper
+loader, the volumetric feeder or the dehumidifier. Those four were left empty
+until the New Catalogue 2025 data arrived — see below.
+
+## The New Catalogue 2025
+
+A later handover, `docs/VALNEX-Website.html` (a single-file catalogue mock-up,
+not committed — 16 MB of inlined images), carries product data labelled
+"transcribed from the VALNEX New Catalogue 2025" for all nine machines, plus a
+photograph of each.
+
+It is treated as a source because it agrees with the scans everywhere they
+overlap — every figure in `specifications.md` reappears unchanged — and it
+fills exactly the rows the scans cut off. What it added:
+
+| Machine | Site product | Added |
+| --- | --- | --- |
+| Water Cooled Chiller, 14 models (`VI02W` → `VI060W`) | `chillers` | full table |
+| Hopper Loader, 6 models (`VAL-02` → `VAL-32`) | `hopper-loader` | full table |
+| Volumetric Feeder, 5 screw sizes (`VAL 1` → `VAL 5`) | `volumetric-feeder` | full table |
+| Dehumidifier, 3 models (`VI 2DH` → `VI 5DH`) | `dehumidifier` | full table |
+| Hot Air Dryer | `hot-air-dryer` | the cut-off `VAL-800` row |
+| Air Cooled Chiller, Mould Temp. Controller | `chillers`, `mould-temp` | the cut-off rows |
+
+The tables are in `specifications.md`, generated from the file's data, along
+with the few figures in it that contradict themselves and are kept off the
+site. There is no scanned page for the four new machines, so their products
+have `specs` but no `specSheet`.
+
+Its eleven photographs are in `public/catalog/photos/2025/`: trimmed to the
+machine and centred on a 1000 × 1000 white canvas, inside the box that survives
+both the homepage's 4:5 crop and the product page's 4:3 crop. Most are small
+cutouts upscaled to fit, so they are soft at full size. They are stand-ins
+until studio renders replace them. The blue VALNEX cabinet that the scans
+showed only as a second chiller is the water-cooled unit.
+
+The older cutouts in `public/catalog/photos/*.webp` show only part of each
+machine. Nothing in the code uses them any more, but the portal's `products`
+rows still point at them, so they stay until those rows are updated.
 
 ## The other project's `config/products.ts` is not a source
 
@@ -114,5 +148,7 @@ three tables is cut off mid-row:
 - **Air Cooled Chiller** — possible rows below `Max. Pressure (Bar)`.
 
 Every figure transcribed into `src/lib/products.ts` comes from a fully visible
-row. Nothing was extrapolated into the cut-off region. Re-scanning the printed
-catalogue at full page height is the way to close this.
+row. Nothing was extrapolated into the cut-off region. The New Catalogue 2025
+data has since closed these gaps for the dryer, the chiller and the mould
+temperature controller (above). The spec-sheet images themselves are still cut
+off; a full-height re-scan would make them complete.

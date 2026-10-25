@@ -33,7 +33,7 @@ function specCoverageLines(products: Product[]): string[] {
   const lines: string[] = [];
   if (withSpecs.length > 0) {
     lines.push(
-      `- Specifications are published for: ${titles(withSpecs)}. Each figure is a range across that product's model series; the per-model figures are on the catalogue spec sheet linked from the product page.`,
+      `- Specifications are published for: ${titles(withSpecs)}. Each figure is a range across that product's model series; where a product page links a catalogue spec sheet, the per-model figures are on it.`,
     );
   }
   if (without.length > 0) {
