@@ -3,6 +3,7 @@ import { HeroScroll } from "@/components/HeroScroll";
 import { Manifesto } from "@/components/Manifesto";
 import { Divisions } from "@/components/Divisions";
 import { Strengths } from "@/components/Strengths";
+import { Industries } from "@/components/Industries";
 import { CtaBand } from "@/components/CtaBand";
 import { SiteFooter } from "@/components/SiteFooter";
 import { JsonLd } from "@/components/JsonLd";
@@ -32,6 +33,7 @@ export default async function Home() {
         <Divisions products={products} />
         <Strengths productCount={products.length} />
         <Manifesto productCount={products.length} />
+        <Industries products={products} />
         <CtaBand />
       </main>
       <SiteFooter />

@@ -39,6 +39,7 @@ export const COMPANY_LINKS: NavChild[] = [
 
 export const NAV_ITEMS: NavItem[] = [
   { label: "Products", href: "/#products", children: PRODUCT_LINKS },
+  { label: "Industries", href: "/#industries" },
   { label: "Company Profile", href: "/#company", children: COMPANY_LINKS },
   /* Was "/#news", an anchor to a section that never existed, so the link went
      nowhere. It is a real page now. */

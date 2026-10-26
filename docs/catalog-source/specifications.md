@@ -9,9 +9,27 @@ rest do not; `VAL- 15HP` is printed that way).
 Rows that run past the bottom edge of the scan are marked. Nothing below a cut
 is transcribed, because nothing below a cut is legible.
 
-The site reduces these matrices to ranges, because `ProductSpec` is a flat
-label/value pair and a product page is not the place for a 14-column table. The
-full matrix stays reachable from the product page as the spec-sheet image.
+The site shows these matrices twice: as ranges in `ProductSpec` (a flat
+label/value pair, the first thing a buyer scans), and in full, model by model,
+in `src/lib/product-models.ts`, which each product page renders as a table
+under "Every model, as published". The tables supersede the spec-sheet images
+on the page, because several scans are cut off at the bottom.
+
+### Left out of the per-model tables
+
+The tables copy the catalogue as printed, but drop the rows it prints
+ambiguously or against itself (the irregularities listed at the end of this
+file), rather than correct them:
+
+- **Water Cooled Chiller** — the compressor row (`VI040W` prints `43` where its
+  neighbours print a per-compressor figure).
+- **Dehumidifier** — the 23 °C / 60 % RH extraction row and "Humidity Control".
+- **Volumetric Feeder** — the gram-per-second column and dimensions `A`–`F`.
+- **Laser Marking Machine** — repetition frequency (`0-200 Hz`, implausible for
+  a pulsed fibre source), pulse width and pulse duration (they disagree),
+  maximum line speed and marking visibility (both footnoted with an `*` the
+  catalogue never explains), and the duplicated "Minimum Width" and "Optional
+  Power Protection" rows.
 
 ---
 

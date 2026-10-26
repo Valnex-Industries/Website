@@ -80,6 +80,18 @@ with the few figures in it that contradict themselves and are kept off the
 site. There is no scanned page for the four new machines, so their products
 have `specs` but no `specSheet`.
 
+The file also embeds the printed catalogue itself, an 8-page PDF with a text
+layer. It is extracted unchanged as `valnex-new-catalogue-2025.pdf` in this
+folder and is the primary source for every 2025 figure: the HTML's tables are
+its transcription, and they agree. The eleven photographs, extracted byte for
+byte as the HTML embeds them, are in `images/2025/`.
+
+The same file lists the industries the company serves (chemical, defence,
+energy, food, medical, pharmaceutical, plastics, rubber, semiconductor, tyre —
+all with process cooling) and groups the machines by plastics process. Both
+live in `src/lib/industries.ts` and render as the homepage's Industries
+section.
+
 Its eleven photographs are in `public/catalog/photos/2025/`: trimmed to the
 machine and centred on a 1000 × 1000 white canvas, inside the box that survives
 both the homepage's 4:5 crop and the product page's 4:3 crop. Most are small

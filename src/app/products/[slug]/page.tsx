@@ -10,6 +10,8 @@ import { JsonLd } from "@/components/JsonLd";
 import { breadcrumbSchema, productSchema } from "@/lib/schema";
 import { getProduct, getProducts } from "@/services/content";
 import { PRODUCT_SEO, inquiryHref, productHref } from "@/lib/products";
+import { getModelTables } from "@/lib/product-models";
+import { ModelTables } from "@/components/ModelTables";
 
 /**
  * True now that the catalogue lives in the database. A product added in the
@@ -92,6 +94,7 @@ export default async function ProductPage({
 
   if (!product) notFound();
 
+  const modelTables = getModelTables(product.slug);
   const others = products
     .filter((item) => item.slug !== product.slug)
     .slice(0, 3);
@@ -277,10 +280,34 @@ export default async function ProductPage({
           </div>
         </section>
 
-        {/* The catalogue page the specs above were read off. Only the products
-            the printed catalogue covers have one, so this whole section is
-            absent rather than empty for the rest. */}
-        {product.specSheet && (
+        {/* Every model, as published: the figures behind the ranges above. */}
+        {modelTables.length > 0 && (
+          <section className="relative mx-auto w-full max-w-[1280px] px-5 pb-20 sm:px-6 lg:px-10 lg:pb-28">
+            <Reveal>
+              <div className="border-b border-white/10 pb-8">
+                <span className="eyebrow text-white/45">Full specification</span>
+                <h2 className="mt-4 text-[clamp(1.5rem,3.4vw,2.25rem)] font-black leading-tight tracking-tight text-white">
+                  Every model, as published
+                </h2>
+                <p className="mt-4 max-w-xl text-sm font-light leading-relaxed text-white/55">
+                  The figures above are the range across the series. These are
+                  the figures model by model, from the Valnex New Catalogue
+                  2025. Customised versions are built to a client&rsquo;s
+                  specification on request.
+                </p>
+              </div>
+            </Reveal>
+
+            <Reveal delay={0.1}>
+              <ModelTables tables={modelTables} />
+            </Reveal>
+          </section>
+        )}
+
+        {/* The scanned catalogue page, for a product with no transcribed
+            tables — one added in the portal later, say. Where tables exist
+            they supersede it: the scans cut off the bottom of several pages. */}
+        {modelTables.length === 0 && product.specSheet && (
           <section className="relative mx-auto w-full max-w-[1280px] px-5 pb-20 sm:px-6 lg:px-10 lg:pb-28">
             <Reveal>
               <div className="border-b border-white/10 pb-8">

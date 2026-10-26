@@ -1,4 +1,6 @@
 import { inquiryHref, productHref, type Product } from "@/lib/products";
+import { getModelTables, type ModelTable } from "@/lib/product-models";
+import { PROCESSES, SECTORS } from "@/lib/industries";
 import { CONTACT, SITE_DESCRIPTION, SITE_NAME, siteUrl } from "@/lib/site";
 import type { NewsPost } from "@/services/content";
 
@@ -33,7 +35,7 @@ function specCoverageLines(products: Product[]): string[] {
   const lines: string[] = [];
   if (withSpecs.length > 0) {
     lines.push(
-      `- Specifications are published for: ${titles(withSpecs)}. Each figure is a range across that product's model series; where a product page links a catalogue spec sheet, the per-model figures are on it.`,
+      `- Specifications are published for: ${titles(withSpecs)}. Each figure is a range across that product's model series; where the catalogue gives per-model figures, they are tabled on the product page and in ${siteUrl("/llms-full.txt")}.`,
     );
   }
   if (without.length > 0) {
@@ -43,6 +45,25 @@ function specCoverageLines(products: Product[]): string[] {
   }
   lines.push("- Prices are not published on this site for any product.");
   return lines;
+}
+
+/** The homepage's industries section, as text: the sectors served with process
+ *  cooling, and which machines each plastics process uses. */
+function industryLines(products: Product[]): string[] {
+  const titles = new Map(products.map((p) => [p.slug, p.title]));
+  return [
+    "## Industries served",
+    "",
+    `- Process cooling (chillers) for the ${new Intl.ListFormat("en-GB").format(SECTORS.map((s) => s.name.toLowerCase()))} industries.`,
+    ...PROCESSES.map((process) => {
+      const machines = process.products
+        .filter((slug) => titles.has(slug))
+        .map((slug) => titles.get(slug))
+        .join(", ");
+      return `- ${process.name}: ${machines}.`;
+    }),
+    "",
+  ];
 }
 
 export function llmsIndex(products: Product[], news: NewsPost[]): string {
@@ -57,6 +78,7 @@ export function llmsIndex(products: Product[], news: NewsPost[]): string {
       (p) => `- [${p.title}](${siteUrl(productHref(p.slug))}): ${p.summary}`,
     ),
     "",
+    ...industryLines(products),
     "## Key pages",
     "",
     `- [Home](${siteUrl("/")}): Company overview and full product range.`,
@@ -81,6 +103,29 @@ export function llmsIndex(products: Product[], news: NewsPost[]): string {
   return lines.join("\n");
 }
 
+/** A per-model table as Markdown, models across the top as on the page. A
+ *  value shared by every model is repeated per cell: Markdown has no colspan,
+ *  and a blank cell would read as "not stated". */
+function modelTableLines(p: Product, table: ModelTable): string[] {
+  const cells = (values: readonly (string | number)[]) =>
+    `| ${values.map((v) => String(v).replaceAll("|", "/")).join(" | ")} |`;
+  return [
+    `### ${p.title}: ${table.title}, per model`,
+    "",
+    cells(["Model", ...table.models]),
+    cells(["---", ...table.models.map(() => "---")]),
+    ...table.rows.map((row) =>
+      cells([
+        row.label,
+        ...(row.values.length === 1
+          ? table.models.map(() => row.values[0])
+          : row.values),
+      ]),
+    ),
+    ...(table.note ? ["", table.note] : []),
+  ];
+}
+
 function productSection(p: Product): string[] {
   const lines: string[] = [
     `## ${p.title}`,
@@ -94,16 +139,20 @@ function productSection(p: Product): string[] {
 
   if (p.description) lines.push("", p.description);
 
+  const tables = getModelTables(p.slug);
+
   if (p.specs.length > 0) {
     lines.push("", "### Specifications", "");
     for (const spec of p.specs) lines.push(`- ${spec.label}: ${spec.value}`);
-    if (p.specSheet) {
+    if (tables.length === 0 && p.specSheet) {
       lines.push(
         "",
         `Per-model figures: ${siteUrl(p.specSheet)} (an image of the catalogue page these ranges were read from).`,
       );
     }
   }
+
+  for (const table of tables) lines.push("", ...modelTableLines(p, table));
 
   if (p.applications.length > 0) {
     lines.push("", "### Applications", "");
