@@ -6,40 +6,53 @@ import { ArrowRight } from "lucide-react";
 import { motion, Variants } from "framer-motion";
 import { PRODUCT_LINKS } from "@/lib/nav";
 import { useHashNav } from "@/lib/use-hash-nav";
+import { MENU_IN, MENU_OUT } from "@/lib/motion";
+import { cn } from "@/utils/cn";
 
+/* The header's white layer runs on the same MENU_IN / MENU_OUT, so the bar
+   and this panel arrive and leave as one sheet. */
 const containerVariants: Variants = {
-  hidden: { opacity: 0, y: -10 },
+  hidden: { opacity: 0, y: -8, transition: MENU_OUT },
   visible: {
     opacity: 1,
     y: 0,
-    transition: {
-      duration: 0.3,
-      ease: "easeOut",
-      staggerChildren: 0.05,
-    },
-  },
-  exit: {
-    opacity: 0,
-    y: -5,
-    transition: { duration: 0.2, ease: "easeIn" },
+    transition: { ...MENU_IN, staggerChildren: 0.05 },
   },
 };
 
 const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 15 },
+  /* Reset only once the panel has faded, so the tiles never blink out ahead
+     of the sheet they sit on and leave it empty for a frame. */
+  hidden: { opacity: 0, y: 15, transition: { duration: 0, delay: MENU_OUT.duration } },
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
 };
 
-export function ProductsMegaMenu({ onClose }: { onClose?: () => void }) {
+/**
+ * Stays mounted once the Navbar has rendered it, and is shown and hidden
+ * through `open` rather than mounted on hover. Mounting on hover meant the
+ * eight thumbnails only started downloading when the menu was already on
+ * screen, so it opened onto empty tiles that filled in late.
+ */
+export function ProductsMegaMenu({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose?: () => void;
+}) {
   const navigate = useHashNav();
 
   return (
     <motion.div
       variants={containerVariants}
       initial="hidden"
-      animate="visible"
-      exit="exit"
-      className="absolute left-0 top-full hidden w-full origin-top border-t border-[color:var(--brand-blue)]/10 bg-white shadow-2xl xl:block"
+      animate={open ? "visible" : "hidden"}
+      inert={!open}
+      aria-hidden={!open}
+      className={cn(
+        "absolute left-0 top-full hidden w-full origin-top border-t border-[color:var(--brand-blue)]/10 bg-white shadow-2xl xl:block",
+        !open && "pointer-events-none",
+      )}
     >
       <div className="mx-auto w-full max-w-[1280px] px-6 py-10 lg:px-10">
         <div className="grid grid-cols-12 gap-8 xl:gap-10">
