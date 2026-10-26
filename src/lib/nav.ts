@@ -38,6 +38,10 @@ export const COMPANY_LINKS: NavChild[] = [
 ];
 
 export const NAV_ITEMS: NavItem[] = [
+  /* The logo already links home, but only as an image with the wordmark
+     beside it. A plain "Home" item is the link visitors look for, and gives
+     every page a text link to the root. */
+  { label: "Home", href: "/" },
   { label: "Products", href: "/#products", children: PRODUCT_LINKS },
   { label: "Industries", href: "/#industries" },
   { label: "Company Profile", href: "/#company", children: COMPANY_LINKS },

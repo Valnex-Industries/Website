@@ -26,6 +26,23 @@ export function useHashNav() {
       href: string,
       before?: () => void,
     ) => {
+      /* Home, clicked on the homepage: a link to the page already open would
+         do nothing, so it takes the reader back to the top instead. */
+      if (href === "/" && pathname === "/") {
+        e.preventDefault();
+        before?.();
+        window.history.replaceState(null, "", "/");
+        requestAnimationFrame(() => {
+          if (lenis) {
+            lenis.start();
+            lenis.scrollTo(0, { duration: 1.2 });
+          } else {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }
+        });
+        return;
+      }
+
       if (!href.startsWith("/#")) {
         // A real page link: let <Link> do its job, just run the side effect.
         before?.();
