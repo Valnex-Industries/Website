@@ -1,34 +1,8 @@
 import Link from "next/link";
-import {
-  Cpu,
-  Droplet,
-  FlaskConical,
-  Milk,
-  Pill,
-  Shield,
-  Stethoscope,
-  Torus,
-  Wheat,
-  Zap,
-  type LucideIcon,
-} from "lucide-react";
 import { Reveal } from "@/components/Reveal";
-import { PROCESSES, SECTORS, type SectorId } from "@/lib/industries";
+import { SectorFigure } from "@/components/SectorFigure";
+import { PROCESSES, SECTORS } from "@/lib/industries";
 import { PRODUCTS, productHref, type Product } from "@/lib/products";
-
-/** Kept here rather than in lib/industries.ts: lib/ holds data, not React. */
-const SECTOR_ICONS: Record<SectorId, LucideIcon> = {
-  chemical: FlaskConical,
-  defence: Shield,
-  energy: Zap,
-  food: Wheat,
-  medical: Stethoscope,
-  pharmaceutical: Pill,
-  plastics: Milk,
-  rubber: Droplet,
-  semiconductor: Cpu,
-  tyre: Torus,
-};
 
 /**
  * Industries served, placed between the company profile and the inquiry band:
@@ -83,27 +57,32 @@ export function Industries({ products = PRODUCTS }: { products?: Product[] }) {
             themselves across the 2 → 5 column change. */}
         <Reveal delay={0.05}>
           <ul className="mt-14 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/12 bg-white/12 sm:grid-cols-5 md:mt-20">
-            {SECTORS.map((sector) => {
-              const Icon = SECTOR_ICONS[sector.id];
-              return (
-                <li
-                  key={sector.id}
-                  className="flex min-w-0 flex-col gap-4 bg-[#061a4a] p-5 sm:p-4 md:p-6"
-                >
-                  <Icon
-                    aria-hidden="true"
-                    size={26}
-                    strokeWidth={1.5}
-                    className="text-[#f97316]"
-                  />
+            {SECTORS.map((sector, i) => (
+              <li
+                key={sector.id}
+                className="group flex min-w-0 flex-col bg-[#061a4a] px-4 pt-5 pb-4 [--hl-plate:#061a4a] md:px-5 md:pt-6 md:pb-5"
+              >
+                {/* Every figure shares one camera and one scale, so the row
+                    reads as equipment standing side by side. Held under the
+                    tile's width so the drawing keeps air round it. */}
+                <SectorFigure
+                  id={sector.id}
+                  className="mx-auto w-[82%] sm:w-full lg:w-[88%]"
+                />
+                <div className="mt-4 flex items-baseline justify-between gap-2 border-t border-white/10 pt-3">
                   {/* "Pharmaceutical" is the longest name and has ~100px at
                       768, where the grid first runs five across. */}
                   <span className="text-[13px] font-bold tracking-tight text-white md:text-base">
                     {sector.name}
                   </span>
-                </li>
-              );
-            })}
+                  {/* Dropped from 640 to 1023, where five tiles across leave
+                      "Pharmaceutical" no room beside it. */}
+                  <span className="font-orbitron text-[10px] font-bold tracking-[0.2em] text-white/30 sm:hidden lg:inline">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                </div>
+              </li>
+            ))}
           </ul>
         </Reveal>
 
