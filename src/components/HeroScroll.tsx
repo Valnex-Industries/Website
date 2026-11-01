@@ -216,20 +216,14 @@ export function HeroScroll() {
             cornerBox,
           )}
         >
-          {/* The page's H1: what Valnex makes and where, in plain words and
-              visible on first paint. Every other line on the opening screen is
-              brand voice, so a visitor arriving from a search for "chiller
-              manufacturer Ahmedabad" had nothing confirming they had landed in
-              the right place, and the old H1 sat at opacity 0 until the end of
-              the scroll.
-
-              Above the statement, never below it, which ran into the filled
-              marquee. Phones and portrait tablets have room to spare, so there
-              it sits in flow and nudges the statement down. A landscape screen
-              has none: "new value" already ends just above the marquee's
-              letters, so from lg the line lifts out of flow into the gap under
-              the nav, on one line, and the statement keeps its old place. */}
-          <h1 className="mb-4 max-w-[min(88vw,46rem)] text-balance text-[clamp(0.7rem,0.95vw,0.82rem)] font-semibold uppercase leading-relaxed tracking-[0.18em] text-white/75 sm:mb-5 lg:absolute lg:bottom-full lg:left-0 lg:mb-3 lg:max-w-none lg:whitespace-nowrap">
+          {/* The page's H1: what Valnex makes and where, in plain words.
+              Visually hidden at the owner's call (acb2b61 showed it above the
+              statement) — as a visible line it read as an SEO caption against
+              the brand voice of the opening screen. It stays in the document
+              so screen readers and crawlers still get one H1 that says what
+              the page is; the closing statement below is an h2 for the same
+              reason. */}
+          <h1 className="sr-only">
             Industrial chillers and plastics auxiliary equipment, made in
             Ahmedabad, India.
           </h1>

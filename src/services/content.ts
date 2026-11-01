@@ -67,7 +67,21 @@ interface ProductRow {
  * someone uploads a replacement, with no migration inventing files that were
  * never in ImageKit.
  */
+/**
+ * Abstract artwork (a reactor core, a glowing crystal, a welding robot) that
+ * stood in for three products before they had photographs. It shows nothing
+ * Valnex makes, so it is deleted from `public/` — but portal rows saved before
+ * then still name it. A row pointing at one falls back to the catalogue's
+ * photograph for that slug instead of rendering a broken image.
+ */
+const RETIRED_IMAGES = new Set([
+  "/assets/division_energy.png",
+  "/assets/division_materials.png",
+  "/assets/division_robotics.png",
+]);
+
 function toProduct(row: ProductRow, ordinal: number): Product {
+  const catalogue = PRODUCTS.find((product) => product.slug === row.slug);
   const gallery = (row.product_media ?? [])
     .slice()
     /* PostgREST cannot order an embedded resource by the join table's own
@@ -88,14 +102,16 @@ function toProduct(row: ProductRow, ordinal: number): Product {
     title: row.title,
     summary: row.summary,
     description: row.description,
-    image: row.image_asset?.file_path || row.image,
+    image:
+      row.image_asset?.file_path ||
+      (RETIRED_IMAGES.has(row.image) && catalogue ? catalogue.image : row.image),
     imageAlt: row.image_asset?.alt ?? "",
     imageWidth: row.image_asset?.width ?? null,
     imageHeight: row.image_asset?.height ?? null,
     gallery:
       gallery.length > 0
         ? gallery.map((asset) => asset.file_path)
-        : (row.gallery ?? []),
+        : (row.gallery ?? []).filter((path) => !RETIRED_IMAGES.has(path)),
     galleryAssets: gallery,
     tags: row.tags ?? [],
     specs: row.specs ?? [],

@@ -10,6 +10,8 @@ import { JsonLd } from "@/components/JsonLd";
 import { breadcrumbSchema, productSchema } from "@/lib/schema";
 import { getProduct, getProducts } from "@/services/content";
 import { PRODUCT_SEO, inquiryHref, productHref } from "@/lib/products";
+import { getModelTables } from "@/lib/product-models";
+import { ModelTables } from "@/components/ModelTables";
 
 /**
  * True now that the catalogue lives in the database. A product added in the
@@ -92,6 +94,7 @@ export default async function ProductPage({
 
   if (!product) notFound();
 
+  const modelTables = getModelTables(product.slug);
   const others = products
     .filter((item) => item.slug !== product.slug)
     .slice(0, 3);
@@ -144,7 +147,7 @@ export default async function ProductPage({
                 {product.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="rounded-full border border-white/15 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-white/55"
+                    className="border border-white/15 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-white/55"
                   >
                     {tag}
                   </span>
@@ -158,7 +161,7 @@ export default async function ProductPage({
         <section className="relative mx-auto w-full max-w-[1280px] px-5 pb-20 sm:px-6 md:pb-28 lg:px-10 lg:pb-32">
           <div className="grid gap-10 md:gap-12 lg:grid-cols-12 lg:gap-16">
             <Reveal className="lg:col-span-7">
-              <div className="relative aspect-4/3 w-full overflow-hidden rounded-2xl border border-white/12">
+              <div className="relative aspect-4/3 w-full overflow-hidden border border-white/12">
                 <CdnImage
                   src={product.image}
                   alt={product.title}
@@ -175,7 +178,7 @@ export default async function ProductPage({
                   {product.gallery.map((src, index) => (
                     <div
                       key={src}
-                      className="relative aspect-4/3 overflow-hidden rounded-xl border border-white/12"
+                      className="relative aspect-4/3 overflow-hidden border border-white/12"
                     >
                       <CdnImage
                         src={src}
@@ -194,75 +197,92 @@ export default async function ProductPage({
               )}
             </Reveal>
 
-            <div className="lg:col-span-5">
-              {/* Every block below renders only when the catalogue has data for
-                  it, so an unfilled product reads as sparse rather than wrong. */}
-              {product.description && (
+            <div className="flex flex-col gap-6 lg:col-span-5">
+              {/* The inquiry page's sheets, carried over: square corners, an
+                  opaque off-white panel on the dark page, blue labels and
+                  values, with an orange rule along the top as the one warm
+                  mark. Every block renders only when the catalogue has data
+                  for it, so an unfilled product reads as sparse, not wrong. */}
+              {(product.description ||
+                product.specs.length > 0 ||
+                product.applications.length > 0) && (
                 <Reveal delay={0.1}>
-                  <span className="eyebrow text-white/45">Overview</span>
-                  <p className="mt-6 text-sm font-light leading-relaxed text-white/65 md:text-base">
-                    {product.description}
-                  </p>
-                </Reveal>
-              )}
-
-              {product.specs.length > 0 && (
-                <Reveal delay={0.14}>
-                  <div className={product.description ? "mt-12" : ""}>
-                    <span className="eyebrow text-white/45">Specifications</span>
-                    <dl className="mt-6 flex flex-col">
-                      {product.specs.map((spec) => (
-                        <div
-                          key={spec.label}
-                          className="flex flex-col gap-1 border-b border-white/10 py-4 first:pt-0 last:border-b-0 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
-                        >
-                          <dt className="text-xs font-light text-white/45">
-                            {spec.label}
-                          </dt>
-                          <dd className="text-sm font-medium text-white sm:text-right">
-                            {spec.value}
-                          </dd>
+                  <div className="border border-[color:var(--brand-blue)]/10 bg-[#f8f9fa] shadow-2xl shadow-black/10">
+                    <div aria-hidden="true" className="h-1 bg-[#f97316]" />
+                    <div className="flex flex-col gap-10 p-5 sm:p-6 md:p-8">
+                      {product.description && (
+                        <div>
+                          <span className="eyebrow text-[color:var(--brand-blue)]">
+                            Overview
+                          </span>
+                          <p className="mt-4 text-sm font-medium leading-relaxed text-[color:var(--brand-ink)]/75 md:text-[15px]">
+                            {product.description}
+                          </p>
                         </div>
-                      ))}
-                    </dl>
+                      )}
+
+                      {product.specs.length > 0 && (
+                        <div>
+                          <span className="eyebrow text-[color:var(--brand-blue)]">
+                            Specifications
+                          </span>
+                          <dl className="mt-4 flex flex-col">
+                            {product.specs.map((spec) => (
+                              <div
+                                key={spec.label}
+                                className="flex flex-col gap-1 border-b border-[color:var(--brand-blue)]/10 py-3.5 first:pt-0 last:border-b-0 last:pb-0 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
+                              >
+                                <dt className="text-xs font-light text-[color:var(--brand-ink)]/60">
+                                  {spec.label}
+                                </dt>
+                                <dd className="text-sm font-semibold text-[color:var(--brand-blue)] sm:text-right">
+                                  {spec.value}
+                                </dd>
+                              </div>
+                            ))}
+                          </dl>
+                        </div>
+                      )}
+
+                      {product.applications.length > 0 && (
+                        <div>
+                          <span className="eyebrow text-[color:var(--brand-blue)]">
+                            Applications
+                          </span>
+                          <ul className="mt-4 flex flex-col gap-2.5">
+                            {product.applications.map((application) => (
+                              <li
+                                key={application}
+                                className="flex items-baseline gap-3 text-sm font-medium leading-relaxed text-[color:var(--brand-ink)]/75"
+                              >
+                                <span
+                                  aria-hidden="true"
+                                  className="h-1.5 w-1.5 shrink-0 -translate-y-0.5 bg-[#f97316]"
+                                />
+                                {application}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </Reveal>
               )}
 
-              {product.applications.length > 0 && (
-                <Reveal delay={0.18}>
-                  <div className="mt-12">
-                    <span className="eyebrow text-white/45">Applications</span>
-                    <ul className="mt-6 flex flex-col gap-3">
-                      {product.applications.map((application) => (
-                        <li
-                          key={application}
-                          className="flex gap-3 text-sm font-light leading-relaxed text-white/65"
-                        >
-                          <span
-                            aria-hidden="true"
-                            className="mt-2 h-px w-4 shrink-0 bg-[#f97316]"
-                          />
-                          {application}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </Reveal>
-              )}
-
-              <Reveal delay={0.22}>
-                <div className="mt-12 rounded-2xl border border-white/12 bg-white/[0.03] p-6 md:p-8">
-                  <h2 className="text-lg font-extrabold tracking-tight text-white">
+              <Reveal delay={0.16}>
+                <div className="border border-[color:var(--brand-blue)]/10 bg-[#f8f9fa] p-5 shadow-xl shadow-black/5 sm:p-6 md:p-8">
+                  <span className="eyebrow text-[color:var(--brand-blue)]/70">
                     Ask about this equipment
-                  </h2>
-                  <p className="mt-3 text-sm font-light leading-relaxed text-white/55">
+                  </span>
+                  <p className="mt-4 text-sm font-medium leading-relaxed text-[color:var(--brand-ink)]/75">
                     Send a duty cycle, a drawing, or just the problem. The
                     inquiry arrives tagged to {product.title}.
                   </p>
+                  {/* The inquiry form's own submit button: square, solid blue. */}
                   <Link
                     href={inquiryHref(product.slug)}
-                    className="group mt-6 flex items-center justify-between gap-6 rounded-full bg-white px-6 py-3 text-sm font-bold text-[color:var(--brand-blue)] transition-transform duration-300 hover:-translate-y-0.5"
+                    className="group mt-6 flex items-center justify-between gap-6 bg-[color:var(--brand-blue)] px-7 py-3.5 text-sm font-bold text-white shadow-md shadow-[color:var(--brand-blue)]/20 transition-transform duration-300 hover:-translate-y-0.5"
                   >
                     Start an inquiry
                     <ArrowRight
@@ -277,10 +297,34 @@ export default async function ProductPage({
           </div>
         </section>
 
-        {/* The catalogue page the specs above were read off. Only the products
-            the printed catalogue covers have one, so this whole section is
-            absent rather than empty for the rest. */}
-        {product.specSheet && (
+        {/* Every model, as published: the figures behind the ranges above. */}
+        {modelTables.length > 0 && (
+          <section className="relative mx-auto w-full max-w-[1280px] px-5 pb-20 sm:px-6 lg:px-10 lg:pb-28">
+            <Reveal>
+              <div className="border-b border-white/10 pb-8">
+                <span className="eyebrow text-white/45">Full specification</span>
+                <h2 className="mt-4 text-[clamp(1.5rem,3.4vw,2.25rem)] font-black leading-tight tracking-tight text-white">
+                  Every model, as published
+                </h2>
+                <p className="mt-4 max-w-xl text-sm font-light leading-relaxed text-white/55">
+                  The figures above are the range across the series. These are
+                  the figures model by model, from the Valnex New Catalogue
+                  2025. Customised versions are built to a client&rsquo;s
+                  specification on request.
+                </p>
+              </div>
+            </Reveal>
+
+            <Reveal delay={0.1}>
+              <ModelTables tables={modelTables} />
+            </Reveal>
+          </section>
+        )}
+
+        {/* The scanned catalogue page, for a product with no transcribed
+            tables — one added in the portal later, say. Where tables exist
+            they supersede it: the scans cut off the bottom of several pages. */}
+        {modelTables.length === 0 && product.specSheet && (
           <section className="relative mx-auto w-full max-w-[1280px] px-5 pb-20 sm:px-6 lg:px-10 lg:pb-28">
             <Reveal>
               <div className="border-b border-white/10 pb-8">
@@ -302,7 +346,7 @@ export default async function ProductPage({
                 href={product.specSheet}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group mt-8 block overflow-hidden rounded-2xl border border-white/12 bg-white transition-colors duration-500 hover:border-white/30"
+                className="group mt-8 block overflow-hidden border border-white/12 bg-white transition-colors duration-500 hover:border-white/30"
               >
                 <CdnImage
                   src={product.specSheet}
@@ -346,9 +390,15 @@ export default async function ProductPage({
               <Reveal key={item.slug} delay={i * 0.1}>
                 <Link
                   href={productHref(item.slug)}
-                  className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/12 bg-white/[0.03] transition-colors duration-500 hover:border-white/30"
+                  className="group relative flex h-full flex-col overflow-hidden border border-[color:var(--brand-blue)]/10 bg-[#f8f9fa] shadow-xl shadow-black/10 transition-transform duration-300 hover:-translate-y-0.5"
                 >
-                  <div className="relative aspect-4/3 overflow-hidden">
+                  {/* The orange rule runs in from the left on hover: the card's
+                      one warm mark, as on the sheets above. */}
+                  <span
+                    aria-hidden="true"
+                    className="absolute inset-x-0 top-0 z-10 h-1 origin-left scale-x-0 bg-[#f97316] transition-transform duration-500 group-hover:scale-x-100"
+                  />
+                  <div className="relative aspect-4/3 overflow-hidden bg-[#08131f]">
                     <CdnImage
                       src={item.image}
                       alt={item.title}
@@ -356,15 +406,14 @@ export default async function ProductPage({
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       className="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-linear-to-t from-[#02102e] via-[rgba(2,16,46,0.25)] to-transparent" />
                   </div>
                   <div className="flex items-start justify-between gap-4 p-5 sm:p-6">
-                    <h3 className="text-base font-extrabold tracking-tight text-white">
+                    <h3 className="text-base font-extrabold tracking-tight text-[color:var(--brand-ink)]">
                       {item.title}
                     </h3>
                     <ArrowUpRight
                       size={18}
-                      className="mt-0.5 shrink-0 text-white/40 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-white"
+                      className="mt-0.5 shrink-0 text-[color:var(--brand-blue)]/50 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[color:var(--brand-blue)]"
                     />
                   </div>
                 </Link>

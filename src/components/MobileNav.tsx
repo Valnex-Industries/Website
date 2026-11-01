@@ -9,11 +9,9 @@ import { useLenis } from "lenis/react";
 import { NAV_ITEMS, UTILITY_LINKS, type NavItem } from "@/lib/nav";
 import { useHashNav } from "@/lib/use-hash-nav";
 import { cn } from "@/utils/cn";
+import { DRAWER_TRANSITION, PANEL_EASE } from "@/lib/motion";
 import { useWhatsAppHref } from "@/lib/use-whatsapp-href";
 import { WhatsAppIcon } from "@/components/WhatsAppIcon";
-
-/** Same curve the preloader uses, so the site has one "panel" motion. */
-const PANEL_EASE = [0.22, 1, 0.36, 1] as const;
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -168,7 +166,9 @@ export function MobileNav({ open, onClose, triggerRef }: MobileNavProps) {
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
-            transition={{ duration: reduceMotion ? 0 : 0.5, ease: PANEL_EASE }}
+            /* The header's glass layer runs on this same transition, so it
+               gives way to the panel frame for frame. */
+            transition={reduceMotion ? { duration: 0 } : DRAWER_TRANSITION}
             className={cn(
               "fixed inset-y-0 right-0 z-[110] flex w-full flex-col bg-white shadow-[0_0_60px_rgba(2,16,46,0.35)] xl:hidden",
               "sm:max-w-[440px] md:max-w-[540px]",
