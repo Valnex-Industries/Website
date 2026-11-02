@@ -46,3 +46,14 @@ next-env.d.ts
 
 # lighthouse ci
 /.lighthouseci/
+
+# local docs & HTML dumps
+docs/*.html
+*.html
+
+# agent & IDE tooling
+.agents/
+.claude/
+
+# unreferenced / temporary assets
+public/assets/Group-Photo.jpeg
