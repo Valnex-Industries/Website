@@ -2,6 +2,7 @@ import { Navbar } from "@/components/Navbar";
 import { HeroScroll } from "@/components/HeroScroll";
 import { Manifesto } from "@/components/Manifesto";
 import { Divisions } from "@/components/Divisions";
+import { ProductOrbitShowcase } from "@/components/ProductOrbitShowcase";
 import { Strengths } from "@/components/Strengths";
 import { Industries } from "@/components/Industries";
 import { CtaBand } from "@/components/CtaBand";
@@ -30,7 +31,8 @@ export default async function Home() {
             components, so the database read has to happen here and travel as
             props. Each keeps the static catalogue as its default, so none of
             them can render empty. */}
-        <Divisions products={products} />
+        {/* Horizontal scroll section is preserved in src/components/Divisions.tsx */}
+        <ProductOrbitShowcase products={products} />
         <Strengths productCount={products.length} />
         <Manifesto productCount={products.length} />
         <Industries products={products} />
