@@ -332,8 +332,9 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
   const cosTilt = Math.cos(tiltRad);
   const sinTilt = Math.sin(tiltRad);
 
-  // Dynamic responsive orbital radii
-  const currentRadiiRef = useRef({ rx: 380, ry: 240 });
+  // Dynamic responsive orbital radii (synchronized for both JS physics and SVG CAD track)
+  const [radii, setRadii] = useState({ rx: 430, ry: 230 });
+  const currentRadiiRef = useRef({ rx: 430, ry: 230 });
 
   // Update satellite node positions along the 30° tilted oval orbit
   const updateNodePositions = useCallback(
@@ -354,13 +355,13 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
         const u = rx * Math.cos(phi);
         const v = ry * Math.sin(phi);
 
-        // Rotate coordinates by 30° tilt angle
+        // Rotate coordinates by 30° tilt angle (-28°)
         const x = u * cosTilt - v * sinTilt;
         const y = u * sinTilt + v * cosTilt;
 
-        // Depth perspective
+        // Depth perspective (softened to [0.92, 1.08] for delicate badges)
         const depth = (Math.sin(phi) + 1) / 2; // 0 (far) to 1 (near)
-        const scale = 0.88 + depth * 0.22; // 0.88x to 1.1x
+        const scale = 0.92 + depth * 0.16; // 0.92x to 1.08x
         const zIndex = Math.round(15 + depth * 20);
 
         // Hardware-accelerated 3D transform directly on DOM (0 React re-renders)
@@ -371,22 +372,29 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
     [items.length, cosTilt, sinTilt]
   );
 
-  // Responsive radii calculator based on container width
+  // Responsive radii calculator synchronized with viewport breakpoints
   useEffect(() => {
     function handleResize() {
-      if (!containerRef.current) return;
-      const width = containerRef.current.clientWidth;
+      const width = typeof window !== "undefined" ? window.innerWidth : 1280;
+      let nextRadii = { rx: 430, ry: 230 };
 
-      if (width < 450) {
-        currentRadiiRef.current = { rx: 155, ry: 105 };
-      } else if (width < 640) {
-        currentRadiiRef.current = { rx: 200, ry: 130 };
+      if (width < 480) {
+        nextRadii = { rx: 175, ry: 125 };
+      } else if (width < 768) {
+        nextRadii = { rx: 225, ry: 150 };
       } else if (width < 1024) {
-        currentRadiiRef.current = { rx: 280, ry: 175 };
-      } else if (width < 1360) {
-        currentRadiiRef.current = { rx: 340, ry: 215 };
+        nextRadii = { rx: 300, ry: 185 };
+      } else if (width < 1280) {
+        nextRadii = { rx: 380, ry: 215 };
       } else {
-        currentRadiiRef.current = { rx: 395, ry: 245 };
+        nextRadii = { rx: 430, ry: 230 };
+      }
+
+      const rxChanged = nextRadii.rx !== currentRadiiRef.current.rx;
+      const ryChanged = nextRadii.ry !== currentRadiiRef.current.ry;
+      currentRadiiRef.current = nextRadii;
+      if (rxChanged || ryChanged) {
+        setRadii(nextRadii);
       }
 
       updateNodePositions(orbitAngleRef.current.angle);
@@ -622,11 +630,10 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
             onMouseLeave={handleMouseLeave}
             className="relative flex h-[520px] w-full items-center justify-center sm:h-[600px] lg:col-span-7 lg:h-[680px] xl:col-span-7 select-none overflow-visible"
           >
-            {/* SVG 30° Tilted Orbital Ellipse Track with CAD Precision */}
+            {/* SVG 30° Tilted Orbital Ellipse Track with CAD Precision (1:1 Pixel Calibration) */}
             <svg
-              className="pointer-events-none absolute inset-0 h-full w-full overflow-visible"
+              className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[760px] overflow-visible"
               viewBox="-500 -380 1000 760"
-              preserveAspectRatio="xMidYMid meet"
             >
               <defs>
                 <linearGradient id="orbitGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -642,8 +649,8 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
                 <ellipse
                   cx="0"
                   cy="0"
-                  rx="418"
-                  ry="268"
+                  rx={radii.rx + 24}
+                  ry={radii.ry + 24}
                   fill="none"
                   stroke="#f1f5f9"
                   strokeWidth="1.2"
@@ -653,33 +660,33 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
                 <ellipse
                   cx="0"
                   cy="0"
-                  rx="395"
-                  ry="245"
+                  rx={radii.rx}
+                  ry={radii.ry}
                   fill="none"
                   stroke="url(#orbitGrad)"
                   strokeWidth="2"
                 />
                 {/* Cardinal tick marks */}
-                <circle cx="395" cy="0" r="3" fill="#f97316" opacity="0.6" />
-                <circle cx="-395" cy="0" r="3" fill="#cbd5e1" opacity="0.6" />
-                <circle cx="0" cy="245" r="3" fill="#0047e1" opacity="0.6" />
-                <circle cx="0" cy="-245" r="3" fill="#cbd5e1" opacity="0.6" />
+                <circle cx={radii.rx} cy="0" r="3" fill="#f97316" opacity="0.6" />
+                <circle cx={-radii.rx} cy="0" r="3" fill="#cbd5e1" opacity="0.6" />
+                <circle cx="0" cy={radii.ry} r="3" fill="#0047e1" opacity="0.6" />
+                <circle cx="0" cy={-radii.ry} r="3" fill="#cbd5e1" opacity="0.6" />
               </g>
             </svg>
 
             {/* Glowing Ambient Halo Behind the Central Stage */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute h-[320px] w-[320px] sm:h-[420px] sm:w-[420px] lg:h-[500px] lg:w-[500px] rounded-full bg-[radial-gradient(circle,rgba(249,115,22,0.12)_0%,rgba(0,71,225,0.06)_50%,transparent_72%)] blur-2xl"
+              className="pointer-events-none absolute h-[220px] w-[220px] sm:h-[280px] sm:w-[280px] md:h-[330px] md:w-[330px] lg:h-[390px] lg:w-[390px] xl:h-[420px] xl:w-[420px] rounded-full bg-[radial-gradient(circle,rgba(249,115,22,0.12)_0%,rgba(0,71,225,0.06)_50%,transparent_72%)] blur-2xl"
             />
 
-            {/* ── Central Large Circular Showcase Card (PERFECTLY CLIPPED) ── */}
+            {/* ── Central Circular Showcase Card (Refined Desktop 365px Diameter & No Photo Clipping) ── */}
             <div
               style={{
                 clipPath: "circle(50% at 50% 50%)",
                 WebkitClipPath: "circle(50% at 50% 50%)",
               }}
-              className="relative z-20 flex h-[290px] w-[290px] sm:h-[380px] sm:w-[380px] md:h-[450px] md:w-[450px] lg:h-[490px] lg:w-[490px] xl:h-[520px] xl:w-[520px] shrink-0 items-center justify-center rounded-full border-2 border-slate-200/80 bg-white shadow-[0_30px_80px_-15px_rgba(2,16,46,0.12),0_0_0_1px_rgba(0,0,0,0.04)] overflow-hidden transition-all duration-500 hover:shadow-[0_35px_90px_-15px_rgba(249,115,22,0.2)]"
+              className="relative z-20 flex h-[180px] w-[180px] sm:h-[230px] sm:w-[230px] md:h-[280px] md:w-[280px] lg:h-[340px] lg:w-[340px] xl:h-[365px] xl:w-[365px] shrink-0 items-center justify-center rounded-full border-2 border-slate-200/80 bg-white shadow-[0_24px_60px_-12px_rgba(2,16,46,0.12),0_0_0_1px_rgba(0,0,0,0.04)] overflow-hidden transition-all duration-500 hover:shadow-[0_30px_75px_-12px_rgba(249,115,22,0.2)]"
             >
               {/* Subtle inner radial vignette */}
               <div
@@ -687,7 +694,7 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
                 className="pointer-events-none absolute inset-0 rounded-full bg-[radial-gradient(circle_at_50%_35%,rgba(249,115,22,0.04)_0%,rgba(2,16,46,0.02)_60%,rgba(0,0,0,0.04)_100%)] z-10"
               />
 
-              {/* Active Product Image (Enlarged, Heroic, and strictly clipped by circular viewport) */}
+              {/* Active Product Image (Fully visible inside circle with breathable padding) */}
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeProduct.slug}
@@ -695,13 +702,13 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.82 }}
                   transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                  className="relative h-[115%] w-[115%] flex items-center justify-center p-3 sm:p-5"
+                  className="relative h-full w-full flex items-center justify-center p-5 sm:p-7"
                 >
                   <CdnImage
                     src={activeProduct.image}
                     alt={`${activeProduct.title} showcase`}
                     fill
-                    sizes="(max-width: 640px) 300px, (max-width: 1024px) 420px, 540px"
+                    sizes="(max-width: 640px) 240px, (max-width: 1024px) 340px, 400px"
                     priority
                     className="object-contain filter drop-shadow-[0_20px_35px_rgba(2,16,46,0.14)] transition-transform duration-700 hover:scale-105"
                   />
@@ -709,7 +716,7 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
               </AnimatePresence>
             </div>
 
-            {/* ── Orbiting Satellite Product Circles along 30° Tilted Path (PERFECTLY CLIPPED) ── */}
+            {/* ── Orbiting Satellite Product Badges (Delicate 66px, Preserved Shadows & Child Clip-Path) ── */}
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
               {items.map((prod, idx) => {
                 const isSelected = idx === activeIndex;
@@ -722,24 +729,26 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
                     onClick={() => selectProduct(idx)}
                     type="button"
                     title={prod.title}
-                    style={{
-                      clipPath: "circle(50% at 50% 50%)",
-                      WebkitClipPath: "circle(50% at 50% 50%)",
-                    }}
                     className={cn(
-                      "group pointer-events-auto absolute left-1/2 top-1/2 flex h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24 lg:h-26 lg:w-26 cursor-pointer items-center justify-center rounded-full border-2 bg-white p-2.5 sm:p-3 overflow-hidden transition-all duration-300 will-change-transform focus:outline-none focus:ring-4 focus:ring-orange-500/25",
+                      "group pointer-events-auto absolute left-1/2 top-1/2 flex h-11 w-11 sm:h-12 sm:w-12 md:h-14 md:w-14 lg:h-16 lg:w-16 xl:h-[66px] xl:w-[66px] cursor-pointer items-center justify-center rounded-full border bg-white p-2 sm:p-2.5 transition-all duration-300 will-change-transform focus:outline-none focus:ring-2 focus:ring-[#f97316]",
                       isSelected
-                        ? "border-[#f97316] ring-4 ring-orange-500/25 shadow-[0_14px_30px_rgba(249,115,22,0.35)] scale-110"
-                        : "border-slate-200/90 shadow-[0_10px_25px_-5px_rgba(2,16,46,0.1)] hover:scale-120 hover:border-[#f97316] hover:shadow-[0_14px_32px_rgba(249,115,22,0.28)]"
+                        ? "border-[#f97316] ring-2 ring-orange-500/30 shadow-[0_8px_20px_rgba(249,115,22,0.32)]"
+                        : "border-slate-200/90 shadow-[0_6px_16px_-3px_rgba(2,16,46,0.1)] hover:border-[#f97316] hover:shadow-[0_8px_22px_rgba(249,115,22,0.22)]"
                     )}
                   >
-                    <div className="relative h-full w-full flex items-center justify-center overflow-hidden rounded-full">
+                    <div
+                      style={{
+                        clipPath: "circle(50% at 50% 50%)",
+                        WebkitClipPath: "circle(50% at 50% 50%)",
+                      }}
+                      className="relative h-full w-full flex items-center justify-center overflow-hidden rounded-full"
+                    >
                       <CdnImage
                         src={prod.image}
                         alt={prod.title}
                         fill
-                        sizes="100px"
-                        className="object-contain filter drop-shadow-[0_2px_6px_rgba(0,0,0,0.08)] transition-transform duration-300 group-hover:scale-110"
+                        sizes="80px"
+                        className="object-contain filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.06)] transition-transform duration-300 group-hover:scale-110"
                       />
                     </div>
                   </button>
