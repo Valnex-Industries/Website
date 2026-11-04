@@ -405,52 +405,91 @@ function buildCustomerHtml(inquiry: StoredInquiry, catalogUrl: string): string {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
   <title>Your Inquiry Has Been Registered — Valnex Industries</title>
+  <style>
+    @media only screen and (max-width: 600px) {
+      .email-wrapper {
+        padding: 12px 6px !important;
+      }
+      .main-card {
+        border-radius: 8px !important;
+      }
+      .mobile-header-pad {
+        padding: 22px 16px 18px !important;
+      }
+      .mobile-body-pad {
+        padding: 20px 14px !important;
+      }
+      .mobile-hero-pad {
+        padding: 18px 14px !important;
+      }
+      .stack-col {
+        display: block !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
+      .mobile-btn {
+        display: block !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        text-align: center !important;
+        padding: 13px 16px !important;
+      }
+      .mobile-title {
+        font-size: 16px !important;
+        line-height: 1.3 !important;
+      }
+      .mobile-ref {
+        font-size: 21px !important;
+      }
+    }
+  </style>
 </head>
 <body style="margin:0;padding:0;background-color:#f1f4f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#02102e;-webkit-font-smoothing:antialiased;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f1f4f9;padding:32px 16px;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" class="email-wrapper" style="background-color:#f1f4f9;padding:24px 12px;">
     <tr>
       <td align="center">
         <!-- Main Card Container -->
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:640px;background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(2,16,46,0.08);border:1px solid #e2e8f0;border-collapse:separate;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" class="main-card" style="max-width:600px;background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(2,16,46,0.08);border:1px solid #e2e8f0;border-collapse:separate;">
           
           <!-- Header Banner in Deep Navy -->
           <tr>
-            <td style="background-color:#0a2472;padding:32px 32px 24px;color:#ffffff;">
+            <td class="mobile-header-pad" style="background-color:#0a2472;padding:26px 28px 22px;color:#ffffff;">
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                   <td>
-                    <div style="font-size:18px;font-weight:900;letter-spacing:0.04em;color:#ffffff;text-transform:uppercase;">
+                    <div style="font-size:18px;font-weight:900;letter-spacing:0.04em;color:#ffffff;text-transform:uppercase;line-height:1.2;">
                       VALNEX <span style="font-weight:400;color:#93c5fd;">INDUSTRIES PVT. LTD.</span>
                     </div>
-                    <div style="margin-top:4px;font-size:11px;font-weight:700;letter-spacing:0.18em;color:#38bdf8;text-transform:uppercase;">
+                    <div style="margin-top:5px;font-size:11px;font-weight:700;letter-spacing:0.16em;color:#38bdf8;text-transform:uppercase;">
                       QUALITY &bull; EXCELLENCE &bull; COMMITMENT
                     </div>
-                    <div style="margin-top:8px;display:inline-block;padding:3px 10px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:4px;font-size:10px;font-weight:700;letter-spacing:0.12em;color:#e0f2fe;text-transform:uppercase;">
-                      MANUFACTURER OF PLASTIC AUXILIARIES
+                    <div style="margin-top:8px;">
+                      <span style="display:inline-block;padding:4px 10px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.22);border-radius:4px;font-size:10px;font-weight:700;letter-spacing:0.12em;color:#e0f2fe;text-transform:uppercase;">
+                        MANUFACTURER OF PLASTIC AUXILIARIES
+                      </span>
                     </div>
-                  </td>
-                  <td align="right" valign="top">
-                    <span style="display:inline-block;padding:6px 12px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:6px;font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:700;color:#ffffff;">
-                      ${escapeHtml(inquiry.reference)}
-                    </span>
                   </td>
                 </tr>
               </table>
-              <div style="height:3px;background:linear-gradient(90deg, #38bdf8 0%, #0055ff 100%);margin-top:20px;border-radius:2px;"></div>
+              <div style="height:3px;background:linear-gradient(90deg, #38bdf8 0%, #0055ff 100%);margin-top:18px;border-radius:2px;"></div>
             </td>
           </tr>
 
           <!-- Confirmation Hero Block -->
           <tr>
-            <td style="background-color:#f0fdf4;padding:24px 32px;border-bottom:1px solid #dcfce7;">
+            <td class="mobile-hero-pad" style="background-color:#f0fdf4;padding:20px 24px;border-bottom:1px solid #dcfce7;">
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                 <tr>
-                  <td width="36" valign="top" style="padding-right:16px;">
-                    <div style="width:32px;height:32px;line-height:32px;border-radius:50%;background:#16a34a;color:#ffffff;text-align:center;font-size:16px;font-weight:800;">✓</div>
+                  <td width="36" valign="top" style="padding-right:12px;">
+                    <div style="width:30px;height:30px;line-height:30px;border-radius:50%;background:#16a34a;color:#ffffff;text-align:center;font-size:15px;font-weight:800;">✓</div>
                   </td>
                   <td valign="middle">
-                    <h2 style="margin:0 0 6px;font-size:18px;font-weight:800;color:#14532d;line-height:1.35;">
+                    <h2 class="mobile-title" style="margin:0 0 6px;font-size:17px;font-weight:800;color:#14532d;line-height:1.35;">
                       Your inquiry has been registered. Thank you for choosing us, Valnex Industries.
                     </h2>
                     <p style="margin:0;font-size:13px;color:#166534;line-height:1.5;">
@@ -464,21 +503,45 @@ function buildCustomerHtml(inquiry: StoredInquiry, catalogUrl: string): string {
 
           <!-- Content Body -->
           <tr>
-            <td style="padding:32px;">
+            <td class="mobile-body-pad" style="padding:26px 24px;">
 
               <!-- Inquiry Summary Card -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px 20px;margin-bottom:24px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin-bottom:20px;">
                 <tr>
                   <td>
-                    <div style="font-size:11px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#64748b;margin-bottom:10px;">Registered Inquiry Overview</div>
+                    <div style="font-size:11px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#64748b;margin-bottom:10px;">
+                      Registered Inquiry Overview
+                    </div>
                     <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                       <tr>
-                        <td width="50%" style="padding:4px 0;font-size:13px;color:#64748b;">Reference No: <strong style="color:#02102e;font-family:ui-monospace,Menlo,monospace;">${escapeHtml(inquiry.reference)}</strong></td>
-                        <td width="50%" style="padding:4px 0;font-size:13px;color:#64748b;">Registered: <strong style="color:#02102e;">${escapeHtml(dateFormatted)}</strong></td>
+                        <td style="padding:6px 0;border-bottom:1px solid #edf2f7;">
+                          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                            <tr>
+                              <td width="110" valign="top" style="font-size:12px;font-weight:600;color:#64748b;">Equipment:</td>
+                              <td valign="top" style="font-size:13px;font-weight:700;color:#0047e1;">${escapeHtml(prod)}</td>
+                            </tr>
+                          </table>
+                        </td>
                       </tr>
                       <tr>
-                        <td width="50%" style="padding:4px 0;font-size:13px;color:#64748b;">Company / Plant: <strong style="color:#02102e;">${escapeHtml(inquiry.company)}</strong></td>
-                        <td width="50%" style="padding:4px 0;font-size:13px;color:#64748b;">Equipment: <strong style="color:#0047e1;">${escapeHtml(prod)}</strong></td>
+                        <td style="padding:6px 0;border-bottom:1px solid #edf2f7;">
+                          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                            <tr>
+                              <td width="110" valign="top" style="font-size:12px;font-weight:600;color:#64748b;">Company / Plant:</td>
+                              <td valign="top" style="font-size:13px;font-weight:700;color:#02102e;">${escapeHtml(inquiry.company)}</td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:6px 0;">
+                          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                            <tr>
+                              <td width="110" valign="top" style="font-size:12px;font-weight:600;color:#64748b;">Registered:</td>
+                              <td valign="top" style="font-size:12px;font-weight:600;color:#475569;">${escapeHtml(dateFormatted)}</td>
+                            </tr>
+                          </table>
+                        </td>
                       </tr>
                     </table>
                   </td>
@@ -486,16 +549,16 @@ function buildCustomerHtml(inquiry: StoredInquiry, catalogUrl: string): string {
               </table>
 
               <!-- Reference ID Card to Copy -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:2px dashed #0047e1;border-radius:10px;padding:18px;margin-bottom:28px;text-align:center;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:2px dashed #0047e1;border-radius:10px;padding:16px 14px;margin-bottom:24px;text-align:center;">
                 <tr>
                   <td>
-                    <div style="font-size:11px;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:#0047e1;margin-bottom:6px;">
+                    <div style="font-size:11px;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;color:#0047e1;margin-bottom:4px;">
                       YOUR REFERENCE ID (COPY &amp; SAVE)
                     </div>
-                    <div style="font-family:ui-monospace,Menlo,Consolas,monospace;font-size:24px;font-weight:900;color:#0a2472;letter-spacing:0.14em;user-select:all;-webkit-user-select:all;padding:6px 0;">
+                    <div class="mobile-ref" style="font-family:ui-monospace,Menlo,Consolas,monospace;font-size:24px;font-weight:900;color:#0a2472;letter-spacing:0.12em;user-select:all;-webkit-user-select:all;padding:6px 0;word-break:break-all;">
                       ${escapeHtml(inquiry.reference)}
                     </div>
-                    <div style="font-size:12px;color:#64748b;line-height:1.4;">
+                    <div style="font-size:11px;color:#64748b;line-height:1.4;">
                       Click or tap the ID above to copy it. Please quote this reference number in all inquiries or correspondence with our team.
                     </div>
                   </td>
@@ -503,18 +566,18 @@ function buildCustomerHtml(inquiry: StoredInquiry, catalogUrl: string): string {
               </table>
 
               <!-- Product Catalog Download Box -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:linear-gradient(135deg, #0a2472 0%, #0047e1 100%);border-radius:10px;padding:24px;margin-bottom:32px;color:#ffffff;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:linear-gradient(135deg, #0a2472 0%, #0047e1 100%);border-radius:10px;padding:22px 20px;margin-bottom:26px;color:#ffffff;">
                 <tr>
                   <td>
-                    <div style="font-size:11px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#38bdf8;margin-bottom:6px;">Machinery &amp; Auxiliaries Catalog</div>
-                    <h3 style="margin:0 0 8px;font-size:18px;font-weight:800;color:#ffffff;">Download Our Product Catalog (PDF)</h3>
-                    <p style="margin:0 0 18px;font-size:13px;line-height:1.5;color:rgba(255,255,255,0.85);">
+                    <div style="font-size:10px;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;color:#38bdf8;margin-bottom:5px;">Machinery &amp; Auxiliaries Catalog</div>
+                    <h3 style="margin:0 0 6px;font-size:17px;font-weight:800;color:#ffffff;">Download Our Product Catalog (PDF)</h3>
+                    <p style="margin:0 0 16px;font-size:13px;line-height:1.5;color:rgba(255,255,255,0.88);">
                       We have attached our complete product catalog PDF directly to this email. You can also view or download it via the button below to explore technical specifications across our entire industrial cooling and auxiliary range.
                     </p>
-                    <table role="presentation" cellpadding="0" cellspacing="0">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                       <tr>
-                        <td style="border-radius:6px;background-color:#ffffff;">
-                          <a href="${escapeHtml(catalogUrl)}" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:12px 24px;font-size:14px;font-weight:800;color:#0a2472;text-decoration:none;border-radius:6px;letter-spacing:0.02em;">
+                        <td>
+                          <a href="${escapeHtml(catalogUrl)}" target="_blank" rel="noopener noreferrer" class="mobile-btn" style="display:inline-block;padding:12px 22px;font-size:13px;font-weight:800;color:#0a2472;background-color:#ffffff;text-decoration:none;border-radius:6px;letter-spacing:0.02em;text-align:center;">
                             Download Equipment Catalog (PDF) &darr;
                           </a>
                         </td>
@@ -525,29 +588,29 @@ function buildCustomerHtml(inquiry: StoredInquiry, catalogUrl: string): string {
               </table>
 
               <!-- Types of Products Section -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:26px;">
                 <tr>
-                  <td style="padding-bottom:12px;border-bottom:2px solid #f1f5f9;">
-                    <div style="font-size:11px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#0047e1;">Types of Products We Manufacture</div>
+                  <td style="padding-bottom:10px;border-bottom:2px solid #f1f5f9;">
+                    <div style="font-size:11px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:#0047e1;">Types of Products We Manufacture</div>
                   </td>
                 </tr>
                 <tr>
-                  <td style="padding-top:16px;">
+                  <td style="padding-top:12px;">
                     <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                       <tr>
-                        <td width="50%" valign="top" style="padding-right:12px;">
+                        <td class="stack-col" width="50%" valign="top" style="padding-right:8px;">
                           <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                            <tr><td style="padding:6px 0;font-size:14px;font-weight:600;color:#1e293b;"><span style="color:#0284c7;font-size:16px;margin-right:8px;">&bull;</span> Air Cooled Chiller</td></tr>
-                            <tr><td style="padding:6px 0;font-size:14px;font-weight:600;color:#1e293b;"><span style="color:#0284c7;font-size:16px;margin-right:8px;">&bull;</span> Water Cooled Chiller</td></tr>
-                            <tr><td style="padding:6px 0;font-size:14px;font-weight:600;color:#1e293b;"><span style="color:#0284c7;font-size:16px;margin-right:8px;">&bull;</span> Hooper Loader</td></tr>
-                            <tr><td style="padding:6px 0;font-size:14px;font-weight:600;color:#1e293b;"><span style="color:#0284c7;font-size:16px;margin-right:8px;">&bull;</span> Hot Air Dryer</td></tr>
+                            <tr><td style="padding:5px 0;font-size:13px;font-weight:600;color:#1e293b;"><span style="color:#0284c7;font-size:15px;margin-right:6px;">&bull;</span> Air Cooled Chiller</td></tr>
+                            <tr><td style="padding:5px 0;font-size:13px;font-weight:600;color:#1e293b;"><span style="color:#0284c7;font-size:15px;margin-right:6px;">&bull;</span> Water Cooled Chiller</td></tr>
+                            <tr><td style="padding:5px 0;font-size:13px;font-weight:600;color:#1e293b;"><span style="color:#0284c7;font-size:15px;margin-right:6px;">&bull;</span> Hooper Loader</td></tr>
+                            <tr><td style="padding:5px 0;font-size:13px;font-weight:600;color:#1e293b;"><span style="color:#0284c7;font-size:15px;margin-right:6px;">&bull;</span> Hot Air Dryer</td></tr>
                           </table>
                         </td>
-                        <td width="50%" valign="top" style="padding-left:12px;">
+                        <td class="stack-col" width="50%" valign="top" style="padding-left:8px;">
                           <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                            <tr><td style="padding:6px 0;font-size:14px;font-weight:600;color:#1e293b;"><span style="color:#0284c7;font-size:16px;margin-right:8px;">&bull;</span> Mould Temperature Controller</td></tr>
-                            <tr><td style="padding:6px 0;font-size:14px;font-weight:600;color:#1e293b;"><span style="color:#0284c7;font-size:16px;margin-right:8px;">&bull;</span> Dozer</td></tr>
-                            <tr><td style="padding:6px 0;font-size:14px;font-weight:600;color:#1e293b;"><span style="color:#0284c7;font-size:16px;margin-right:8px;">&bull;</span> Dehumidifier (Refri)</td></tr>
+                            <tr><td style="padding:5px 0;font-size:13px;font-weight:600;color:#1e293b;"><span style="color:#0284c7;font-size:15px;margin-right:6px;">&bull;</span> Mould Temperature Controller</td></tr>
+                            <tr><td style="padding:5px 0;font-size:13px;font-weight:600;color:#1e293b;"><span style="color:#0284c7;font-size:15px;margin-right:6px;">&bull;</span> Dozer</td></tr>
+                            <tr><td style="padding:5px 0;font-size:13px;font-weight:600;color:#1e293b;"><span style="color:#0284c7;font-size:15px;margin-right:6px;">&bull;</span> Dehumidifier (Refri)</td></tr>
                           </table>
                         </td>
                       </tr>
@@ -557,29 +620,29 @@ function buildCustomerHtml(inquiry: StoredInquiry, catalogUrl: string): string {
               </table>
 
               <!-- Contact & Support Section (3 Lines + Service Number) -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:20px;margin-bottom:28px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:18px 16px;margin-bottom:22px;">
                 <tr>
                   <td>
-                    <div style="font-size:11px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#0047e1;margin-bottom:10px;">Get In Touch &amp; Dedicated Support</div>
-                    <p style="margin:0 0 14px;font-size:14px;line-height:1.5;color:#334155;">
-                      If you need immediate technical consultation, customized plant sizing, or order updates, please reach out to our team:
+                    <div style="font-size:11px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:#0047e1;margin-bottom:8px;">Get In Touch &amp; Dedicated Support</div>
+                    <p style="margin:0 0 12px;font-size:13px;line-height:1.5;color:#334155;">
+                      If you need immediate technical consultation, customized plant sizing, or order updates:
                     </p>
-                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:13px;">
                       <tr>
-                        <td style="padding:6px 0;color:#64748b;" width="140"><strong>Email ID:</strong></td>
-                        <td style="padding:6px 0;"><a href="mailto:info@valnexindustries.com" style="color:#0047e1;font-weight:700;text-decoration:none;">info@valnexindustries.com</a></td>
+                        <td style="padding:5px 0;color:#64748b;" width="115" valign="top"><strong>Email ID:</strong></td>
+                        <td style="padding:5px 0;" valign="top"><a href="mailto:info@valnexindustries.com" style="color:#0047e1;font-weight:700;text-decoration:none;word-break:break-all;">info@valnexindustries.com</a></td>
                       </tr>
                       <tr>
-                        <td style="padding:6px 0;color:#64748b;"><strong>Contact Phone:</strong></td>
-                        <td style="padding:6px 0;"><a href="tel:+917574848748" style="color:#02102e;font-weight:700;text-decoration:none;">+91 75748 48748</a></td>
+                        <td style="padding:5px 0;color:#64748b;" width="115" valign="top"><strong>Contact Phone:</strong></td>
+                        <td style="padding:5px 0;" valign="top"><a href="tel:+917574848748" style="color:#02102e;font-weight:700;text-decoration:none;">+91 75748 48748</a></td>
                       </tr>
                       <tr>
-                        <td style="padding:6px 0;color:#64748b;"><strong>Service Number:</strong></td>
-                        <td style="padding:6px 0;"><a href="tel:+919173194131" style="color:#0284c7;font-weight:800;text-decoration:none;">SERVICES :- 91731 94131</a></td>
+                        <td style="padding:5px 0;color:#64748b;" width="115" valign="top"><strong>Service Number:</strong></td>
+                        <td style="padding:5px 0;" valign="top"><a href="tel:+919173194131" style="color:#0284c7;font-weight:800;text-decoration:none;">SERVICES :- 91731 94131</a></td>
                       </tr>
                       <tr>
-                        <td style="padding:6px 0;color:#64748b;"><strong>Website:</strong></td>
-                        <td style="padding:6px 0;"><a href="https://www.valnexindustries.com" target="_blank" rel="noopener noreferrer" style="color:#0047e1;font-weight:600;text-decoration:none;">www.valnexindustries.com</a></td>
+                        <td style="padding:5px 0;color:#64748b;" width="115" valign="top"><strong>Website:</strong></td>
+                        <td style="padding:5px 0;" valign="top"><a href="https://www.valnexindustries.com" target="_blank" rel="noopener noreferrer" style="color:#0047e1;font-weight:600;text-decoration:none;">www.valnexindustries.com</a></td>
                       </tr>
                     </table>
                   </td>
@@ -589,8 +652,8 @@ function buildCustomerHtml(inquiry: StoredInquiry, catalogUrl: string): string {
               <!-- Manufacturing Plant / Address Section -->
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:10px;">
                 <tr>
-                  <td style="padding:16px 20px;background:#f1f5f9;border-radius:8px;font-size:12px;line-height:1.6;color:#475569;">
-                    <div style="font-size:11px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#1e293b;margin-bottom:4px;">
+                  <td style="padding:14px 16px;background:#f1f5f9;border-radius:8px;font-size:12px;line-height:1.55;color:#475569;">
+                    <div style="font-size:11px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#1e293b;margin-bottom:3px;">
                       VALNEX INDUSTRIES PVT. LTD.
                     </div>
                     <div>3, MARUTI INDUSTRIAL PARK-2, DHAMATVAN-BAKROL ROAD, DHAMATVAN, AHMEDABAD - 382435, GUJARAT, INDIA</div>
@@ -603,11 +666,11 @@ function buildCustomerHtml(inquiry: StoredInquiry, catalogUrl: string): string {
 
           <!-- Footer Banner -->
           <tr>
-            <td style="background-color:#02102e;padding:24px 32px;text-align:center;color:#94a3b8;font-size:12px;line-height:1.6;">
-              <div style="font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#38bdf8;margin-bottom:6px;">
+            <td style="background-color:#02102e;padding:22px 24px;text-align:center;color:#94a3b8;font-size:12px;line-height:1.6;">
+              <div style="font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#38bdf8;margin-bottom:5px;">
                 QUALITY &bull; EXCELLENCE &bull; COMMITMENT
               </div>
-              <p style="margin:0 0 6px;color:#cbd5e1;">&copy; 2026 Valnex Industries Pvt. Ltd. All rights reserved.</p>
+              <p style="margin:0 0 5px;color:#cbd5e1;">&copy; 2026 Valnex Industries Pvt. Ltd. All rights reserved.</p>
               <p style="margin:0;font-size:11px;color:#64748b;">This automated confirmation was sent because an inquiry was submitted on valnexindustries.com with this email address.</p>
             </td>
           </tr>
