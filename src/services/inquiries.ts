@@ -308,7 +308,7 @@ function buildHtml(inquiry: StoredInquiry): string {
           <tr>
             <td style="background-color:#f8fafc;padding:24px 32px;border-top:1px solid #e2e8f0;font-size:12px;color:#64748b;line-height:1.6;">
               <p style="margin:0 0 6px;font-weight:600;color:#334155;">Valnex Industries &bull; Industrial Machinery & Cooling Systems</p>
-              <p style="margin:0 0 6px;">3, Maruti Industrial Park-2, Dhamatvan Bakrol Road, Dhamatvan, Ahmedabad-382435, Gujarat, India.</p>
+              <p style="margin:0 0 6px;"><a href="https://www.google.com/maps/search/?api=1&amp;query=Valnex+Industries+Pvt.+Ltd.+3+Maruti+Industrial+Park-2+Dhamatvan+Bakrol+Road+Dhamatvan+Ahmedabad+382435" target="_blank" rel="noopener noreferrer" style="color:#0047e1;text-decoration:none;">📍 3, Maruti Industrial Park-2, Dhamatvan Bakrol Road, Dhamatvan, Ahmedabad-382435, Gujarat, India (View on Maps &rarr;)</a></p>
               <p style="margin:0;color:#94a3b8;font-size:11px;">This inquiry was captured automatically by the Valnex Industries website form and delivered via Resend.</p>
             </td>
           </tr>
@@ -653,10 +653,21 @@ function buildCustomerHtml(inquiry: StoredInquiry, catalogUrl: string): string {
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:10px;">
                 <tr>
                   <td style="padding:14px 16px;background:#f1f5f9;border-radius:8px;font-size:12px;line-height:1.55;color:#475569;">
-                    <div style="font-size:11px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#1e293b;margin-bottom:3px;">
-                      VALNEX INDUSTRIES PVT. LTD.
-                    </div>
-                    <div>3, MARUTI INDUSTRIAL PARK-2, DHAMATVAN-BAKROL ROAD, DHAMATVAN, AHMEDABAD - 382435, GUJARAT, INDIA</div>
+                    <a href="https://www.google.com/maps/search/?api=1&amp;query=Valnex+Industries+Pvt.+Ltd.+3+Maruti+Industrial+Park-2+Dhamatvan+Bakrol+Road+Dhamatvan+Ahmedabad+382435" target="_blank" rel="noopener noreferrer" style="text-decoration:none;color:inherit;display:block;">
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                        <tr>
+                          <td>
+                            <div style="font-size:11px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#1e293b;margin-bottom:3px;">
+                              VALNEX INDUSTRIES PVT. LTD.
+                            </div>
+                            <div style="color:#475569;">3, MARUTI INDUSTRIAL PARK-2, DHAMATVAN-BAKROL ROAD, DHAMATVAN, AHMEDABAD - 382435, GUJARAT, INDIA</div>
+                            <div style="margin-top:6px;font-size:11px;font-weight:700;color:#0047e1;">
+                              📍 View Location on Google Maps &rarr;
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                    </a>
                   </td>
                 </tr>
               </table>
@@ -736,6 +747,7 @@ function buildCustomerText(
     "VALNEX INDUSTRIES PVT. LTD.",
     "3, MARUTI INDUSTRIAL PARK-2, DHAMATVAN-BAKROL ROAD,",
     "DHAMATVAN, AHMEDABAD - 382435, GUJARAT, INDIA",
+    "Google Maps: https://www.google.com/maps/search/?api=1&query=Valnex+Industries+Pvt.+Ltd.+3+Maruti+Industrial+Park-2+Dhamatvan+Bakrol+Road+Dhamatvan+Ahmedabad+382435",
   ].join("\n");
 }
 

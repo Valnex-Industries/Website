@@ -47,9 +47,21 @@ const STEPS = [
 ];
 
 const DIRECT = [
-  { label: "Email", value: "info@valnexindustries.com" },
-  { label: "Phone", value: "+91 7574848748, +91 94294 81086" },
-  { label: "Address", value: "3, Maruti Industrial Park-2, Dhamatvan Bakrol Road, Dhamatvan, Ahmedabad-382435, Gujarat, INDIA." },
+  {
+    label: "Email",
+    value: "info@valnexindustries.com",
+    href: "mailto:info@valnexindustries.com",
+  },
+  {
+    label: "Phone",
+    value: "+91 7574848748, +91 94294 81086",
+    href: "tel:+917574848748",
+  },
+  {
+    label: "Address",
+    value: "3, Maruti Industrial Park-2, Dhamatvan Bakrol Road, Dhamatvan, Ahmedabad-382435, Gujarat, INDIA.",
+    href: "https://www.google.com/maps/search/?api=1&query=Valnex+Industries+Pvt.+Ltd.+3+Maruti+Industrial+Park-2+Dhamatvan+Bakrol+Road+Dhamatvan+Ahmedabad+382435",
+  },
 ];
 
 export default function InquiryPage() {
@@ -134,7 +146,18 @@ export default function InquiryPage() {
                           {item.label}
                         </dt>
                         <dd className="text-sm font-medium leading-relaxed text-[color:var(--brand-blue)] sm:max-w-[240px] sm:text-right">
-                          {item.value}
+                          {item.href ? (
+                            <a
+                              href={item.href}
+                              target={item.href.startsWith("http") ? "_blank" : undefined}
+                              rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                              className="transition-colors hover:underline"
+                            >
+                              {item.value}
+                            </a>
+                          ) : (
+                            item.value
+                          )}
                         </dd>
                       </div>
                     ))}

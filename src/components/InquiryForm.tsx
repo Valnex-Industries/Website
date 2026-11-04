@@ -274,6 +274,17 @@ export function InquiryForm() {
               <strong>Dedicated Service Support:</strong>{" "}
               <span className="font-bold text-[color:var(--brand-blue)]">SERVICES :- 91731 94131</span>
             </p>
+            <p>
+              <strong>Plant Location:</strong>{" "}
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=Valnex+Industries+Pvt.+Ltd.+3+Maruti+Industrial+Park-2+Dhamatvan+Bakrol+Road+Dhamatvan+Ahmedabad+382435"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[color:var(--brand-blue)] underline inline-flex items-center gap-1"
+              >
+                <span>3, Maruti Industrial Park-2, Dhamatvan, Ahmedabad (Open in Maps &rarr;)</span>
+              </a>
+            </p>
           </div>
         </div>
 
