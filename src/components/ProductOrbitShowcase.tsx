@@ -47,7 +47,7 @@ export interface ShowcaseProduct {
 
 /**
  * Curated specifications and metadata aligned with the client's design proposal.
- * When the client provides the spec HTML file, this structure is prepared for 1:1 injection.
+ * Prepared for 1:1 replacement when the incoming HTML file is supplied.
  */
 const CURATED_SHOWCASE_DATA: Record<
   string,
@@ -275,9 +275,6 @@ const CURATED_SHOWCASE_DATA: Record<
   },
 };
 
-/**
- * Fallback cutout images in `public/catalog/photos/2025/` that are clean white cutouts
- */
 const CUTOUT_PHOTOS: Record<string, string> = {
   "mould-temp": "/catalog/photos/2025/mould-temperature-controller.webp",
   chillers: "/catalog/photos/2025/air-cooled-chiller.webp",
@@ -294,13 +291,12 @@ interface ProductOrbitShowcaseProps {
 }
 
 export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowcaseProps) {
-  // Build unified showcase dataset
   const items: ShowcaseProduct[] = useMemo(() => {
     return products.map((prod, idx) => {
       const curated = CURATED_SHOWCASE_DATA[prod.slug];
       const cutout = CUTOUT_PHOTOS[prod.slug] || prod.image;
       return {
-        slug: prod.slug,
+        slug: prod.slug as ProductSlug,
         index: String(idx + 1).padStart(2, "0"),
         title: curated?.titleOverride || prod.title,
         subtitle: curated?.subtitle || prod.summary,
@@ -327,15 +323,14 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
   const nodeRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const isHoveredRef = useRef(false);
 
-  // Geometry configuration
-  // The client requested a 30° tilted oval orbit with clockwise rotation
-  const tiltDeg = -28; // -28° provides the exact diagonal slope shown in the client's mockup
+  // Exact 30° tilted elliptical geometry (-28° diagonal slope as in reference drawing)
+  const tiltDeg = -28;
   const tiltRad = (tiltDeg * Math.PI) / 180;
   const cosTilt = Math.cos(tiltRad);
   const sinTilt = Math.sin(tiltRad);
 
-  // Radii for the ellipse (scaled responsively in updateNodePositions)
-  const currentRadiiRef = useRef({ rx: 320, ry: 180 });
+  // Dynamic responsive orbital radii
+  const currentRadiiRef = useRef({ rx: 380, ry: 240 });
 
   // Update satellite node positions along the 30° tilted oval orbit
   const updateNodePositions = useCallback(
@@ -348,7 +343,7 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
       nodeRefs.current.forEach((node, i) => {
         if (!node) return;
 
-        // Space nodes evenly around the circumference
+        // Equal angular distribution along perimeter
         const nodeAngleDeg = baseAngle + (i * 360) / total;
         const phi = (nodeAngleDeg * Math.PI) / 180;
 
@@ -360,13 +355,12 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
         const x = u * cosTilt - v * sinTilt;
         const y = u * sinTilt + v * cosTilt;
 
-        // 3D depth perspective: nodes closer to bottom-front appear subtly larger
-        // Normalized z-depth based on sin(phi)
+        // Depth perspective
         const depth = (Math.sin(phi) + 1) / 2; // 0 (far) to 1 (near)
-        const scale = 0.82 + depth * 0.28; // 0.82x to 1.1x
-        const zIndex = Math.round(10 + depth * 20);
+        const scale = 0.88 + depth * 0.22; // 0.88x to 1.1x
+        const zIndex = Math.round(15 + depth * 20);
 
-        // Apply hardware-accelerated transform directly without React re-renders
+        // Hardware-accelerated 3D transform directly on DOM (0 React re-renders)
         node.style.transform = `translate3d(calc(-50% + ${x.toFixed(1)}px), calc(-50% + ${y.toFixed(1)}px), 0) scale(${scale.toFixed(3)})`;
         node.style.zIndex = String(zIndex);
       });
@@ -374,22 +368,22 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
     [items.length, cosTilt, sinTilt]
   );
 
-  // Resize listener to adjust orbit radius dynamically based on stage width
+  // Responsive radii calculator based on container width
   useEffect(() => {
     function handleResize() {
       if (!containerRef.current) return;
       const width = containerRef.current.clientWidth;
 
       if (width < 450) {
-        currentRadiiRef.current = { rx: 145, ry: 80 };
+        currentRadiiRef.current = { rx: 155, ry: 105 };
       } else if (width < 640) {
-        currentRadiiRef.current = { rx: 180, ry: 100 };
+        currentRadiiRef.current = { rx: 200, ry: 130 };
       } else if (width < 1024) {
-        currentRadiiRef.current = { rx: 250, ry: 135 };
-      } else if (width < 1280) {
-        currentRadiiRef.current = { rx: 290, ry: 165 };
+        currentRadiiRef.current = { rx: 280, ry: 175 };
+      } else if (width < 1360) {
+        currentRadiiRef.current = { rx: 340, ry: 215 };
       } else {
-        currentRadiiRef.current = { rx: 340, ry: 190 };
+        currentRadiiRef.current = { rx: 395, ry: 245 };
       }
 
       updateNodePositions(orbitAngleRef.current.angle);
@@ -402,7 +396,6 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
 
   // Main GSAP continuous clockwise orbit animation
   useEffect(() => {
-    // 48 seconds per full 360° clockwise cycle (smooth, elegant award-style pacing)
     const tween = gsap.to(orbitAngleRef.current, {
       angle: "+=360",
       duration: 48,
@@ -420,29 +413,26 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
     };
   }, [updateNodePositions]);
 
-  // Navigate to specific product
+  // Smoothly select product and align orbit
   const selectProduct = useCallback(
     (index: number) => {
       if (items.length === 0) return;
       const targetIndex = (index + items.length) % items.length;
       setActiveIndex(targetIndex);
 
-      // Smoothly tween orbit angle to align target node prominently
       if (orbitTweenRef.current) {
         const step = 360 / items.length;
         const currentAngle = orbitAngleRef.current.angle;
-        // Calculate nearest target angle
         const targetAngle = currentAngle + step;
 
         gsap.to(orbitAngleRef.current, {
           angle: targetAngle,
-          duration: 0.9,
+          duration: 0.85,
           ease: "power2.out",
           onUpdate: () => {
             updateNodePositions(orbitAngleRef.current.angle);
           },
           onComplete: () => {
-            // Resume continuous rotation seamlessly
             if (!isHoveredRef.current && orbitTweenRef.current) {
               orbitTweenRef.current.play();
             }
@@ -461,22 +451,20 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
     selectProduct(activeIndex - 1);
   };
 
-  // Hover handlers to slow/pause orbit on user interaction
   const handleMouseEnter = () => {
     isHoveredRef.current = true;
     if (orbitTweenRef.current) {
-      gsap.to(orbitTweenRef.current, { timeScale: 0.15, duration: 0.5 });
+      gsap.to(orbitTweenRef.current, { timeScale: 0.15, duration: 0.4 });
     }
   };
 
   const handleMouseLeave = () => {
     isHoveredRef.current = false;
     if (orbitTweenRef.current) {
-      gsap.to(orbitTweenRef.current, { timeScale: 1, duration: 0.8 });
+      gsap.to(orbitTweenRef.current, { timeScale: 1, duration: 0.6 });
     }
   };
 
-  // Keyboard accessibility
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowRight") handleNext();
     if (e.key === "ArrowLeft") handlePrev();
@@ -487,7 +475,7 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
       id="products"
       tabIndex={0}
       onKeyDown={handleKeyDown}
-      className="relative overflow-hidden bg-white text-slate-900 py-16 sm:py-20 lg:py-28 focus:outline-none"
+      className="relative overflow-hidden bg-white text-slate-900 py-16 sm:py-20 lg:py-24 focus:outline-none"
     >
       {/* Precision Blueprint Grid Overlay */}
       <div
@@ -495,35 +483,36 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
         className="blueprint-grid pointer-events-none absolute inset-0 opacity-[0.04] invert"
       />
 
-      {/* Subtle Ambient Radial Lighting */}
+      {/* Ambient Radial Brand Glow */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-40 right-0 h-[600px] w-[600px] rounded-full bg-[radial-gradient(circle,rgba(249,115,22,0.06)_0%,rgba(0,71,225,0.03)_50%,transparent_75%)] blur-3xl"
+        className="pointer-events-none absolute -top-32 right-0 h-[650px] w-[650px] rounded-full bg-[radial-gradient(circle,rgba(249,115,22,0.08)_0%,rgba(0,71,225,0.04)_50%,transparent_75%)] blur-3xl"
       />
 
-      <div className="relative mx-auto w-full max-w-[1360px] px-5 sm:px-8 lg:px-12">
-        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-8 xl:gap-14">
+      <div className="relative mx-auto w-full max-w-[1400px] px-5 sm:px-8 lg:px-12">
+        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-8 xl:gap-12">
+          
           {/* ── LEFT COLUMN: Specifications & Product Information ── */}
           <div className="flex flex-col justify-between lg:col-span-5 xl:col-span-5">
             <div>
               {/* Eyebrow with Brand Orange Accent Dash */}
               <div className="flex items-center gap-2.5">
-                <span className="h-[2px] w-6 bg-[#f97316]" />
-                <span className="font-orbitron text-xs font-bold uppercase tracking-[0.22em] text-[#02102e]">
+                <span className="h-[2.5px] w-7 bg-[#f97316] rounded-full" />
+                <span className="font-orbitron text-xs font-bold uppercase tracking-[0.24em] text-[#02102e]">
                   Our Products
                 </span>
               </div>
 
-              {/* Dynamic Product Heading with AnimatePresence */}
+              {/* Dynamic Product Heading */}
               <div className="relative mt-4 min-h-[72px] sm:min-h-[88px]">
                 <AnimatePresence mode="wait">
                   <motion.h2
                     key={activeProduct.slug}
-                    initial={{ opacity: 0, y: 14 }}
+                    initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -14 }}
+                    exit={{ opacity: 0, y: -16 }}
                     transition={{ duration: 0.35, ease: "easeOut" }}
-                    className="font-orbitron text-[2rem] font-black leading-[1.05] tracking-tight text-[#02102e] sm:text-4xl xl:text-[2.75rem]"
+                    className="font-orbitron text-[2.1rem] font-black leading-[1.04] tracking-tight text-[#02102e] sm:text-4xl xl:text-[2.85rem]"
                   >
                     {activeProduct.title}
                   </motion.h2>
@@ -546,38 +535,38 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
                 </AnimatePresence>
               </div>
 
-              {/* KEY SPECIFICATIONS Label */}
+              {/* KEY SPECIFICATIONS */}
               <div className="mt-8">
-                <span className="font-orbitron text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">
+                <span className="font-orbitron text-[11px] font-extrabold uppercase tracking-[0.22em] text-slate-400">
                   Key Specifications
                 </span>
 
-                {/* 4 Specification Cards (matching client's 2x2 / 4-card layout) */}
-                <div className="mt-3.5 grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-1 xl:gap-3">
+                {/* 4 Specification Cards */}
+                <div className="mt-3.5">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={activeProduct.slug}
-                      initial={{ opacity: 0, y: 8 }}
+                      initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -8 }}
+                      exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.3, staggerChildren: 0.05 }}
-                      className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-1"
+                      className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-1 xl:gap-3"
                     >
                       {activeProduct.specs.map((spec, sIdx) => {
                         const Icon = spec.icon;
                         return (
                           <div
                             key={sIdx}
-                            className="group flex items-center gap-3.5 rounded-xl border border-slate-100 bg-slate-50/70 p-3 transition-all duration-300 hover:border-slate-200 hover:bg-white hover:shadow-sm"
+                            className="group flex items-center gap-3.5 rounded-2xl border border-slate-100 bg-slate-50/80 p-3.5 transition-all duration-300 hover:border-orange-300 hover:bg-white hover:shadow-md"
                           >
-                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200/60 bg-white text-slate-700 shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-colors group-hover:border-orange-200 group-hover:text-[#f97316]">
-                              <Icon size={18} strokeWidth={2.2} />
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200/70 bg-white text-slate-700 shadow-sm transition-all duration-300 group-hover:border-orange-300 group-hover:bg-orange-50 group-hover:text-[#f97316]">
+                              <Icon size={19} strokeWidth={2.2} />
                             </div>
                             <div className="min-w-0 flex-1">
                               <span className="block text-[11px] font-medium tracking-wide text-slate-500">
                                 {spec.label}
                               </span>
-                              <span className="font-orbitron block truncate text-xs font-bold text-slate-900 sm:text-[13px]">
+                              <span className="font-orbitron block truncate text-xs font-bold text-slate-900 sm:text-sm">
                                 {spec.value}
                               </span>
                             </div>
@@ -595,11 +584,14 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
               {/* Pagination counter & sleek progress bar */}
               <div className="flex items-center gap-3">
                 <span className="font-orbitron text-xs font-bold tracking-wider text-slate-800">
-                  {activeProduct.index} <span className="text-slate-400 font-normal">/ {String(items.length).padStart(2, "0")}</span>
+                  {activeProduct.index}{" "}
+                  <span className="text-slate-400 font-normal">
+                    / {String(items.length).padStart(2, "0")}
+                  </span>
                 </span>
-                <div className="relative h-1 w-24 sm:w-28 overflow-hidden rounded-full bg-slate-200">
+                <div className="relative h-1.5 w-24 sm:w-32 overflow-hidden rounded-full bg-slate-200">
                   <div
-                    className="h-full bg-[#f97316] transition-all duration-500 ease-out"
+                    className="h-full bg-[#f97316] transition-all duration-500 ease-out rounded-full"
                     style={{
                       width: `${((activeIndex + 1) / items.length) * 100}%`,
                     }}
@@ -621,85 +613,101 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
             </div>
           </div>
 
-          {/* ── RIGHT COLUMN: 30° Tilted Orbital Stage ── */}
+          {/* ── RIGHT COLUMN: Enlarged 30° Tilted Orbital Stage with Perfect Circular Mask Clipping ── */}
           <div
             ref={containerRef}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
-            className="relative flex h-[480px] w-full items-center justify-center sm:h-[560px] lg:col-span-7 lg:h-[640px] xl:col-span-7 select-none"
+            className="relative flex h-[520px] w-full items-center justify-center sm:h-[600px] lg:col-span-7 lg:h-[680px] xl:col-span-7 select-none overflow-visible"
           >
-            {/* SVG 30° Tilted Orbital Ellipse Track Line */}
+            {/* SVG 30° Tilted Orbital Ellipse Track with CAD Precision */}
             <svg
               className="pointer-events-none absolute inset-0 h-full w-full overflow-visible"
-              viewBox="-400 -300 800 600"
+              viewBox="-500 -380 1000 760"
               preserveAspectRatio="xMidYMid meet"
             >
               <defs>
-                {/* Subtle gradient for orbital track */}
-                <linearGradient id="orbitLineGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#f97316" stopOpacity="0.35" />
-                  <stop offset="50%" stopColor="#cbd5e1" stopOpacity="0.45" />
-                  <stop offset="100%" stopColor="#0047e1" stopOpacity="0.25" />
+                <linearGradient id="orbitGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#f97316" stopOpacity="0.45" />
+                  <stop offset="50%" stopColor="#cbd5e1" stopOpacity="0.5" />
+                  <stop offset="100%" stopColor="#0047e1" stopOpacity="0.35" />
                 </linearGradient>
               </defs>
 
-              {/* 30° Tilted Elliptical Ring (Rotated around center 0,0) */}
+              {/* 30° Tilted Elliptical Ring */}
               <g transform={`rotate(${tiltDeg})`}>
-                {/* Secondary faint outer blueprint ring */}
+                {/* Secondary outer dashed CAD guide */}
                 <ellipse
                   cx="0"
                   cy="0"
-                  rx="344"
-                  ry="194"
+                  rx="418"
+                  ry="268"
                   fill="none"
                   stroke="#f1f5f9"
-                  strokeWidth="1"
+                  strokeWidth="1.2"
                   strokeDasharray="6 6"
                 />
-                {/* Main orbital track matching client mockup */}
+                {/* Main orbital track */}
                 <ellipse
                   cx="0"
                   cy="0"
-                  rx="320"
-                  ry="180"
+                  rx="395"
+                  ry="245"
                   fill="none"
-                  stroke="url(#orbitLineGrad)"
-                  strokeWidth="1.75"
+                  stroke="url(#orbitGrad)"
+                  strokeWidth="2"
                 />
+                {/* Cardinal tick marks */}
+                <circle cx="395" cy="0" r="3" fill="#f97316" opacity="0.6" />
+                <circle cx="-395" cy="0" r="3" fill="#cbd5e1" opacity="0.6" />
+                <circle cx="0" cy="245" r="3" fill="#0047e1" opacity="0.6" />
+                <circle cx="0" cy="-245" r="3" fill="#cbd5e1" opacity="0.6" />
               </g>
             </svg>
 
-            {/* Central Large Circular Showcase Card */}
-            <div className="relative z-20 flex h-[260px] w-[260px] items-center justify-center rounded-full border border-slate-100 bg-white p-6 shadow-[0_20px_60px_-15px_rgba(2,16,46,0.1),0_0_0_1px_rgba(0,0,0,0.03)] sm:h-[340px] sm:w-[340px] sm:p-8 md:h-[400px] md:w-[400px] md:p-10 transition-shadow duration-500 hover:shadow-[0_25px_70px_-15px_rgba(249,115,22,0.15)]">
-              {/* Subtle Ambient Radial Glow inside circle */}
+            {/* Glowing Ambient Halo Behind the Central Stage */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute h-[320px] w-[320px] sm:h-[420px] sm:w-[420px] lg:h-[500px] lg:w-[500px] rounded-full bg-[radial-gradient(circle,rgba(249,115,22,0.12)_0%,rgba(0,71,225,0.06)_50%,transparent_72%)] blur-2xl"
+            />
+
+            {/* ── Central Large Circular Showcase Card (PERFECTLY CLIPPED) ── */}
+            <div
+              style={{
+                clipPath: "circle(50% at 50% 50%)",
+                WebkitClipPath: "circle(50% at 50% 50%)",
+              }}
+              className="relative z-20 flex h-[290px] w-[290px] sm:h-[380px] sm:w-[380px] md:h-[450px] md:w-[450px] lg:h-[490px] lg:w-[490px] xl:h-[520px] xl:w-[520px] shrink-0 items-center justify-center rounded-full border-2 border-slate-200/80 bg-white shadow-[0_30px_80px_-15px_rgba(2,16,46,0.12),0_0_0_1px_rgba(0,0,0,0.04)] overflow-hidden transition-all duration-500 hover:shadow-[0_35px_90px_-15px_rgba(249,115,22,0.2)]"
+            >
+              {/* Subtle inner radial vignette */}
               <div
                 aria-hidden="true"
-                className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_50%_40%,rgba(249,115,22,0.06)_0%,transparent_70%)]"
+                className="pointer-events-none absolute inset-0 rounded-full bg-[radial-gradient(circle_at_50%_35%,rgba(249,115,22,0.04)_0%,rgba(2,16,46,0.02)_60%,rgba(0,0,0,0.04)_100%)] z-10"
               />
 
-              {/* Active Product Image Cutout with Smooth Scale/Fade Transition */}
+              {/* Active Product Image (Enlarged, Heroic, and strictly clipped by circular viewport) */}
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeProduct.slug}
-                  initial={{ opacity: 0, scale: 0.88 }}
+                  initial={{ opacity: 0, scale: 0.82 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.88 }}
+                  exit={{ opacity: 0, scale: 0.82 }}
                   transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                  className="relative h-full w-full"
+                  className="relative h-[115%] w-[115%] flex items-center justify-center p-3 sm:p-5"
                 >
                   <CdnImage
                     src={activeProduct.image}
-                    alt={`${activeProduct.title} cutout`}
+                    alt={`${activeProduct.title} showcase`}
                     fill
-                    sizes="(max-width: 640px) 240px, (max-width: 1024px) 320px, 400px"
+                    sizes="(max-width: 640px) 300px, (max-width: 1024px) 420px, 540px"
                     priority
-                    className="object-contain filter drop-shadow-[0_15px_25px_rgba(2,16,46,0.12)] transition-transform duration-500 hover:scale-105"
+                    className="object-contain filter drop-shadow-[0_20px_35px_rgba(2,16,46,0.14)] transition-transform duration-700 hover:scale-105"
                   />
                 </motion.div>
               </AnimatePresence>
             </div>
 
-            {/* Orbiting Satellite Product Circles along 30° Tilted Oval Path */}
+            {/* ── Orbiting Satellite Product Circles along 30° Tilted Path (PERFECTLY CLIPPED) ── */}
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
               {items.map((prod, idx) => {
                 const isSelected = idx === activeIndex;
@@ -711,21 +719,25 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
                     }}
                     onClick={() => selectProduct(idx)}
                     type="button"
-                    title={`View ${prod.title}`}
+                    title={prod.title}
+                    style={{
+                      clipPath: "circle(50% at 50% 50%)",
+                      WebkitClipPath: "circle(50% at 50% 50%)",
+                    }}
                     className={cn(
-                      "pointer-events-auto absolute left-1/2 top-1/2 flex h-14 w-14 sm:h-18 sm:w-18 md:h-20 md:w-20 cursor-pointer items-center justify-center rounded-full border bg-white p-2 sm:p-2.5 transition-all duration-300 will-change-transform focus:outline-none focus:ring-2 focus:ring-[#f97316]",
+                      "group pointer-events-auto absolute left-1/2 top-1/2 flex h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24 lg:h-26 lg:w-26 cursor-pointer items-center justify-center rounded-full border-2 bg-white p-2.5 sm:p-3 overflow-hidden transition-all duration-300 will-change-transform focus:outline-none focus:ring-4 focus:ring-orange-500/25",
                       isSelected
-                        ? "border-[#f97316] ring-4 ring-orange-500/20 shadow-[0_10px_25px_-5px_rgba(249,115,22,0.3)]"
-                        : "border-slate-200/90 shadow-[0_8px_20px_-4px_rgba(2,16,46,0.08)] hover:scale-115 hover:border-[#f97316] hover:shadow-[0_10px_25px_-5px_rgba(249,115,22,0.25)]"
+                        ? "border-[#f97316] ring-4 ring-orange-500/25 shadow-[0_14px_30px_rgba(249,115,22,0.35)] scale-110"
+                        : "border-slate-200/90 shadow-[0_10px_25px_-5px_rgba(2,16,46,0.1)] hover:scale-120 hover:border-[#f97316] hover:shadow-[0_14px_32px_rgba(249,115,22,0.28)]"
                     )}
                   >
-                    <div className="relative h-full w-full">
+                    <div className="relative h-full w-full flex items-center justify-center overflow-hidden rounded-full">
                       <CdnImage
                         src={prod.image}
                         alt={prod.title}
                         fill
-                        sizes="80px"
-                        className="object-contain filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.06)]"
+                        sizes="100px"
+                        className="object-contain filter drop-shadow-[0_2px_6px_rgba(0,0,0,0.08)] transition-transform duration-300 group-hover:scale-110"
                       />
                     </div>
                   </button>
@@ -733,26 +745,27 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
               })}
             </div>
 
-            {/* Bottom-Right Navigation Arrow Buttons (matching client's proposal) */}
-            <div className="absolute bottom-2 right-2 sm:bottom-4 sm:right-6 z-30 flex items-center gap-3">
+            {/* Bottom-Right Navigation Arrow Controls */}
+            <div className="absolute bottom-2 right-2 sm:bottom-4 sm:right-6 z-40 flex items-center gap-3">
               <button
                 type="button"
                 onClick={handlePrev}
                 aria-label="Previous product"
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 active:scale-95"
+                className="flex h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-full border-2 border-slate-200 bg-white text-slate-700 shadow-md transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 active:scale-95"
               >
-                <ChevronLeft size={18} strokeWidth={2.5} />
+                <ChevronLeft size={20} strokeWidth={2.5} />
               </button>
               <button
                 type="button"
                 onClick={handleNext}
                 aria-label="Next product"
-                className="flex h-11 w-11 items-center justify-center rounded-full bg-[#f97316] text-white shadow-md shadow-orange-500/25 transition hover:bg-orange-600 active:scale-95"
+                className="flex h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-[#f97316] text-white shadow-lg shadow-orange-500/30 transition hover:bg-orange-600 active:scale-95"
               >
-                <ChevronRight size={18} strokeWidth={2.5} />
+                <ChevronRight size={20} strokeWidth={2.5} />
               </button>
             </div>
           </div>
+
         </div>
       </div>
     </section>
