@@ -619,29 +619,29 @@ function buildCustomerHtml(inquiry: StoredInquiry, catalogUrl: string): string {
                 </tr>
               </table>
 
-              <!-- Contact & Support Section (3 Lines + Service Number) -->
+              <!-- Contact & Support Section -->
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:18px 16px;margin-bottom:22px;">
                 <tr>
                   <td>
-                    <div style="font-size:11px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:#0047e1;margin-bottom:8px;">Get In Touch &amp; Dedicated Support</div>
+                    <div style="font-size:11px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:#0047e1;margin-bottom:8px;">Contact &amp; Support</div>
                     <p style="margin:0 0 12px;font-size:13px;line-height:1.5;color:#334155;">
                       If you need immediate technical consultation, customized plant sizing, or order updates:
                     </p>
                     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:13px;">
                       <tr>
-                        <td style="padding:5px 0;color:#64748b;" width="115" valign="top"><strong>Email ID:</strong></td>
-                        <td style="padding:5px 0;" valign="top"><a href="mailto:info@valnexindustries.com" style="color:#0047e1;font-weight:700;text-decoration:none;word-break:break-all;">info@valnexindustries.com</a></td>
+                        <td style="padding:5px 0;color:#64748b;" width="90" valign="top"><strong>Email:</strong></td>
+                        <td style="padding:5px 0;" valign="top"><a href="mailto:info@valnexindustries.com" style="color:#0047e1;font-weight:600;text-decoration:none;word-break:break-all;">info@valnexindustries.com</a></td>
                       </tr>
                       <tr>
-                        <td style="padding:5px 0;color:#64748b;" width="115" valign="top"><strong>Contact Phone:</strong></td>
-                        <td style="padding:5px 0;" valign="top"><a href="tel:+917574848748" style="color:#02102e;font-weight:700;text-decoration:none;">+91 75748 48748</a></td>
+                        <td style="padding:5px 0;color:#64748b;" width="90" valign="top"><strong>Phone:</strong></td>
+                        <td style="padding:5px 0;" valign="top"><a href="tel:+917574848748" style="color:#02102e;font-weight:600;text-decoration:none;">+91 75748 48748</a></td>
                       </tr>
                       <tr>
-                        <td style="padding:5px 0;color:#64748b;" width="115" valign="top"><strong>Service Number:</strong></td>
-                        <td style="padding:5px 0;" valign="top"><a href="tel:+919173194131" style="color:#0284c7;font-weight:800;text-decoration:none;">SERVICES :- 91731 94131</a></td>
+                        <td style="padding:5px 0;color:#64748b;" width="90" valign="top"><strong>Service:</strong></td>
+                        <td style="padding:5px 0;" valign="top"><a href="tel:+919173194131" style="color:#0284c7;font-weight:700;text-decoration:none;">+91 91731 94131</a></td>
                       </tr>
                       <tr>
-                        <td style="padding:5px 0;color:#64748b;" width="115" valign="top"><strong>Website:</strong></td>
+                        <td style="padding:5px 0;color:#64748b;" width="90" valign="top"><strong>Website:</strong></td>
                         <td style="padding:5px 0;" valign="top"><a href="https://www.valnexindustries.com" target="_blank" rel="noopener noreferrer" style="color:#0047e1;font-weight:600;text-decoration:none;">www.valnexindustries.com</a></td>
                       </tr>
                     </table>
@@ -736,11 +736,10 @@ function buildCustomerText(
     "• Dozer",
     "• Dehumidifier (Refri)",
     "",
-    "--- CONTACT & DEDICATED SUPPORT ---",
-    "You can contact us directly at:",
+    "--- CONTACT & SUPPORT ---",
     "• Email: info@valnexindustries.com",
-    "• Phone / Sales: +91 75748 48748",
-    "• Dedicated Service Support: SERVICES :- 91731 94131",
+    "• Phone: +91 75748 48748",
+    "• Service: +91 91731 94131",
     "• Website: https://www.valnexindustries.com",
     "",
     "--- PLANT & FACTORY ADDRESS ---",

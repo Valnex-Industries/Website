@@ -259,23 +259,25 @@ export function InquiryForm() {
 
           <div className="mt-1 pt-3 border-t border-[color:var(--brand-ink)]/10 text-xs text-[color:var(--brand-ink)]/75 space-y-1.5">
             <p>
-              <strong>Direct Email:</strong>{" "}
+              <strong>Email:</strong>{" "}
               <a href="mailto:info@valnexindustries.com" className="text-[color:var(--brand-blue)] underline">
                 info@valnexindustries.com
               </a>
             </p>
             <p>
-              <strong>Sales &amp; Inquiry:</strong>{" "}
+              <strong>Phone:</strong>{" "}
               <a href="tel:+917574848748" className="text-[color:var(--brand-ink)] font-semibold">
                 +91 75748 48748
               </a>
             </p>
             <p>
-              <strong>Dedicated Service Support:</strong>{" "}
-              <span className="font-bold text-[color:var(--brand-blue)]">SERVICES :- 91731 94131</span>
+              <strong>Service:</strong>{" "}
+              <a href="tel:+919173194131" className="font-bold text-[color:var(--brand-blue)]">
+                +91 91731 94131
+              </a>
             </p>
             <p>
-              <strong>Plant Location:</strong>{" "}
+              <strong>Location:</strong>{" "}
               <a
                 href="https://www.google.com/maps/search/?api=1&query=Valnex+Industries+Pvt.+Ltd.+3+Maruti+Industrial+Park-2+Dhamatvan+Bakrol+Road+Dhamatvan+Ahmedabad+382435"
                 target="_blank"
