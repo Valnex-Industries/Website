@@ -61,5 +61,6 @@ export async function submitInquiry(
     message: "Received. An engineer reads every inquiry that arrives.",
     errors: {},
     reference,
+    values,
   };
 }

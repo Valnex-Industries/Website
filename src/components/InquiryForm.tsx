@@ -2,7 +2,7 @@
 
 import { useActionState, useId, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { ArrowRight, Check, ChevronDown } from "lucide-react";
+import { ArrowRight, Check, ChevronDown, Copy, Download, MessageCircle } from "lucide-react";
 import { submitInquiry } from "@/app/inquiry/actions";
 import {
   PRODUCT_OPTIONS,
@@ -111,6 +111,59 @@ function Select({
   );
 }
 
+function CopyReferenceButton({ reference }: { reference: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(reference);
+      } else {
+        const textarea = document.createElement("textarea");
+        textarea.value = reference;
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+      }
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={handleCopy}
+      className={cn(
+        "inline-flex items-center gap-1.5 border px-3 py-1.5 text-xs font-bold tracking-wide transition cursor-pointer active:scale-95",
+        copied
+          ? "border-emerald-600 bg-emerald-50 text-emerald-700"
+          : "border-[color:var(--brand-blue)]/30 bg-[color:var(--brand-blue)]/5 text-[color:var(--brand-blue)] hover:bg-[color:var(--brand-blue)]/10"
+      )}
+      title="Click to copy Reference ID"
+      aria-label="Copy reference ID to clipboard"
+    >
+      {copied ? (
+        <>
+          <Check size={14} className="stroke-[3]" />
+          <span>Copied!</span>
+        </>
+      ) : (
+        <>
+          <Copy size={14} />
+          <span>Copy ID</span>
+        </>
+      )}
+    </button>
+  );
+}
+
 export function InquiryForm() {
   const [state, formAction, pending] = useActionState(
     submitInquiry,
@@ -134,25 +187,109 @@ export function InquiryForm() {
   const field = (name: string) => `${uid}-${name}`;
 
   if (state.status === "success") {
+    const customerEmail = state.values?.email;
+    const customerName = state.values?.name;
+    const ref = state.reference ?? "";
+    const waText = encodeURIComponent(
+      `Hello Valnex Industries, I submitted an inquiry (Reference: ${ref}). I would like to discuss specifications.`
+    );
+    const waUrl = `https://wa.me/917574848748?text=${waText}`;
+
     return (
-      <div className="py-4">
-        <span className="flex h-11 w-11 items-center justify-center bg-[color:var(--brand-blue)]">
-          <Check size={20} strokeWidth={3} className="text-white" />
-        </span>
-        <h2 className="mt-6 text-[clamp(1.5rem,2.6vw,2.25rem)] font-black leading-tight tracking-tight text-[color:var(--brand-blue)]">
-          Inquiry received.
-        </h2>
-        <p className="mt-4 max-w-md text-sm font-medium leading-relaxed text-[color:var(--brand-ink)]/80 md:text-base">
-          {state.message} Expect a reply within one working day.
-        </p>
-        <div className="mt-8 inline-flex flex-col gap-1 border border-[color:var(--brand-blue)]/20 bg-white shadow-sm px-5 py-4">
-          <span className="eyebrow text-[color:var(--brand-blue)]/70">
-            Your reference
+      <div className="py-2 flex flex-col gap-6">
+        <div className="flex items-start gap-3.5">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center bg-[color:var(--brand-blue)] shadow-md">
+            <Check size={22} strokeWidth={3} className="text-white" />
           </span>
-          <span className="font-orbitron text-lg font-bold tracking-[0.14em] text-[color:var(--brand-ink)]">
-            {state.reference}
-          </span>
+          <div>
+            <span className="eyebrow text-emerald-600 font-bold text-[11px]">
+              Two-Way Inquiry Active
+            </span>
+            <h2 className="text-[clamp(1.4rem,2.4vw,2rem)] font-black leading-tight tracking-tight text-[color:var(--brand-blue)]">
+              Inquiry Registered.
+            </h2>
+          </div>
         </div>
+
+        <p className="text-sm font-medium leading-relaxed text-[color:var(--brand-ink)]/85 md:text-base">
+          Thank you{customerName ? `, ${customerName}` : ""}. Your requirement has been registered and routed directly to our engineering desk.
+          {customerEmail && (
+            <span className="block mt-2 text-xs md:text-sm text-[color:var(--brand-ink)]/75">
+              An automated confirmation &amp; our complete equipment catalog have also been emailed to <strong className="text-[color:var(--brand-ink)] font-semibold">{customerEmail}</strong>.
+            </span>
+          )}
+        </p>
+
+        {/* Reference ID card with 1-click Copy */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border border-[color:var(--brand-blue)]/25 bg-white p-4 shadow-sm">
+          <div>
+            <span className="eyebrow text-[color:var(--brand-blue)]/80 text-[10px]">
+              Your Reference ID (Click to copy)
+            </span>
+            <div className="font-orbitron text-xl font-bold tracking-[0.14em] text-[color:var(--brand-ink)] mt-0.5 select-all">
+              {ref}
+            </div>
+          </div>
+          {ref && <CopyReferenceButton reference={ref} />}
+        </div>
+
+        {/* Two-Way Engagement Actions */}
+        <div className="border border-[color:var(--brand-ink)]/10 bg-[#f1f5f9] p-4 flex flex-col gap-3">
+          <span className="eyebrow text-[color:var(--brand-blue)] text-[10px]">
+            Two-Way Channels &amp; Instant Access
+          </span>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+            <a
+              href="/Valnex-Industries-Catalog.pdf"
+              download="Valnex-Industries-Catalog.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 border border-[color:var(--brand-blue)] bg-[color:var(--brand-blue)] px-4 py-2.5 text-xs font-bold text-white transition hover:bg-[color:var(--brand-blue-hover)] shadow-sm"
+            >
+              <Download size={14} />
+              <span>Download Catalog (PDF)</span>
+            </a>
+
+            <a
+              href={waUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 border border-[#25D366] bg-[#25D366] px-4 py-2.5 text-xs font-bold text-white transition hover:bg-[#20ba59] shadow-sm"
+            >
+              <MessageCircle size={14} />
+              <span>Connect on WhatsApp</span>
+            </a>
+          </div>
+
+          <div className="mt-1 pt-3 border-t border-[color:var(--brand-ink)]/10 text-xs text-[color:var(--brand-ink)]/75 space-y-1.5">
+            <p>
+              <strong>Direct Email:</strong>{" "}
+              <a href="mailto:info@valnexindustries.com" className="text-[color:var(--brand-blue)] underline">
+                info@valnexindustries.com
+              </a>
+            </p>
+            <p>
+              <strong>Sales &amp; Inquiry:</strong>{" "}
+              <a href="tel:+917574848748" className="text-[color:var(--brand-ink)] font-semibold">
+                +91 75748 48748
+              </a>
+            </p>
+            <p>
+              <strong>Dedicated Service Support:</strong>{" "}
+              <span className="font-bold text-[color:var(--brand-blue)]">SERVICES :- 91731 94131</span>
+            </p>
+          </div>
+        </div>
+
+        {/* Reset button to submit another requirement */}
+        <button
+          type="button"
+          onClick={() => window.location.reload()}
+          className="self-start text-xs font-semibold text-[color:var(--brand-ink)]/60 hover:text-[color:var(--brand-blue)] transition underline cursor-pointer"
+        >
+          Submit another inquiry &rarr;
+        </button>
       </div>
     );
   }

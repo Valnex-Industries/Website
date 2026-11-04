@@ -467,7 +467,7 @@ function buildCustomerHtml(inquiry: StoredInquiry, catalogUrl: string): string {
             <td style="padding:32px;">
 
               <!-- Inquiry Summary Card -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px 20px;margin-bottom:28px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px 20px;margin-bottom:24px;">
                 <tr>
                   <td>
                     <div style="font-size:11px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#64748b;margin-bottom:10px;">Registered Inquiry Overview</div>
@@ -479,6 +479,54 @@ function buildCustomerHtml(inquiry: StoredInquiry, catalogUrl: string): string {
                       <tr>
                         <td width="50%" style="padding:4px 0;font-size:13px;color:#64748b;">Company / Plant: <strong style="color:#02102e;">${escapeHtml(inquiry.company)}</strong></td>
                         <td width="50%" style="padding:4px 0;font-size:13px;color:#64748b;">Equipment: <strong style="color:#0047e1;">${escapeHtml(prod)}</strong></td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Reference ID Card to Copy -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:2px dashed #0047e1;border-radius:10px;padding:18px;margin-bottom:28px;text-align:center;">
+                <tr>
+                  <td>
+                    <div style="font-size:11px;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:#0047e1;margin-bottom:6px;">
+                      YOUR REFERENCE ID (COPY &amp; SAVE)
+                    </div>
+                    <div style="font-family:ui-monospace,Menlo,Consolas,monospace;font-size:24px;font-weight:900;color:#0a2472;letter-spacing:0.14em;user-select:all;-webkit-user-select:all;padding:6px 0;">
+                      ${escapeHtml(inquiry.reference)}
+                    </div>
+                    <div style="font-size:12px;color:#64748b;line-height:1.4;">
+                      Click or tap the ID above to copy it. Please quote this reference number in all inquiries or correspondence with our team.
+                    </div>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Two-Way Active Communication Channel -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:20px;margin-bottom:28px;">
+                <tr>
+                  <td>
+                    <div style="font-size:11px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#15803d;margin-bottom:6px;">
+                      Two-Way Active Communication
+                    </div>
+                    <h4 style="margin:0 0 6px;font-size:15px;font-weight:800;color:#14532d;">
+                      Direct Two-Way Channel With Our Engineers
+                    </h4>
+                    <p style="margin:0 0 14px;font-size:13px;line-height:1.6;color:#166534;">
+                      This email is an active two-way thread. You can hit <strong>Reply</strong> directly to send technical drawings, ask duty cycle questions, or provide plant specifications to our engineers.
+                    </p>
+                    <table role="presentation" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="border-radius:6px;background-color:#0047e1;">
+                          <a href="mailto:info@valnexindustries.com?subject=${encodeURIComponent(`Re: Inquiry [${inquiry.reference}] — ${inquiry.company}`)}" style="display:inline-block;padding:10px 18px;font-size:13px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:6px;">
+                            Reply to Engineering Desk &rarr;
+                          </a>
+                        </td>
+                        <td style="padding-left:10px;">
+                          <a href="https://wa.me/917574848748?text=${encodeURIComponent(`Hello Valnex Industries, regarding inquiry [${inquiry.reference}]. I would like to discuss specifications.`)}" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:10px 16px;font-size:13px;font-weight:700;color:#ffffff;background:#25D366;text-decoration:none;border-radius:6px;">
+                            Chat on WhatsApp
+                          </a>
+                        </td>
                       </tr>
                     </table>
                   </td>
@@ -626,6 +674,14 @@ function buildCustomerText(
     `Date:         ${dateFormatted}`,
     `Company:      ${inquiry.company}`,
     `Equipment:    ${prod}`,
+    "",
+    "--- YOUR REFERENCE ID (COPY & SAVE) ---",
+    `REFERENCE ID: ${inquiry.reference}`,
+    "(Please copy and quote this Reference ID in all correspondence with our team)",
+    "",
+    "--- TWO-WAY ACTIVE COMMUNICATION ---",
+    "This is an active two-way thread. You can hit Reply directly to this email to",
+    "attach drawings, specify cycle times, or ask technical sizing questions.",
     "",
     "--- PRODUCT & MACHINERY CATALOG ---",
     "We have attached our complete product catalog PDF to this email.",
