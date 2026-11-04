@@ -465,7 +465,7 @@ function buildCustomerHtml(inquiry: StoredInquiry, catalogUrl: string): string {
                     <div style="font-size:18px;font-weight:900;letter-spacing:0.04em;color:#ffffff;text-transform:uppercase;line-height:1.2;">
                       VALNEX <span style="font-weight:400;color:#93c5fd;">INDUSTRIES PVT. LTD.</span>
                     </div>
-                    <div style="margin-top:5px;font-size:11px;font-weight:700;letter-spacing:0.16em;color:#38bdf8;text-transform:uppercase;">
+                    <div style="margin-top:6px;font-size:11px;font-weight:800;letter-spacing:0.18em;color:#f97316;text-transform:uppercase;">
                       QUALITY &bull; EXCELLENCE &bull; COMMITMENT
                     </div>
                     <div style="margin-top:8px;">
@@ -476,7 +476,7 @@ function buildCustomerHtml(inquiry: StoredInquiry, catalogUrl: string): string {
                   </td>
                 </tr>
               </table>
-              <div style="height:3px;background:linear-gradient(90deg, #38bdf8 0%, #0055ff 100%);margin-top:18px;border-radius:2px;"></div>
+              <div style="height:3px;background:linear-gradient(90deg, #f97316 0%, #0047e1 100%);margin-top:18px;border-radius:2px;"></div>
             </td>
           </tr>
 
@@ -600,17 +600,17 @@ function buildCustomerHtml(inquiry: StoredInquiry, catalogUrl: string): string {
                       <tr>
                         <td class="stack-col" width="50%" valign="top" style="padding-right:8px;">
                           <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                            <tr><td style="padding:5px 0;font-size:13px;font-weight:600;color:#1e293b;"><span style="color:#0284c7;font-size:15px;margin-right:6px;">&bull;</span> Air Cooled Chiller</td></tr>
-                            <tr><td style="padding:5px 0;font-size:13px;font-weight:600;color:#1e293b;"><span style="color:#0284c7;font-size:15px;margin-right:6px;">&bull;</span> Water Cooled Chiller</td></tr>
-                            <tr><td style="padding:5px 0;font-size:13px;font-weight:600;color:#1e293b;"><span style="color:#0284c7;font-size:15px;margin-right:6px;">&bull;</span> Hooper Loader</td></tr>
-                            <tr><td style="padding:5px 0;font-size:13px;font-weight:600;color:#1e293b;"><span style="color:#0284c7;font-size:15px;margin-right:6px;">&bull;</span> Hot Air Dryer</td></tr>
+                            <tr><td style="padding:5px 0;font-size:13px;font-weight:600;color:#1e293b;"><span style="color:#0047e1;font-size:15px;margin-right:6px;">&bull;</span> Air Cooled Chiller</td></tr>
+                            <tr><td style="padding:5px 0;font-size:13px;font-weight:600;color:#1e293b;"><span style="color:#0047e1;font-size:15px;margin-right:6px;">&bull;</span> Water Cooled Chiller</td></tr>
+                            <tr><td style="padding:5px 0;font-size:13px;font-weight:600;color:#1e293b;"><span style="color:#0047e1;font-size:15px;margin-right:6px;">&bull;</span> Hooper Loader</td></tr>
+                            <tr><td style="padding:5px 0;font-size:13px;font-weight:600;color:#1e293b;"><span style="color:#0047e1;font-size:15px;margin-right:6px;">&bull;</span> Hot Air Dryer</td></tr>
                           </table>
                         </td>
                         <td class="stack-col" width="50%" valign="top" style="padding-left:8px;">
                           <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                            <tr><td style="padding:5px 0;font-size:13px;font-weight:600;color:#1e293b;"><span style="color:#0284c7;font-size:15px;margin-right:6px;">&bull;</span> Mould Temperature Controller</td></tr>
-                            <tr><td style="padding:5px 0;font-size:13px;font-weight:600;color:#1e293b;"><span style="color:#0284c7;font-size:15px;margin-right:6px;">&bull;</span> Dozer</td></tr>
-                            <tr><td style="padding:5px 0;font-size:13px;font-weight:600;color:#1e293b;"><span style="color:#0284c7;font-size:15px;margin-right:6px;">&bull;</span> Dehumidifier (Refri)</td></tr>
+                            <tr><td style="padding:5px 0;font-size:13px;font-weight:600;color:#1e293b;"><span style="color:#0047e1;font-size:15px;margin-right:6px;">&bull;</span> Mould Temperature Controller</td></tr>
+                            <tr><td style="padding:5px 0;font-size:13px;font-weight:600;color:#1e293b;"><span style="color:#0047e1;font-size:15px;margin-right:6px;">&bull;</span> Dozer</td></tr>
+                            <tr><td style="padding:5px 0;font-size:13px;font-weight:600;color:#1e293b;"><span style="color:#0047e1;font-size:15px;margin-right:6px;">&bull;</span> Dehumidifier (Refri)</td></tr>
                           </table>
                         </td>
                       </tr>
@@ -634,11 +634,11 @@ function buildCustomerHtml(inquiry: StoredInquiry, catalogUrl: string): string {
                       </tr>
                       <tr>
                         <td style="padding:5px 0;color:#64748b;" width="90" valign="top"><strong>Phone:</strong></td>
-                        <td style="padding:5px 0;" valign="top"><a href="tel:+917574848748" style="color:#02102e;font-weight:600;text-decoration:none;">+91 75748 48748</a></td>
+                        <td style="padding:5px 0;" valign="top"><a href="tel:+917574848748" style="color:#0047e1;font-weight:700;text-decoration:none;">+91 75748 48748</a></td>
                       </tr>
                       <tr>
                         <td style="padding:5px 0;color:#64748b;" width="90" valign="top"><strong>Service:</strong></td>
-                        <td style="padding:5px 0;" valign="top"><a href="tel:+919173194131" style="color:#0284c7;font-weight:700;text-decoration:none;">+91 91731 94131</a></td>
+                        <td style="padding:5px 0;" valign="top"><a href="tel:+919173194131" style="color:#0047e1;font-weight:700;text-decoration:none;">+91 91731 94131</a></td>
                       </tr>
                       <tr>
                         <td style="padding:5px 0;color:#64748b;" width="90" valign="top"><strong>Website:</strong></td>
@@ -678,7 +678,7 @@ function buildCustomerHtml(inquiry: StoredInquiry, catalogUrl: string): string {
           <!-- Footer Banner -->
           <tr>
             <td style="background-color:#02102e;padding:22px 24px;text-align:center;color:#94a3b8;font-size:12px;line-height:1.6;">
-              <div style="font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#38bdf8;margin-bottom:5px;">
+              <div style="font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:#f97316;margin-bottom:6px;">
                 QUALITY &bull; EXCELLENCE &bull; COMMITMENT
               </div>
               <p style="margin:0 0 5px;color:#cbd5e1;">&copy; 2026 Valnex Industries Pvt. Ltd. All rights reserved.</p>

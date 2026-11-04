@@ -230,9 +230,14 @@ export function InquiryForm() {
 
         {/* Instant Access & Support Actions */}
         <div className="border border-[color:var(--brand-ink)]/10 bg-[#f1f5f9] p-4 flex flex-col gap-3">
-          <span className="eyebrow text-[color:var(--brand-blue)] text-[10px]">
-            Instant Access &amp; Support
-          </span>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="eyebrow text-[color:var(--brand-blue)] text-[10px]">
+              Direct Contact &amp; Support
+            </span>
+            <span className="font-orbitron text-[9px] font-extrabold tracking-[0.2em] text-[#f97316] uppercase">
+              Quality &bull; Excellence &bull; Commitment
+            </span>
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
             <a
@@ -266,7 +271,7 @@ export function InquiryForm() {
             </p>
             <p>
               <strong>Phone:</strong>{" "}
-              <a href="tel:+917574848748" className="text-[color:var(--brand-ink)] font-semibold">
+              <a href="tel:+917574848748" className="font-bold text-[color:var(--brand-blue)]">
                 +91 75748 48748
               </a>
             </p>
