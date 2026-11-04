@@ -24,9 +24,12 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 import { CdnImage } from "@/components/CdnImage";
 import { PRODUCTS, productHref, type Product, type ProductSlug } from "@/lib/products";
 import { cn } from "@/utils/cn";
+
+gsap.registerPlugin(useGSAP);
 
 export interface ShowcaseSpec {
   icon: LucideIcon;
@@ -394,24 +397,23 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
     return () => window.removeEventListener("resize", handleResize);
   }, [updateNodePositions]);
 
-  // Main GSAP continuous clockwise orbit animation
-  useEffect(() => {
-    const tween = gsap.to(orbitAngleRef.current, {
-      angle: "+=360",
-      duration: 48,
-      ease: "none",
-      repeat: -1,
-      onUpdate: () => {
-        updateNodePositions(orbitAngleRef.current.angle);
-      },
-    });
+  // Main GSAP continuous clockwise orbit animation using official useGSAP hook
+  useGSAP(
+    () => {
+      const tween = gsap.to(orbitAngleRef.current, {
+        angle: "+=360",
+        duration: 48,
+        ease: "none",
+        repeat: -1,
+        onUpdate: () => {
+          updateNodePositions(orbitAngleRef.current.angle);
+        },
+      });
 
-    orbitTweenRef.current = tween;
-
-    return () => {
-      tween.kill();
-    };
-  }, [updateNodePositions]);
+      orbitTweenRef.current = tween;
+    },
+    { scope: containerRef }
+  );
 
   // Smoothly select product and align orbit
   const selectProduct = useCallback(
