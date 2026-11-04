@@ -106,7 +106,7 @@ export function HeroScroll() {
   const backgroundColor = useTransform(
     scrollYProgress,
     [0, 0.5, 1],
-    ["#0047e1", "#0a2472", "#02102e"],
+    ["#0a2472", "#061a4a", "#02102e"],
     { clamp: true }
   );
   /* Settles on 0.07, the value every section below uses, so the grid reads as

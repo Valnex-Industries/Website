@@ -14,7 +14,7 @@
   --brand-blue-deep: #0a2472;
   --brand-ink: #02102e;
 
-  --background: var(--brand-blue);
+  --background: var(--brand-blue-deep);
   --foreground: #ffffff;
 
   --hairline: rgba(255, 255, 255, 0.18);

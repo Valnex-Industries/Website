@@ -19,7 +19,7 @@ export default async function Home() {
   const products = await getProducts();
 
   return (
-    <div className="relative w-full bg-[color:var(--brand-blue)]">
+    <div className="relative w-full bg-[color:var(--brand-blue-deep)]">
       {/* Enumerates the range, so an answer engine asked "what does Valnex
           make?" can list it without parsing the animated grid. */}
       <JsonLd data={productListSchema(products)} />
