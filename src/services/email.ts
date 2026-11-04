@@ -53,6 +53,13 @@ function getTransporter(settings: SmtpSettings): Transporter {
   return cachedTransporter;
 }
 
+export interface EmailAttachment {
+  filename: string;
+  content?: Buffer | string;
+  path?: string;
+  contentType?: string;
+}
+
 export interface MailOptions {
   to: string | string[];
   subject: string;
@@ -62,6 +69,8 @@ export interface MailOptions {
   replyTo?: string;
   /** Overrides the default sender name on the From header. */
   fromName?: string;
+  /** Optional file attachments (e.g. Catalog PDF). */
+  attachments?: EmailAttachment[];
 }
 
 export interface MailResult {
@@ -113,6 +122,7 @@ export async function sendMail(options: MailOptions): Promise<MailResult> {
         subject: options.subject,
         text: options.text,
         html: options.html,
+        attachments: options.attachments,
       });
 
       if (!error) {
@@ -187,6 +197,7 @@ export async function sendMail(options: MailOptions): Promise<MailResult> {
         subject: options.subject,
         text: options.text,
         html: options.html,
+        attachments: options.attachments,
       });
 
       return { ok: true, configured: true, delivered: true };

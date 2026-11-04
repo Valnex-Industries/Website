@@ -1,12 +1,16 @@
 import "server-only";
 
+import fs from "node:fs";
+import path from "node:path";
+
 import {
   productLabel,
   TIMELINES,
   VOLUMES,
   type Inquiry,
 } from "@/lib/inquiry";
-import { sendMail } from "@/services/email";
+import { siteUrl } from "@/lib/site";
+import { sendMail, type EmailAttachment } from "@/services/email";
 import { insertAdmin } from "@/services/supabase";
 
 /**
@@ -365,6 +369,318 @@ async function notify(inquiry: StoredInquiry): Promise<DeliveryResult> {
   });
 }
 
+/* --- Catalog Attachment Loader ------------------------------------------- */
+
+function getCatalogAttachments(): EmailAttachment[] | undefined {
+  try {
+    const catalogPath = path.join(
+      process.cwd(),
+      "public",
+      "Valnex-Industries-Catalog.pdf",
+    );
+    if (fs.existsSync(catalogPath)) {
+      const buffer = fs.readFileSync(catalogPath);
+      return [
+        {
+          filename: "Valnex-Industries-Catalog.pdf",
+          content: buffer,
+          contentType: "application/pdf",
+        },
+      ];
+    }
+  } catch (err) {
+    console.warn("[inquiry] Could not load catalog PDF as attachment:", err);
+  }
+  return undefined;
+}
+
+/* --- Customer Confirmation Email Template ------------------------------- */
+
+function buildCustomerHtml(inquiry: StoredInquiry, catalogUrl: string): string {
+  const prod = productLabel(inquiry.product);
+  const dateFormatted = formatDate(inquiry.submittedAt);
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Inquiry Has Been Registered — Valnex Industries</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f1f4f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#02102e;-webkit-font-smoothing:antialiased;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f1f4f9;padding:32px 16px;">
+    <tr>
+      <td align="center">
+        <!-- Main Card Container -->
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:640px;background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(2,16,46,0.08);border:1px solid #e2e8f0;border-collapse:separate;">
+          
+          <!-- Header Banner in Deep Navy -->
+          <tr>
+            <td style="background-color:#0a2472;padding:32px 32px 24px;color:#ffffff;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td>
+                    <div style="font-size:18px;font-weight:900;letter-spacing:0.04em;color:#ffffff;text-transform:uppercase;">
+                      VALNEX <span style="font-weight:400;color:#93c5fd;">INDUSTRIES PVT. LTD.</span>
+                    </div>
+                    <div style="margin-top:4px;font-size:11px;font-weight:700;letter-spacing:0.18em;color:#38bdf8;text-transform:uppercase;">
+                      QUALITY &bull; EXCELLENCE &bull; COMMITMENT
+                    </div>
+                    <div style="margin-top:8px;display:inline-block;padding:3px 10px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:4px;font-size:10px;font-weight:700;letter-spacing:0.12em;color:#e0f2fe;text-transform:uppercase;">
+                      MANUFACTURER OF PLASTIC AUXILIARIES
+                    </div>
+                  </td>
+                  <td align="right" valign="top">
+                    <span style="display:inline-block;padding:6px 12px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:6px;font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:700;color:#ffffff;">
+                      ${escapeHtml(inquiry.reference)}
+                    </span>
+                  </td>
+                </tr>
+              </table>
+              <div style="height:3px;background:linear-gradient(90deg, #38bdf8 0%, #0055ff 100%);margin-top:20px;border-radius:2px;"></div>
+            </td>
+          </tr>
+
+          <!-- Confirmation Hero Block -->
+          <tr>
+            <td style="background-color:#f0fdf4;padding:24px 32px;border-bottom:1px solid #dcfce7;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td width="36" valign="top" style="padding-right:16px;">
+                    <div style="width:32px;height:32px;line-height:32px;border-radius:50%;background:#16a34a;color:#ffffff;text-align:center;font-size:16px;font-weight:800;">✓</div>
+                  </td>
+                  <td valign="middle">
+                    <h2 style="margin:0 0 6px;font-size:18px;font-weight:800;color:#14532d;line-height:1.35;">
+                      Your inquiry has been registered. Thank you for choosing us, Valnex Industries.
+                    </h2>
+                    <p style="margin:0;font-size:13px;color:#166534;line-height:1.5;">
+                      Dear <strong>${escapeHtml(inquiry.name)}</strong>, our technical sales and engineering team has received your requirement for <strong>${escapeHtml(prod)}</strong> and is reviewing your specifications.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Content Body -->
+          <tr>
+            <td style="padding:32px;">
+
+              <!-- Inquiry Summary Card -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px 20px;margin-bottom:28px;">
+                <tr>
+                  <td>
+                    <div style="font-size:11px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#64748b;margin-bottom:10px;">Registered Inquiry Overview</div>
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td width="50%" style="padding:4px 0;font-size:13px;color:#64748b;">Reference No: <strong style="color:#02102e;font-family:ui-monospace,Menlo,monospace;">${escapeHtml(inquiry.reference)}</strong></td>
+                        <td width="50%" style="padding:4px 0;font-size:13px;color:#64748b;">Registered: <strong style="color:#02102e;">${escapeHtml(dateFormatted)}</strong></td>
+                      </tr>
+                      <tr>
+                        <td width="50%" style="padding:4px 0;font-size:13px;color:#64748b;">Company / Plant: <strong style="color:#02102e;">${escapeHtml(inquiry.company)}</strong></td>
+                        <td width="50%" style="padding:4px 0;font-size:13px;color:#64748b;">Equipment: <strong style="color:#0047e1;">${escapeHtml(prod)}</strong></td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Product Catalog Download Box -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:linear-gradient(135deg, #0a2472 0%, #0047e1 100%);border-radius:10px;padding:24px;margin-bottom:32px;color:#ffffff;">
+                <tr>
+                  <td>
+                    <div style="font-size:11px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#38bdf8;margin-bottom:6px;">Machinery &amp; Auxiliaries Catalog</div>
+                    <h3 style="margin:0 0 8px;font-size:18px;font-weight:800;color:#ffffff;">Download Our Product Catalog (PDF)</h3>
+                    <p style="margin:0 0 18px;font-size:13px;line-height:1.5;color:rgba(255,255,255,0.85);">
+                      We have attached our complete product catalog PDF directly to this email. You can also view or download it via the button below to explore technical specifications across our entire industrial cooling and auxiliary range.
+                    </p>
+                    <table role="presentation" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="border-radius:6px;background-color:#ffffff;">
+                          <a href="${escapeHtml(catalogUrl)}" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:12px 24px;font-size:14px;font-weight:800;color:#0a2472;text-decoration:none;border-radius:6px;letter-spacing:0.02em;">
+                            Download Equipment Catalog (PDF) &darr;
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Types of Products Section -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;">
+                <tr>
+                  <td style="padding-bottom:12px;border-bottom:2px solid #f1f5f9;">
+                    <div style="font-size:11px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#0047e1;">Types of Products We Manufacture</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding-top:16px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td width="50%" valign="top" style="padding-right:12px;">
+                          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                            <tr><td style="padding:6px 0;font-size:14px;font-weight:600;color:#1e293b;"><span style="color:#0284c7;font-size:16px;margin-right:8px;">&bull;</span> Air Cooled Chiller</td></tr>
+                            <tr><td style="padding:6px 0;font-size:14px;font-weight:600;color:#1e293b;"><span style="color:#0284c7;font-size:16px;margin-right:8px;">&bull;</span> Water Cooled Chiller</td></tr>
+                            <tr><td style="padding:6px 0;font-size:14px;font-weight:600;color:#1e293b;"><span style="color:#0284c7;font-size:16px;margin-right:8px;">&bull;</span> Hooper Loader</td></tr>
+                            <tr><td style="padding:6px 0;font-size:14px;font-weight:600;color:#1e293b;"><span style="color:#0284c7;font-size:16px;margin-right:8px;">&bull;</span> Hot Air Dryer</td></tr>
+                          </table>
+                        </td>
+                        <td width="50%" valign="top" style="padding-left:12px;">
+                          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                            <tr><td style="padding:6px 0;font-size:14px;font-weight:600;color:#1e293b;"><span style="color:#0284c7;font-size:16px;margin-right:8px;">&bull;</span> Mould Temperature Controller</td></tr>
+                            <tr><td style="padding:6px 0;font-size:14px;font-weight:600;color:#1e293b;"><span style="color:#0284c7;font-size:16px;margin-right:8px;">&bull;</span> Dozer</td></tr>
+                            <tr><td style="padding:6px 0;font-size:14px;font-weight:600;color:#1e293b;"><span style="color:#0284c7;font-size:16px;margin-right:8px;">&bull;</span> Dehumidifier (Refri)</td></tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Contact & Support Section (3 Lines + Service Number) -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:20px;margin-bottom:28px;">
+                <tr>
+                  <td>
+                    <div style="font-size:11px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#0047e1;margin-bottom:10px;">Get In Touch &amp; Dedicated Support</div>
+                    <p style="margin:0 0 14px;font-size:14px;line-height:1.5;color:#334155;">
+                      If you need immediate technical consultation, customized plant sizing, or order updates, please reach out to our team:
+                    </p>
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;">
+                      <tr>
+                        <td style="padding:6px 0;color:#64748b;" width="140"><strong>Email ID:</strong></td>
+                        <td style="padding:6px 0;"><a href="mailto:info@valnexindustries.com" style="color:#0047e1;font-weight:700;text-decoration:none;">info@valnexindustries.com</a></td>
+                      </tr>
+                      <tr>
+                        <td style="padding:6px 0;color:#64748b;"><strong>Contact Phone:</strong></td>
+                        <td style="padding:6px 0;"><a href="tel:+917574848748" style="color:#02102e;font-weight:700;text-decoration:none;">+91 75748 48748</a></td>
+                      </tr>
+                      <tr>
+                        <td style="padding:6px 0;color:#64748b;"><strong>Service Number:</strong></td>
+                        <td style="padding:6px 0;"><a href="tel:+919173194131" style="color:#0284c7;font-weight:800;text-decoration:none;">SERVICES :- 91731 94131</a></td>
+                      </tr>
+                      <tr>
+                        <td style="padding:6px 0;color:#64748b;"><strong>Website:</strong></td>
+                        <td style="padding:6px 0;"><a href="https://www.valnexindustries.com" target="_blank" rel="noopener noreferrer" style="color:#0047e1;font-weight:600;text-decoration:none;">www.valnexindustries.com</a></td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Manufacturing Plant / Address Section -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:10px;">
+                <tr>
+                  <td style="padding:16px 20px;background:#f1f5f9;border-radius:8px;font-size:12px;line-height:1.6;color:#475569;">
+                    <div style="font-size:11px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#1e293b;margin-bottom:4px;">
+                      VALNEX INDUSTRIES PVT. LTD.
+                    </div>
+                    <div>3, MARUTI INDUSTRIAL PARK-2, DHAMATVAN-BAKROL ROAD, DHAMATVAN, AHMEDABAD - 382435, GUJARAT, INDIA</div>
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+          <!-- Footer Banner -->
+          <tr>
+            <td style="background-color:#02102e;padding:24px 32px;text-align:center;color:#94a3b8;font-size:12px;line-height:1.6;">
+              <div style="font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#38bdf8;margin-bottom:6px;">
+                QUALITY &bull; EXCELLENCE &bull; COMMITMENT
+              </div>
+              <p style="margin:0 0 6px;color:#cbd5e1;">&copy; 2026 Valnex Industries Pvt. Ltd. All rights reserved.</p>
+              <p style="margin:0;font-size:11px;color:#64748b;">This automated confirmation was sent because an inquiry was submitted on valnexindustries.com with this email address.</p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
+
+function buildCustomerText(
+  inquiry: StoredInquiry,
+  catalogUrl: string,
+): string {
+  const prod = productLabel(inquiry.product);
+  const dateFormatted = formatDate(inquiry.submittedAt);
+
+  return [
+    "=== VALNEX INDUSTRIES PVT. LTD. ===",
+    "QUALITY · EXCELLENCE · COMMITMENT",
+    "MANUFACTURER OF PLASTIC AUXILIARIES",
+    "",
+    `Dear ${inquiry.name},`,
+    "",
+    "Your inquiry has been registered. Thank you for choosing us, Valnex Industries.",
+    "",
+    `Our engineering team has received your inquiry for ${prod} and is reviewing your application requirements. We will connect with you shortly with detailed technical specs and pricing.`,
+    "",
+    "--- INQUIRY OVERVIEW ---",
+    `Reference No: ${inquiry.reference}`,
+    `Date:         ${dateFormatted}`,
+    `Company:      ${inquiry.company}`,
+    `Equipment:    ${prod}`,
+    "",
+    "--- PRODUCT & MACHINERY CATALOG ---",
+    "We have attached our complete product catalog PDF to this email.",
+    "You can also download it directly at:",
+    catalogUrl,
+    "",
+    "--- TYPES OF PRODUCTS WE MANUFACTURE ---",
+    "• Air Cooled Chiller",
+    "• Water Cooled Chiller",
+    "• Hooper Loader",
+    "• Hot Air Dryer",
+    "• Mould Temperature Controller",
+    "• Dozer",
+    "• Dehumidifier (Refri)",
+    "",
+    "--- CONTACT & DEDICATED SUPPORT ---",
+    "You can contact us directly at:",
+    "• Email: info@valnexindustries.com",
+    "• Phone / Sales: +91 75748 48748",
+    "• Dedicated Service Support: SERVICES :- 91731 94131",
+    "• Website: https://www.valnexindustries.com",
+    "",
+    "--- PLANT & FACTORY ADDRESS ---",
+    "VALNEX INDUSTRIES PVT. LTD.",
+    "3, MARUTI INDUSTRIAL PARK-2, DHAMATVAN-BAKROL ROAD,",
+    "DHAMATVAN, AHMEDABAD - 382435, GUJARAT, INDIA",
+  ].join("\n");
+}
+
+async function sendCustomerConfirmation(
+  inquiry: StoredInquiry,
+): Promise<DeliveryResult> {
+  if (!inquiry.email || !inquiry.email.includes("@")) {
+    return {
+      ok: false,
+      configured: false,
+      delivered: false,
+      error: "Invalid customer email address",
+    };
+  }
+
+  const catalogUrl = siteUrl("/Valnex-Industries-Catalog.pdf");
+  const attachments = getCatalogAttachments();
+
+  return sendMail({
+    to: inquiry.email,
+    fromName: "Valnex Industries",
+    replyTo: "info@valnexindustries.com",
+    subject: `Your Inquiry Has Been Registered — Valnex Industries [${inquiry.reference}]`,
+    text: buildCustomerText(inquiry, catalogUrl),
+    html: buildCustomerHtml(inquiry, catalogUrl),
+    attachments,
+  });
+}
+
 /* --- The operation the action calls -------------------------------------- */
 
 export interface SubmissionOutcome {
@@ -375,7 +691,8 @@ export interface SubmissionOutcome {
 }
 
 /**
- * Persists an inquiry and notifies the sales/engineering inbox.
+ * Persists an inquiry, notifies the sales/engineering inbox,
+ * and sends an automated acknowledgment + catalog PDF to the customer.
  *
  * Runs delivery in parallel (`Promise.all`): email delivery and database
  * persistence never block or sink each other.
@@ -383,7 +700,26 @@ export interface SubmissionOutcome {
 export async function deliverInquiry(
   inquiry: StoredInquiry,
 ): Promise<SubmissionOutcome> {
-  const [stored, emailed] = await Promise.all([save(inquiry), notify(inquiry)]);
+  const [stored, emailed, customerAck] = await Promise.all([
+    save(inquiry),
+    notify(inquiry),
+    sendCustomerConfirmation(inquiry).catch((err) => {
+      console.error("[inquiry] Customer confirmation delivery error:", err);
+      return {
+        ok: false,
+        configured: true,
+        delivered: false,
+        error: err instanceof Error ? err.message : String(err),
+      };
+    }),
+  ]);
+
+  console.info("[inquiry:delivery]", {
+    reference: inquiry.reference,
+    dbSaved: stored.delivered,
+    internalEmailDelivered: emailed.delivered,
+    customerEmailDelivered: customerAck.delivered,
+  });
 
   return {
     configured: stored.configured || emailed.configured,
