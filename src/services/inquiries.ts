@@ -502,37 +502,6 @@ function buildCustomerHtml(inquiry: StoredInquiry, catalogUrl: string): string {
                 </tr>
               </table>
 
-              <!-- Two-Way Active Communication Channel -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:20px;margin-bottom:28px;">
-                <tr>
-                  <td>
-                    <div style="font-size:11px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:#15803d;margin-bottom:6px;">
-                      Two-Way Active Communication
-                    </div>
-                    <h4 style="margin:0 0 6px;font-size:15px;font-weight:800;color:#14532d;">
-                      Direct Two-Way Channel With Our Engineers
-                    </h4>
-                    <p style="margin:0 0 14px;font-size:13px;line-height:1.6;color:#166534;">
-                      This email is an active two-way thread. You can hit <strong>Reply</strong> directly to send technical drawings, ask duty cycle questions, or provide plant specifications to our engineers.
-                    </p>
-                    <table role="presentation" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td style="border-radius:6px;background-color:#0047e1;">
-                          <a href="mailto:info@valnexindustries.com?subject=${encodeURIComponent(`Re: Inquiry [${inquiry.reference}] — ${inquiry.company}`)}" style="display:inline-block;padding:10px 18px;font-size:13px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:6px;">
-                            Reply to Engineering Desk &rarr;
-                          </a>
-                        </td>
-                        <td style="padding-left:10px;">
-                          <a href="https://wa.me/917574848748?text=${encodeURIComponent(`Hello Valnex Industries, regarding inquiry [${inquiry.reference}]. I would like to discuss specifications.`)}" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:10px 16px;font-size:13px;font-weight:700;color:#ffffff;background:#25D366;text-decoration:none;border-radius:6px;">
-                            Chat on WhatsApp
-                          </a>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-              </table>
-
               <!-- Product Catalog Download Box -->
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:linear-gradient(135deg, #0a2472 0%, #0047e1 100%);border-radius:10px;padding:24px;margin-bottom:32px;color:#ffffff;">
                 <tr>
@@ -678,10 +647,6 @@ function buildCustomerText(
     "--- YOUR REFERENCE ID (COPY & SAVE) ---",
     `REFERENCE ID: ${inquiry.reference}`,
     "(Please copy and quote this Reference ID in all correspondence with our team)",
-    "",
-    "--- TWO-WAY ACTIVE COMMUNICATION ---",
-    "This is an active two-way thread. You can hit Reply directly to this email to",
-    "attach drawings, specify cycle times, or ask technical sizing questions.",
     "",
     "--- PRODUCT & MACHINERY CATALOG ---",
     "We have attached our complete product catalog PDF to this email.",

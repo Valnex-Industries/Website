@@ -197,18 +197,13 @@ export function InquiryForm() {
 
     return (
       <div className="py-2 flex flex-col gap-6">
-        <div className="flex items-start gap-3.5">
+        <div className="flex items-center gap-3.5">
           <span className="flex h-11 w-11 shrink-0 items-center justify-center bg-[color:var(--brand-blue)] shadow-md">
             <Check size={22} strokeWidth={3} className="text-white" />
           </span>
-          <div>
-            <span className="eyebrow text-emerald-600 font-bold text-[11px]">
-              Two-Way Inquiry Active
-            </span>
-            <h2 className="text-[clamp(1.4rem,2.4vw,2rem)] font-black leading-tight tracking-tight text-[color:var(--brand-blue)]">
-              Inquiry Registered.
-            </h2>
-          </div>
+          <h2 className="text-[clamp(1.5rem,2.6vw,2.25rem)] font-black leading-tight tracking-tight text-[color:var(--brand-blue)]">
+            Inquiry Registered.
+          </h2>
         </div>
 
         <p className="text-sm font-medium leading-relaxed text-[color:var(--brand-ink)]/85 md:text-base">
@@ -233,10 +228,10 @@ export function InquiryForm() {
           {ref && <CopyReferenceButton reference={ref} />}
         </div>
 
-        {/* Two-Way Engagement Actions */}
+        {/* Instant Access & Support Actions */}
         <div className="border border-[color:var(--brand-ink)]/10 bg-[#f1f5f9] p-4 flex flex-col gap-3">
           <span className="eyebrow text-[color:var(--brand-blue)] text-[10px]">
-            Two-Way Channels &amp; Instant Access
+            Instant Access &amp; Support
           </span>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
