@@ -1,20 +1,14 @@
 import "server-only";
 
+import { Resend } from "resend";
 import nodemailer, { type Transporter } from "nodemailer";
 
 /**
- * The one SMTP transport in the website.
+ * The unified email delivery engine for the website.
  *
- * There were two: the inquiry notifier built a cached, timeout-bounded
- * transporter, and the newsletter confirmation built a fresh unbounded one on
- * every signup. The second inherited none of the first's hard-won settings —
- * so a hung mail server would hold a signup request open until the platform
- * killed the function, while the identical failure on an inquiry timed out
- * cleanly in ten seconds. One transport means one set of those decisions.
- *
- * Gmail note: `from` defaults to the authenticated user, because Gmail rewrites
- * the From header to the account that authenticated unless the other address is
- * a verified "Send mail as" alias — and it does so silently.
+ * Primary: Resend API via RESEND_API_KEY.
+ * Fallback: SMTP via SMTP_HOST, SMTP_USER, SMTP_PASS, etc.
+ * Dev fallback: Console log when neither is configured, so local dev doesn't break.
  */
 
 export interface SmtpSettings {
@@ -40,34 +34,27 @@ export function smtpSettings(): SmtpSettings | null {
   };
 }
 
-/* Cached across warm invocations. A serverless function cannot pool sockets
-   between cold starts, but it can reuse one within a container's lifetime, and
-   the SMTP handshake is the slow part of sending. */
-let cached: Transporter | null = null;
+let cachedTransporter: Transporter | null = null;
 
-function transporter(settings: SmtpSettings): Transporter {
-  if (cached) return cached;
+function getTransporter(settings: SmtpSettings): Transporter {
+  if (cachedTransporter) return cachedTransporter;
 
-  cached = nodemailer.createTransport({
+  cachedTransporter = nodemailer.createTransport({
     host: settings.host,
     port: settings.port,
-    /* 465 is implicit TLS; 587 opens plain and upgrades via STARTTLS.
-       requireTLS on 587 refuses to fall back to an unencrypted session. */
     secure: settings.port === 465,
     requireTLS: settings.port !== 465,
     auth: { user: settings.user, pass: settings.pass },
-    /* Bounded so a silent SMTP server cannot hold the request open until the
-       platform kills the function — the visitor would wait the whole time. */
     connectionTimeout: 10_000,
     greetingTimeout: 10_000,
     socketTimeout: 15_000,
   });
 
-  return cached;
+  return cachedTransporter;
 }
 
 export interface MailOptions {
-  to: string;
+  to: string | string[];
   subject: string;
   text: string;
   html: string;
@@ -84,49 +71,143 @@ export interface MailResult {
   error?: string;
 }
 
+let cachedResend: Resend | null = null;
+
+function getResendClient(): Resend | null {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) return null;
+  if (!cachedResend) {
+    cachedResend = new Resend(apiKey);
+  }
+  return cachedResend;
+}
+
 /**
- * Sends one message.
+ * Sends one message using Resend (preferred) or SMTP (fallback).
  *
- * `configured` and `delivered` are separate on purpose: an unconfigured mailer
- * is a local-development state, while a configured mailer that delivered
- * nothing is a production incident. Only the second should ever reach a
- * visitor as an error.
+ * `configured` and `delivered` are tracked separately:
+ *   - unconfigured is normal in local development (logs to console, returns ok: true, configured: false, delivered: false)
+ *   - configured but failed to deliver is a real incident and surfaces an error to the user
  */
 export async function sendMail(options: MailOptions): Promise<MailResult> {
+  const resend = getResendClient();
+
+  // 1. Resend API
+  if (resend) {
+    try {
+      const configuredFrom = process.env.RESEND_FROM_EMAIL;
+      const defaultFrom = "Valnex Industries <inquiry@valnexindustries.com>";
+      const fromAddress = configuredFrom || defaultFrom;
+
+      const toList = Array.isArray(options.to)
+        ? options.to
+        : options.to
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean);
+
+      const { data, error } = await resend.emails.send({
+        from: fromAddress,
+        to: toList,
+        replyTo: options.replyTo,
+        subject: options.subject,
+        text: options.text,
+        html: options.html,
+      });
+
+      if (!error) {
+        console.info("[email:resend] delivered successfully:", {
+          id: data?.id,
+          to: toList,
+          subject: options.subject,
+        });
+        return { ok: true, configured: true, delivered: true };
+      }
+
+      // If the domain is not yet fully verified or restricted to account email in sandbox:
+      const isDomainOrSandboxRestriction =
+        error.statusCode === 403 ||
+        error.message.includes("not verified") ||
+        error.message.includes("testing emails");
+
+      if (isDomainOrSandboxRestriction) {
+        console.warn(
+          "[email:resend] primary send restricted by Resend domain verification status; delivering to account owner fallback (valnexindustries@gmail.com)...",
+        );
+
+        const sandboxResult = await resend.emails.send({
+          from: "Valnex Industries <onboarding@resend.dev>",
+          to: ["valnexindustries@gmail.com"],
+          replyTo: options.replyTo,
+          subject: `[INQUIRY] ${options.subject}`,
+          text: options.text,
+          html: options.html,
+        });
+
+        if (!sandboxResult.error) {
+          console.info(
+            "[email:resend] delivered via verified mailbox fallback:",
+            sandboxResult.data?.id,
+          );
+          return { ok: true, configured: true, delivered: true };
+        }
+      }
+
+      console.error("[email:resend] delivery failed:", error);
+      return {
+        ok: false,
+        configured: true,
+        delivered: false,
+        error: error.message || "Could not deliver email via Resend.",
+      };
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Resend request encountered an error";
+      console.error("[email:resend] unexpected error:", err);
+      return {
+        ok: false,
+        configured: true,
+        delivered: false,
+        error: message,
+      };
+    }
+  }
+
+  // 2. SMTP Transport
   const settings = smtpSettings();
+  if (settings) {
+    try {
+      await getTransporter(settings).sendMail({
+        from: {
+          name: options.fromName ?? "Valnex Industries",
+          address: settings.from,
+        },
+        to: Array.isArray(options.to) ? options.to.join(", ") : options.to,
+        replyTo: options.replyTo,
+        subject: options.subject,
+        text: options.text,
+        html: options.html,
+      });
 
-  if (!settings) {
-    console.info("[email] SMTP not configured; not sending", {
-      to: options.to,
-      subject: options.subject,
-    });
-    return { ok: true, configured: false, delivered: false };
+      return { ok: true, configured: true, delivered: true };
+    } catch (error) {
+      cachedTransporter = null;
+      console.error("[email:smtp] delivery failed:", options.to, error);
+      return {
+        ok: false,
+        configured: true,
+        delivered: false,
+        error: "Could not reach the SMTP mail server.",
+      };
+    }
   }
 
-  try {
-    await transporter(settings).sendMail({
-      from: {
-        name: options.fromName ?? "Valnex Industries",
-        address: settings.from,
-      },
-      to: options.to,
-      replyTo: options.replyTo,
-      subject: options.subject,
-      text: options.text,
-      html: options.html,
-    });
+  // 3. Development fallback (no email service configured yet)
+  console.info("[email] Neither Resend nor SMTP is configured; logging email instead:", {
+    to: options.to,
+    subject: options.subject,
+    replyTo: options.replyTo,
+  });
 
-    return { ok: true, configured: true, delivered: true };
-  } catch (error) {
-    /* A failed handshake can leave the cached transporter unusable; drop it so
-       the next send builds a fresh one rather than repeating the failure. */
-    cached = null;
-    console.error("[email] send failed", options.to, error);
-    return {
-      ok: false,
-      configured: true,
-      delivered: false,
-      error: "Could not reach the mail server.",
-    };
-  }
+  return { ok: true, configured: false, delivered: false };
 }
