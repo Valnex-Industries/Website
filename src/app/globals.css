@@ -125,6 +125,14 @@ h1, h2, h3, h4, h5, h6, .display-type {
   background-position: center center;
 }
 
+.product-orbit-grid {
+  background-position: 0 0;
+}
+
+.product-orbit-grid-stage {
+  background-position: var(--product-grid-x, 0) var(--product-grid-y, 0);
+}
+
 /* A 96px cell only draws two and a half columns on a phone, which reads as
    empty panels rather than as a drawing. */
 @media (max-width: 639px) {

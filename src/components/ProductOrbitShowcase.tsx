@@ -324,12 +324,25 @@ interface OrbitLengthLookup {
   total: number;
 }
 
+interface OrbitPlacement extends Point {
+  depth: number;
+  scale: number;
+  tangent: Point;
+}
+
+interface RouteTangents {
+  end?: Point;
+  start?: Point;
+}
+
 const ORBIT_TILT_DEG = -28;
 const ORBIT_TILT_RAD = (ORBIT_TILT_DEG * Math.PI) / 180;
 const ORBIT_COS = Math.cos(ORBIT_TILT_RAD);
 const ORBIT_SIN = Math.sin(ORBIT_TILT_RAD);
 const SHOWCASE_HOLD_SECONDS = 4.4;
 const SWAP_DURATION_SECONDS = 1.15;
+const SWAP_MOTION_DELAY_SECONDS = 0.04;
+const ORBIT_REVOLUTION_SECONDS = 58;
 const ORBIT_LENGTH_STEPS = 360;
 
 function buildOrbitLengthLookup(rx: number, ry: number): OrbitLengthLookup {
@@ -371,10 +384,38 @@ function orbitAngleAtProgress(progress: number, lookup: OrbitLengthLookup) {
   return ((low - 1 + segmentProgress) / lookup.steps) * Math.PI * 2;
 }
 
+function orbitPlacementAtProgress(
+  progress: number,
+  geometry: Pick<OrbitGeometry, "rx" | "ry">,
+  lookup: OrbitLengthLookup
+): OrbitPlacement {
+  const phi = orbitAngleAtProgress(progress, lookup);
+  const u = geometry.rx * Math.cos(phi);
+  const v = geometry.ry * Math.sin(phi);
+  const derivativeU = -geometry.rx * Math.sin(phi);
+  const derivativeV = geometry.ry * Math.cos(phi);
+  const tangentX = derivativeU * ORBIT_COS - derivativeV * ORBIT_SIN;
+  const tangentY = derivativeU * ORBIT_SIN + derivativeV * ORBIT_COS;
+  const tangentLength = Math.max(Math.hypot(tangentX, tangentY), 1);
+  const depth = (Math.sin(phi) + 1) / 2;
+
+  return {
+    x: u * ORBIT_COS - v * ORBIT_SIN,
+    y: u * ORBIT_SIN + v * ORBIT_COS,
+    depth,
+    scale: 0.88 + depth * 0.18,
+    tangent: {
+      x: tangentX / tangentLength,
+      y: tangentY / tangentLength,
+    },
+  };
+}
+
 function makeCubicRoute(
   start: Point,
   end: Point,
-  bendDirection: 1 | -1
+  bendDirection: 1 | -1,
+  tangents: RouteTangents = {}
 ): CubicRoute {
   const dx = end.x - start.x;
   const dy = end.y - start.y;
@@ -382,17 +423,28 @@ function makeCubicRoute(
   const normalX = -dy / distance;
   const normalY = dx / distance;
   const bend = Math.min(118, Math.max(52, distance * 0.24)) * bendDirection;
+  const tangentHandle = Math.min(104, Math.max(48, distance * 0.28));
 
   return {
     start,
-    controlOne: {
-      x: start.x + dx * 0.3 + normalX * bend,
-      y: start.y + dy * 0.3 + normalY * bend,
-    },
-    controlTwo: {
-      x: start.x + dx * 0.72 + normalX * bend,
-      y: start.y + dy * 0.72 + normalY * bend,
-    },
+    controlOne: tangents.start
+      ? {
+          x: start.x + tangents.start.x * tangentHandle,
+          y: start.y + tangents.start.y * tangentHandle,
+        }
+      : {
+          x: start.x + dx * 0.3 + normalX * bend,
+          y: start.y + dy * 0.3 + normalY * bend,
+        },
+    controlTwo: tangents.end
+      ? {
+          x: end.x - tangents.end.x * tangentHandle,
+          y: end.y - tangents.end.y * tangentHandle,
+        }
+      : {
+          x: start.x + dx * 0.72 + normalX * bend,
+          y: start.y + dy * 0.72 + normalY * bend,
+        },
     end,
   };
 }
@@ -471,17 +523,11 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
 
         const slot = slotByProductRef.current[i] ?? i;
         const progress = baseAngle / 360 + slot / visibleSlots;
-        const phi = orbitAngleAtProgress(progress, orbitLengthRef.current);
-        const u = rx * Math.cos(phi);
-        const v = ry * Math.sin(phi);
-        const x = u * ORBIT_COS - v * ORBIT_SIN;
-        const y = u * ORBIT_SIN + v * ORBIT_COS;
-        const depth = (Math.sin(phi) + 1) / 2;
-        const scale = 0.88 + depth * 0.18;
+        const placement = orbitPlacementAtProgress(progress, { rx, ry }, orbitLengthRef.current);
 
-        node.style.transform = `translate3d(calc(-50% + ${x.toFixed(1)}px), calc(-50% + ${y.toFixed(1)}px), 0) scale(${scale.toFixed(3)})`;
-        node.style.zIndex = String(Math.round(12 + depth * 16));
-        node.style.setProperty("--orbit-depth", depth.toFixed(3));
+        node.style.transform = `translate3d(calc(-50% + ${placement.x.toFixed(1)}px), calc(-50% + ${placement.y.toFixed(1)}px), 0) scale(${placement.scale.toFixed(3)})`;
+        node.style.zIndex = String(Math.round(12 + placement.depth * 16));
+        node.style.setProperty("--orbit-depth", placement.depth.toFixed(3));
       });
     },
     [items.length]
@@ -498,6 +544,14 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
       const centerSize = center.offsetWidth;
       const satelliteSize = nodeRefs.current.find(Boolean)?.offsetWidth ?? 48;
       if (!width || !height || !centerSize) return;
+
+      const section = sectionRef.current;
+      if (section) {
+        const sectionRect = section.getBoundingClientRect();
+        const stageRect = stage.getBoundingClientRect();
+        stage.style.setProperty("--product-grid-x", `${sectionRect.left - stageRect.left}px`);
+        stage.style.setProperty("--product-grid-y", `${sectionRect.top - stageRect.top}px`);
+      }
 
       const satelliteRadius = satelliteSize / 2;
       const edgeInset = width < 480 ? 10 : 14;
@@ -592,7 +646,7 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
       updateNodePositions(orbitAngleRef.current.angle);
       const tween = gsap.to(orbitAngleRef.current, {
         angle: "+=360",
-        duration: 58,
+        duration: ORBIT_REVOLUTION_SECONDS,
         ease: "none",
         repeat: -1,
         paused: true,
@@ -612,9 +666,9 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
     const orbit = orbitTweenRef.current;
     if (!orbit) return;
 
-    if (isInView && !transition && !reduceMotion) orbit.play();
+    if (isInView && !reduceMotion) orbit.play();
     else orbit.pause();
-  }, [isInView, reduceMotion, transition]);
+  }, [isInView, reduceMotion]);
 
   const requestTransition = useCallback(
     (index: number) => {
@@ -622,8 +676,6 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
       const targetIndex = (index + items.length) % items.length;
       const currentIndex = activeIndexRef.current;
       if (targetIndex === currentIndex) return;
-
-      orbitTweenRef.current?.pause();
 
       if (reduceMotionRef.current) {
         const slots = slotByProductRef.current;
@@ -671,8 +723,6 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
         return;
       }
 
-      orbitTweenRef.current?.pause();
-
       const stageRect = stage.getBoundingClientRect();
       const sourceRect = source.getBoundingClientRect();
       const centerRect = center.getBoundingClientRect();
@@ -686,16 +736,42 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
       };
       const podRadius = centerRect.width / 2;
       const satelliteScale = sourceRect.width / centerRect.width;
+      const visibleSlots = Math.max(items.length - 1, 1);
+      const targetSlot = slotByProductRef.current[transition.to] ?? 0;
+      const startingAngle = orbitAngleRef.current.angle;
+      const arrivalAngle =
+        startingAngle +
+        ((SWAP_DURATION_SECONDS + SWAP_MOTION_DELAY_SECONDS) /
+          ORBIT_REVOLUTION_SECONDS) *
+          360;
+      const startingPlacement = orbitPlacementAtProgress(
+        startingAngle / 360 + targetSlot / visibleSlots,
+        geometryRef.current,
+        orbitLengthRef.current
+      );
+      const arrivalPlacement = orbitPlacementAtProgress(
+        arrivalAngle / 360 + targetSlot / visibleSlots,
+        geometryRef.current,
+        orbitLengthRef.current
+      );
+      const targetEndPoint = {
+        x: centerPoint.x + arrivalPlacement.x,
+        y: centerPoint.y + arrivalPlacement.y,
+      };
+      const endingSatelliteScale =
+        (source.offsetWidth * arrivalPlacement.scale) / centerRect.width;
       const side = sourcePoint.x < centerPoint.x ? 1 : -1;
       const incomingRoute = makeCubicRoute(
         sourcePoint,
         centerPoint,
-        (side * transition.direction) as 1 | -1
+        (side * transition.direction) as 1 | -1,
+        { start: startingPlacement.tangent }
       );
       const outgoingRoute = makeCubicRoute(
         centerPoint,
-        sourcePoint,
-        (-side * transition.direction) as 1 | -1
+        targetEndPoint,
+        (-side * transition.direction) as 1 | -1,
+        { end: arrivalPlacement.tangent }
       );
       gsap.set(incomingPod, {
         autoAlpha: 1,
@@ -740,7 +816,7 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
             motionPath: { path: routePath(incomingRoute, podRadius) },
             scale: 1,
           },
-          0.04
+          SWAP_MOTION_DELAY_SECONDS
         )
         .to(
           outgoingPod,
@@ -748,11 +824,10 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
             duration: SWAP_DURATION_SECONDS,
             ease: "power3.inOut",
             motionPath: { path: routePath(outgoingRoute, podRadius) },
-            scale: satelliteScale,
+            scale: endingSatelliteScale,
           },
-          0.04
-        )
-        .to(outgoingPod, { autoAlpha: 0.82, duration: 0.16 }, 1.01);
+          SWAP_MOTION_DELAY_SECONDS
+        );
 
       return () => timeline.kill();
     },
@@ -842,7 +917,7 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
     >
       <div
         aria-hidden="true"
-        className="blueprint-grid pointer-events-none absolute inset-0 opacity-[0.045] invert"
+        className="blueprint-grid product-orbit-grid pointer-events-none absolute inset-0 opacity-[0.045] invert"
       />
       <div
         aria-hidden="true"
@@ -953,20 +1028,8 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
           >
             <div
               aria-hidden="true"
-              className="blueprint-grid pointer-events-none absolute inset-0 opacity-[0.035] invert"
+              className="blueprint-grid product-orbit-grid-stage pointer-events-none absolute inset-0 opacity-[0.035] invert"
             />
-            <div className="pointer-events-none absolute left-4 top-4 z-40 flex items-center gap-2 rounded-full border border-slate-200/80 bg-white/75 px-3 py-1.5 backdrop-blur-md sm:left-6 sm:top-6">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#f97316] opacity-40 motion-reduce:animate-none" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#f97316]" />
-              </span>
-              <span className="font-orbitron text-[8px] font-bold uppercase tracking-[0.18em] text-[#02102e] sm:text-[9px]">
-                Clockwise system
-              </span>
-            </div>
-            <div className="pointer-events-none absolute right-4 top-4 z-40 rounded-full border border-slate-200/80 bg-white/75 px-3 py-1.5 font-orbitron text-[8px] font-bold uppercase tracking-[0.18em] text-slate-500 backdrop-blur-md sm:right-6 sm:top-6 sm:text-[9px]">
-              {reduceMotion ? "Manual mode" : "4.4s dwell"}
-            </div>
 
             <svg
               aria-hidden="true"

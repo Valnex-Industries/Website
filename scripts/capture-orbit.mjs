@@ -170,20 +170,63 @@ try {
 
   await sleep(750);
 
+  const orbitNodePositions = `(() =>
+    [...document.querySelectorAll("#products [data-orbit-node]")]
+      .map((node, index) => {
+        const rect = node.getBoundingClientRect();
+        return {
+          index,
+          visible: Number(getComputedStyle(node).opacity) > 0.1,
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2
+        };
+      })
+  )()`;
+  let positionsBeforeAction = null;
+  let actionExpression = null;
+
   if (options.action === "next") {
-    await client.send("Runtime.evaluate", {
-      expression: `document.querySelector('#products button[aria-label="Next product"]')?.click()`,
-    });
-    await sleep(Number(options.delay || 550));
+    actionExpression = `document.querySelector('#products button[aria-label="Next product"]')?.click()`;
   } else if (options.action?.startsWith("product-")) {
     const productIndex = Number(options.action.replace("product-", ""));
+    actionExpression = `document.querySelectorAll("#products [data-orbit-node]")[${productIndex}]?.click()`;
+  }
+
+  if (actionExpression) {
+    positionsBeforeAction = (
+      await client.send("Runtime.evaluate", {
+        expression: orbitNodePositions,
+        returnByValue: true,
+      })
+    ).result.value;
     await client.send("Runtime.evaluate", {
-      expression: `document.querySelectorAll("#products [data-orbit-node]")[${productIndex}]?.click()`,
+      expression: actionExpression,
     });
     await sleep(Number(options.delay || 550));
   }
 
   if (options.wait) await sleep(Number(options.wait));
+
+  if (positionsBeforeAction && motion === "full") {
+    const positionsAfterAction = (
+      await client.send("Runtime.evaluate", {
+        expression: orbitNodePositions,
+        returnByValue: true,
+      })
+    ).result.value;
+    const afterByIndex = new Map(positionsAfterAction.map((position) => [position.index, position]));
+    const travel = positionsBeforeAction
+      .filter((position) => position.visible && afterByIndex.get(position.index)?.visible)
+      .map((position) => {
+        const after = afterByIndex.get(position.index);
+        return Math.hypot(after.x - position.x, after.y - position.y);
+      });
+    const averageTravel = travel.reduce((total, distance) => total + distance, 0) / travel.length;
+    if (averageTravel < 2) {
+      throw new Error(`Orbit paused during swap: ${averageTravel.toFixed(1)}px average travel`);
+    }
+    console.log(`Orbit continued during swap: ${averageTravel.toFixed(1)}px average node travel`);
+  }
 
   const boundsResult = await client.send("Runtime.evaluate", {
     expression: `(() => {
