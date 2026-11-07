@@ -108,10 +108,7 @@ export async function getProducts(): Promise<Product[]> {
 
 export async function getProduct(slug: string): Promise<Product | undefined> {
   const products = await getProducts();
-  const canonical =
-    slug === 'hot-air-dryer' || slug === 'hot-air-hopper-loader'
-      ? 'hopper-loader'
-      : slug;
+  const canonical = slug === 'hot-air-hopper-loader' ? 'hot-air-dryer' : slug;
   return products.find((product) => product.slug === canonical);
 }
 

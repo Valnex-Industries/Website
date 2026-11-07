@@ -115,29 +115,29 @@ const CURATED_SHOWCASE_DATA: Record<
     ],
   },
   "hopper-loader": {
-    titleOverride: "Hot Air Hopper Loader",
+    titleOverride: "Vacuum Hopper Loader",
     subtitle:
-      "Integrated drying and conveying system engineered for automated, moisture-free plastic resin handling.",
+      "Automated plastic granule conveying from 30 to 1200 kg/h with zero material loss.",
     specs: [
       {
         icon: Activity,
-        label: "Throughput Capacity",
+        label: "Conveying Throughput",
         value: "30 – 1200 kg/h",
       },
       {
         icon: Box,
-        label: "Hopper Volume",
-        value: "60 – 800 Litres",
+        label: "Receiver Volume",
+        value: "6 – 85 Litres",
       },
       {
         icon: Zap,
-        label: "Heating Power",
-        value: "2.7 – 18 kW",
+        label: "Vacuum Blower",
+        value: "0.9 – 7.5 kW",
       },
       {
         icon: Plug,
         label: "Power Supply",
-        value: "415 V (3Φ), 50 Hz",
+        value: "230 V (1Φ) / 415 V (3Φ)",
       },
     ],
   },
@@ -196,7 +196,7 @@ const CURATED_SHOWCASE_DATA: Record<
     ],
   },
   "hot-air-dryer": {
-    titleOverride: "Industrial Hot Air Dryer",
+    titleOverride: "Hot Air Hopper Dryer",
     subtitle:
       "Uniform thermal desiccation designed for optimal moisture elimination in virgin and regrind resins.",
     specs: [

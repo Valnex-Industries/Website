@@ -113,7 +113,7 @@ export const PRODUCTS: Product[] = [
     description:
       "Two fourteen-model series on one integral skidded design: air-cooled from 2 to 59 TR and water-cooled from 2.7 to 65.5 TR. Every unit pairs its compressor with an integrated process pump and water tank, so the machine arrives as one skid rather than as a chiller plus a pump set to be matched on site. Both series run on R-22, R-407C or R-410; the water-cooled models reject heat to a cooling tower of 5 to 85 TR.",
     image: "/assets/product-chillers.webp",
-    gallery: [],
+    gallery: [],
     tags: ["Air Cooled", "Water Cooled", "Thermal"],
     specs: [
       { label: "Air-cooled models", value: "VI 02A – VI060A (14)" },
@@ -143,7 +143,7 @@ export const PRODUCTS: Product[] = [
     description:
       "Ten models across two series: seven sized by grinding chamber, from a 230 × 200 mm beside-the-press unit to a 960 × 610 mm central granulator, and three rated by motor. Throughput runs from 100 to 1000 kg/h against a 8 – 12 mm screen, so runners and rejects come back as regrind at a size the machine that made them can take.",
     image: "/assets/product-flake-cutter.webp",
-    gallery: [],
+    gallery: [],
     tags: ["Size Reduction", "Processing"],
     specs: [
       { label: "Models", value: "VAL-230 – VAL-960, VAL-10/15/20 HP (10)" },
@@ -164,24 +164,25 @@ export const PRODUCTS: Product[] = [
   {
     slug: "hopper-loader",
     index: "03",
-    title: "Hot Air Hopper Loader",
+    title: "Vacuum Hopper Loader",
     summary:
-      "Integrated hot-air hopper drying and vacuum conveying systems from 30 to 1200 kg/h for automated material preparation.",
+      "Vacuum hopper loaders from 30 to 1200 kg/h for conveying granules straight to the machine.",
     description:
-      "Integrated hopper drying and vacuum conveying systems from 30 to 1200 kg/h for automated material preparation. Combines insulated hopper drying from 60 to 800 litres with automated vacuum loading to convey granules directly to the injection moulding machine or extruder with zero moisture and zero material loss.",
-    image: "/assets/product-hot-air-hopper-loader.webp",
-    gallery: [],
-    tags: ["Drying", "Conveying", "Automation"],
+      "Six vacuum loaders, from a 6-litre single-phase unit conveying 30 kg/h to an 85-litre receiver conveying 1200 kg/h. The VAL-02 runs on 230 V single phase; every other model runs on 415 V three phase, with the vacuum blower sized from 0.9 to 7.5 kW. Automatic filter cleaning, a ratio valve, positive discharge, a common line valve, a photo-electric material sensor and an intermediate hopper are available as options.",
+    image: "/assets/product-vacuum-hopper-loader.webp",
+    gallery: [],
+    tags: ["Material Handling", "Automation"],
     specs: [
-      { label: "Throughput", value: "30 – 1200 kg/h" },
-      { label: "Hopper capacity", value: "60 – 800 L" },
-      { label: "Heater capacity", value: "2.7 – 18 kW" },
-      { label: "Vacuum blower", value: "0.9 – 7.5 kW" },
+      { label: "Models", value: "VAL-02 – VAL-32 (6)" },
+      { label: "Nominal throughput", value: "30 – 1200 kg/h" },
       { label: "Receiver volume", value: "6 – 85 L" },
-      { label: "Supply", value: "415 V, 3-phase" },
+      { label: "Vacuum blower", value: "0.9 – 7.5 kW" },
+      { label: "Material / vacuum line", value: '1.5" – 4"' },
+      { label: "Supply", value: "230 V 1-phase (VAL-02) / 415 V 3-phase" },
+      { label: "Compressed air", value: "28.3 L/min at 5.51 bar" },
     ],
     applications: [
-      "Conveying and drying granules at the machine hopper",
+      "Conveying granules to the machine hopper",
       "Feeding injection moulding and extrusion machines",
       "Proportional loading of virgin and regrind (ratio valve)",
     ],
@@ -195,7 +196,7 @@ export const PRODUCTS: Product[] = [
     description:
       "A 30 W or 50 W pulsed fibre laser on a floor-standing cabinet, built to mark product moving past it rather than parts placed under it. Air-cooled with no consumables, a touch control system and a centrifugal fume extractor; the two models are identical apart from laser power.",
     image: "/assets/product-laser-marking.webp",
-    gallery: [],
+    gallery: [],
     tags: ["Marking", "Traceability"],
     specs: [
       { label: "Models", value: "VAL-30 / VAL-50" },
@@ -223,7 +224,7 @@ export const PRODUCTS: Product[] = [
     description:
       "A screw-driven volumetric doser for masterbatch and additives. Five screw sizes cover 0.004 to 73 kg/h, from a 3/8 × 1/4 screw for the lightest additions to a 1 × 1 screw at the top of the range, all fed from a 20-litre hopper. The feeder weighs 19 kg, and its separate control panel runs on 230 V AC at 1 A.",
     image: "/assets/product-volumetric-feeder.webp",
-    gallery: [],
+    gallery: [],
     tags: ["Dosing", "Feeding"],
     specs: [
       { label: "Models", value: "VAL 1 – VAL 5 (5)" },
@@ -245,7 +246,7 @@ export const PRODUCTS: Product[] = [
     description:
       "Two series on one frame: five oil-circulating models reaching 180 °C and four water-circulating models reaching 95 °C. Choice of medium is set by the temperature the process needs rather than by unit size — a water model and an oil model of the same heating capacity share their pump, flow and tank.",
     image: "/assets/product-temperature-control-unit.webp",
-    gallery: [],
+    gallery: [],
     tags: ["Thermal", "Regulation"],
     specs: [
       { label: "Models", value: "VAL-O-3 – VAL-O-18, VAL-W-3 – VAL-W-18 (9)" },
@@ -270,7 +271,7 @@ export const PRODUCTS: Product[] = [
     description:
       "Three floor-standing models on an SS 304 structure, rated at 200, 300 and 500 litres a day at 30 °C and 80 % RH, and sized for 1600 to 3000 sq ft of non-air-conditioned floor. Each runs a reciprocating three-phase compressor on R22 or R407, moves 2500 to 5400 m³/h of air through a 20-micron filter, and collects condensate in its own stainless tank with a drain connection.",
     image: "/assets/product-dehumidifier.webp",
-    gallery: [],
+    gallery: [],
     tags: ["Moisture Control", "Drying"],
     specs: [
       { label: "Models", value: "VI 2DH / VI 3DH / VI 5DH" },
@@ -287,6 +288,28 @@ export const PRODUCTS: Product[] = [
       "Humidity control on production floors",
       "Moisture protection in material storage",
     ],
+  },
+  {
+    slug: "hot-air-dryer",
+    index: "08",
+    title: "Hot Air Hopper Dryer",
+    summary:
+      "Hopper dryers from 60 to 800 litres for consistent pre-drying ahead of the press.",
+    description:
+      "Eight insulated hopper dryers, 60 to 800 litres, each with its own heater bank and blower sized to the hopper. They drive surface moisture off granules before processing, which is what keeps splay and voids out of the part. All models run on a 415 V three-phase supply.",
+    image: "/assets/product-hot-air-hopper-loader.webp",
+    gallery: [],
+    tags: ["Drying", "Material Preparation"],
+    specs: [
+      { label: "Models", value: "VAL-50 – VAL-800 (8)" },
+      { label: "Hopper capacity", value: "60 – 800 L" },
+      { label: "Heater capacity", value: "2.7 – 18 kW" },
+      { label: "Blowing power", value: "90 – 750 W" },
+      { label: "Height", value: "1040 – 2260 mm" },
+      { label: "Supply", value: "415 V, 3-phase" },
+    ],
+    applications: ["Injection moulding", "Extrusion", "Blow moulding"],
+    specSheet: "/catalog/spec-sheets/hot-air-dryer.webp",
   },
 ];
 
@@ -314,7 +337,7 @@ export const PRODUCT_SEO: Partial<
       "Oil (to 180 °C) and water (to 95 °C) mould temperature controllers, 3–18 kW heating, 9 models. Made by Valnex Industries in Ahmedabad, Gujarat.",
   },
   "hot-air-dryer": {
-    title: "Hot Air Dryer for Plastics, 60–800 L | Valnex Ahmedabad",
+    title: "Hot Air Hopper Dryer for Plastics, 60–800 L | Valnex Ahmedabad",
     description:
       "Hopper hot air dryers from 60 to 800 litres, 2.7–18 kW heaters, 8 models, for pre-drying resin before moulding or extrusion. Valnex Industries, Ahmedabad.",
   },
@@ -351,10 +374,7 @@ export function productHref(slug: ProductSlug): string {
 
 /** Takes a raw route param, so it has to accept any string. */
 export function getProduct(slug: string): Product | undefined {
-  const canonical =
-    slug === "hot-air-dryer" || slug === "hot-air-hopper-loader"
-      ? "hopper-loader"
-      : slug;
+  const canonical = slug === "hot-air-hopper-loader" ? "hot-air-dryer" : slug;
   return PRODUCTS.find((product) => product.slug === canonical);
 }
 
