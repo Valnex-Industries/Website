@@ -5,7 +5,6 @@ import { CtaBand } from "@/components/CtaBand";
 import { JsonLd } from "@/components/JsonLd";
 import { AboutHero } from "@/components/about/AboutHero";
 import { AboutStory } from "@/components/about/AboutStory";
-import { PeopleCollage } from "@/components/about/PeopleCollage";
 import { AboutVision } from "@/components/about/AboutVision";
 import { AboutLines } from "@/components/about/AboutLines";
 import { AboutProcesses } from "@/components/about/AboutProcesses";
@@ -20,7 +19,7 @@ export const revalidate = 300;
 const TITLE = "About Valnex Industries | Manufacturer in Ahmedabad Since 2021";
 
 const DESCRIPTION =
-  "Valnex Industries has designed and manufactured process equipment for plastics plants in Ahmedabad, Gujarat since 2021. Meet the founders and crew.";
+  "Valnex Industries designs and manufactures process equipment for plastics plants in Ahmedabad, Gujarat since 2021. Thermal management, materials processing and automation under one roof.";
 
 /* The team photo, whole, on brand-ink side panels. Set explicitly because a
    page-level openGraph object replaces the root one rather than merging
@@ -65,12 +64,11 @@ export default async function AboutPage() {
       />
       <Navbar />
 
-      {/* No overflow clipping here: the two pinned sections are fixed while
-          they pin, and the page body already clips sideways overflow. */}
+      {/* No overflow clipping here: pinned hero is fixed while it pins,
+          and the page body already clips sideways overflow. */}
       <main>
         <AboutHero />
         <AboutStory productCount={products.length} />
-        <PeopleCollage />
         <AboutProcesses products={products} />
         <AboutVision />
         <AboutLines products={products} />

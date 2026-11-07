@@ -41,6 +41,7 @@ export function AboutProcesses({ products }: { products: Product[] }) {
 
   return (
     <section
+      id="processes"
       aria-labelledby="processes-heading"
       className="relative bg-[color:var(--brand-blue-deep)] py-20 md:py-28"
     >

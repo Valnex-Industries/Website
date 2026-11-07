@@ -34,7 +34,7 @@ export const COMPANY_LINKS: NavChild[] = [
   { label: "Company profile", href: "/#company" },
   { label: "About Valnex", href: "/about" },
   { label: "Our story", href: "/about#story" },
-  { label: "Founders & crew", href: "/about#team" },
+  { label: "Processes & applications", href: "/about#processes" },
   { label: "Vision", href: "/about#vision" },
 ];
 

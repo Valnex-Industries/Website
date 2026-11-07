@@ -318,12 +318,58 @@ interface CubicRoute {
   end: Point;
 }
 
+interface OrbitLengthLookup {
+  cumulative: Float64Array;
+  steps: number;
+  total: number;
+}
+
 const ORBIT_TILT_DEG = -28;
 const ORBIT_TILT_RAD = (ORBIT_TILT_DEG * Math.PI) / 180;
 const ORBIT_COS = Math.cos(ORBIT_TILT_RAD);
 const ORBIT_SIN = Math.sin(ORBIT_TILT_RAD);
 const SHOWCASE_HOLD_SECONDS = 4.4;
 const SWAP_DURATION_SECONDS = 1.15;
+const ORBIT_LENGTH_STEPS = 360;
+
+function buildOrbitLengthLookup(rx: number, ry: number): OrbitLengthLookup {
+  const cumulative = new Float64Array(ORBIT_LENGTH_STEPS + 1);
+  let previousX = rx;
+  let previousY = 0;
+
+  for (let index = 1; index <= ORBIT_LENGTH_STEPS; index += 1) {
+    const angle = (index / ORBIT_LENGTH_STEPS) * Math.PI * 2;
+    const x = rx * Math.cos(angle);
+    const y = ry * Math.sin(angle);
+    cumulative[index] = cumulative[index - 1] + Math.hypot(x - previousX, y - previousY);
+    previousX = x;
+    previousY = y;
+  }
+
+  return {
+    cumulative,
+    steps: ORBIT_LENGTH_STEPS,
+    total: cumulative[ORBIT_LENGTH_STEPS],
+  };
+}
+
+function orbitAngleAtProgress(progress: number, lookup: OrbitLengthLookup) {
+  const normalized = ((progress % 1) + 1) % 1;
+  const targetLength = normalized * lookup.total;
+  let low = 1;
+  let high = lookup.steps;
+
+  while (low < high) {
+    const middle = Math.floor((low + high) / 2);
+    if (lookup.cumulative[middle] < targetLength) low = middle + 1;
+    else high = middle;
+  }
+
+  const previousLength = lookup.cumulative[low - 1];
+  const segmentLength = lookup.cumulative[low] - previousLength;
+  const segmentProgress = segmentLength ? (targetLength - previousLength) / segmentLength : 0;
+  return ((low - 1 + segmentProgress) / lookup.steps) * Math.PI * 2;
+}
 
 function makeCubicRoute(
   start: Point,
@@ -401,13 +447,12 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
   const progressRef = useRef<HTMLSpanElement>(null);
   const incomingPodRef = useRef<HTMLDivElement>(null);
   const outgoingPodRef = useRef<HTMLDivElement>(null);
-  const incomingPathRef = useRef<SVGPathElement>(null);
-  const outgoingPathRef = useRef<SVGPathElement>(null);
   const orbitAngleRef = useRef({ angle: 0 });
   const orbitTweenRef = useRef<gsap.core.Tween | null>(null);
   const nodeRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const geometryRef = useRef(geometry);
-  const slotByProductRef = useRef(items.map((_, index) => index));
+  const orbitLengthRef = useRef(buildOrbitLengthLookup(geometry.rx, geometry.ry));
+  const slotByProductRef = useRef(items.map((_, index) => (index === 0 ? 0 : index - 1)));
   const activeIndexRef = useRef(0);
   const isTransitioningRef = useRef(false);
   const reduceMotionRef = useRef(false);
@@ -417,6 +462,7 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
     (baseAngle: number) => {
       const total = items.length;
       if (total === 0) return;
+      const visibleSlots = Math.max(total - 1, 1);
 
       const { rx, ry } = geometryRef.current;
 
@@ -424,8 +470,8 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
         if (!node) return;
 
         const slot = slotByProductRef.current[i] ?? i;
-        const nodeAngleDeg = baseAngle + (slot * 360) / total;
-        const phi = (nodeAngleDeg * Math.PI) / 180;
+        const progress = baseAngle / 360 + slot / visibleSlots;
+        const phi = orbitAngleAtProgress(progress, orbitLengthRef.current);
         const u = rx * Math.cos(phi);
         const v = ry * Math.sin(phi);
         const x = u * ORBIT_COS - v * ORBIT_SIN;
@@ -488,6 +534,7 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
       };
 
       geometryRef.current = nextGeometry;
+      orbitLengthRef.current = buildOrbitLengthLookup(nextGeometry.rx, nextGeometry.ry);
       setGeometry((current) => {
         if (
           current.width === nextGeometry.width &&
@@ -608,8 +655,6 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
       const source = nodeRefs.current[transition.to];
       const incomingPod = incomingPodRef.current;
       const outgoingPod = outgoingPodRef.current;
-      const incomingPath = incomingPathRef.current;
-      const outgoingPath = outgoingPathRef.current;
 
       if (
         !stage ||
@@ -617,9 +662,7 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
         !copy ||
         !source ||
         !incomingPod ||
-        !outgoingPod ||
-        !incomingPath ||
-        !outgoingPath
+        !outgoingPod
       ) {
         activeIndexRef.current = transition.to;
         setActiveIndex(transition.to);
@@ -654,22 +697,6 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
         sourcePoint,
         (-side * transition.direction) as 1 | -1
       );
-
-      incomingPath.setAttribute("d", routePath(incomingRoute));
-      outgoingPath.setAttribute("d", routePath(outgoingRoute));
-
-      const incomingLength = incomingPath.getTotalLength();
-      const outgoingLength = outgoingPath.getTotalLength();
-      gsap.set(incomingPath, {
-        autoAlpha: 1,
-        strokeDasharray: incomingLength,
-        strokeDashoffset: incomingLength,
-      });
-      gsap.set(outgoingPath, {
-        autoAlpha: 0.7,
-        strokeDasharray: outgoingLength,
-        strokeDashoffset: outgoingLength,
-      });
       gsap.set(incomingPod, {
         autoAlpha: 1,
         scale: satelliteScale,
@@ -706,16 +733,6 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
       timeline
         .to(copy, { autoAlpha: 0, duration: 0.2, y: -8, ease: "power2.in" }, 0.9)
         .to(
-          incomingPath,
-          { duration: 0.72, strokeDashoffset: 0, ease: "power2.out" },
-          0
-        )
-        .to(
-          outgoingPath,
-          { duration: 0.72, strokeDashoffset: 0, ease: "power2.out" },
-          0.08
-        )
-        .to(
           incomingPod,
           {
             duration: SWAP_DURATION_SECONDS,
@@ -734,11 +751,6 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
             scale: satelliteScale,
           },
           0.04
-        )
-        .to(
-          [incomingPath, outgoingPath],
-          { autoAlpha: 0, duration: 0.28, ease: "power1.out" },
-          0.84
         )
         .to(outgoingPod, { autoAlpha: 0.82, duration: 0.16 }, 1.01);
 
@@ -975,18 +987,6 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
                 <ellipse
                   cx="0"
                   cy="0"
-                  rx={geometry.rx + 15}
-                  ry={geometry.ry + 15}
-                  fill="none"
-                  stroke="#94a3b8"
-                  strokeWidth="1"
-                  strokeDasharray="3 8"
-                  opacity="0.23"
-                  vectorEffect="non-scaling-stroke"
-                />
-                <ellipse
-                  cx="0"
-                  cy="0"
                   rx={geometry.rx}
                   ry={geometry.ry}
                   fill="none"
@@ -994,39 +994,12 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
                   strokeWidth="1.5"
                   vectorEffect="non-scaling-stroke"
                 />
-                <circle cx={geometry.rx} cy="0" r="3" fill="#f97316" opacity="0.85" />
-                <circle cx={-geometry.rx} cy="0" r="2" fill="#94a3b8" opacity="0.55" />
-                <circle cx="0" cy={geometry.ry} r="2" fill="#0047e1" opacity="0.6" />
-                <circle cx="0" cy={-geometry.ry} r="2" fill="#94a3b8" opacity="0.5" />
               </g>
-
-              <path
-                ref={outgoingPathRef}
-                fill="none"
-                stroke="#0047e1"
-                strokeWidth="1.25"
-                strokeLinecap="round"
-                opacity="0"
-                vectorEffect="non-scaling-stroke"
-              />
-              <path
-                ref={incomingPathRef}
-                fill="none"
-                stroke="#f97316"
-                strokeWidth="1.75"
-                strokeLinecap="round"
-                opacity="0"
-                vectorEffect="non-scaling-stroke"
-              />
             </svg>
 
             <div
               aria-hidden="true"
               className="pointer-events-none absolute h-[220px] w-[220px] rounded-full bg-[radial-gradient(circle,rgba(249,115,22,0.13)_0%,rgba(0,71,225,0.055)_48%,transparent_72%)] blur-xl sm:h-[280px] sm:w-[280px] md:h-[340px] md:w-[340px] xl:h-[405px] xl:w-[405px]"
-            />
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute h-[204px] w-[204px] rounded-full border border-dashed border-slate-300/55 sm:h-[258px] sm:w-[258px] md:h-[312px] md:w-[312px] xl:h-[382px] xl:w-[382px]"
             />
 
             <div
@@ -1034,9 +1007,6 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
               data-orbit-center
               className="relative z-30 flex h-[180px] w-[180px] shrink-0 items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-white shadow-[0_26px_70px_-22px_rgba(2,16,46,0.3),0_0_0_6px_rgba(255,255,255,0.72)] sm:h-[230px] sm:w-[230px] md:h-[280px] md:w-[280px] xl:h-[340px] xl:w-[340px] 2xl:h-[365px] 2xl:w-[365px]"
             >
-              <span className="pointer-events-none absolute left-[15%] top-[14%] z-20 font-orbitron text-[8px] font-bold tracking-[0.2em] text-slate-400 sm:text-[9px]">
-                VX / {activeProduct.index}
-              </span>
               <div className="relative h-full w-full">
                 <CdnImage
                   src={activeProduct.image}

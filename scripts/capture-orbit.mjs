@@ -183,6 +183,8 @@ try {
     await sleep(Number(options.delay || 550));
   }
 
+  if (options.wait) await sleep(Number(options.wait));
+
   const boundsResult = await client.send("Runtime.evaluate", {
     expression: `(() => {
       const rect = document.querySelector("#products").getBoundingClientRect();
@@ -246,21 +248,26 @@ try {
 } finally {
   if (client) {
     try {
-      await client.send("Browser.close");
+      await Promise.race([client.send("Browser.close"), sleep(750)]);
     } catch {
-      client.close();
+      // Chrome may close the socket before acknowledging Browser.close.
     }
+    client.close();
   }
-  await Promise.race([chromeClosed, sleep(3000)]);
-  if (chrome.exitCode === null) chrome.kill();
 
-  for (let attempt = 0; attempt < 10; attempt += 1) {
+  await Promise.race([chromeClosed, sleep(3000)]);
+  if (chrome.exitCode === null) {
+    chrome.kill();
+    await Promise.race([chromeClosed, sleep(1000)]);
+  }
+
+  for (let attempt = 0; attempt < 20; attempt += 1) {
     try {
       await rm(profilePath, { recursive: true, force: true });
       break;
     } catch (error) {
-      if (error.code !== "EBUSY" || attempt === 9) throw error;
-      await sleep(200);
+      if (error.code !== "EBUSY" || attempt === 19) throw error;
+      await sleep(250);
     }
   }
 }
