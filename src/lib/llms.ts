@@ -82,10 +82,8 @@ export function llmsIndex(products: Product[], news: NewsPost[]): string {
     "## Key pages",
     "",
     `- [Home](${siteUrl("/")}): Company overview and full product range.`,
+    `- [About](${siteUrl("/about")}): Company background, plant location in Ahmedabad, manufacturing standards and team.`,
     `- [Inquiry](${siteUrl("/inquiry")}): Technical inquiry form. Accepts a drawing link, duty cycle, target volume and timeline.`,
-    ...(news.length > 0
-      ? [`- [News & Offers](${siteUrl("/news")}): Product launches, offers and announcements.`]
-      : []),
     `- [Full catalogue as text](${siteUrl("/llms-full.txt")}): Every product's description, specifications and applications in one file.`,
     "",
     "## Contact",

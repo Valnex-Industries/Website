@@ -1077,7 +1077,7 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
                         src={prod.image}
                         alt={prod.title}
                         fill
-                        sizes="80px"
+                        sizes="(max-width: 640px) 150px, (max-width: 1280px) 240px, 310px"
                         className="object-contain drop-shadow-[0_2px_4px_rgba(2,16,46,0.1)]"
                       />
                     </div>
@@ -1111,7 +1111,7 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
                       src={items[transition.to].image}
                       alt=""
                       fill
-                      sizes="80px"
+                      sizes="(max-width: 640px) 150px, (max-width: 1280px) 240px, 310px"
                       className="object-contain drop-shadow-[0_18px_24px_rgba(2,16,46,0.16)]"
                     />
                   </div>

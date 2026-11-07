@@ -33,6 +33,10 @@ export function siteUrl(path = "/"): string {
 
 export const SITE_NAME = "Valnex Industries";
 
+/** Incorporation date of Valnex Industries Private Limited, from the public
+ *  company record; the owner confirms 2021 as the year the company started. */
+export const FOUNDING_DATE = "2021-08-05";
+
 export const SITE_TAGLINE = "Precision That Powers Progress";
 
 /** The entity statement: who, what, where, in one quotable sentence. It feeds

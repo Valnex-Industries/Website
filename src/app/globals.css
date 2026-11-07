@@ -307,3 +307,13 @@ h1, h2, h3, h4, h5, h6, .display-type {
 /* The one response to a pointer: the silhouette comes up to full white. The
    orange mark stays the only colour, as the style requires. */
 .group:hover .hairline { --hl-edge: rgba(255, 255, 255, 0.98); --hl-lo: rgba(255, 255, 255, 0.32); }
+
+/* ── The /about photo window ───────────────────────────────────────────────
+   Fully clipped until AboutHero measures the page and sets the real resting
+   window (3:2, beside or under the lede). Starting closed rather than at a
+   guessed shape means the photo is never shown at the wrong size, and the
+   preloader covers the moment before hydration anyway. */
+.about-window {
+  clip-path: inset(50% 50% 50% 50% round 24px);
+}
+

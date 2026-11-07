@@ -31,10 +31,10 @@ export const PRODUCT_LINKS: ProductLink[] = PRODUCTS.map((product) => ({
 }));
 
 export const COMPANY_LINKS: NavChild[] = [
-  { label: "Company profile", href: "/#company" },
-  { label: "Leadership", href: "/#company" },
-  { label: "Plants & facilities", href: "/#company" },
-  { label: "Sustainability", href: "/#company" },
+  { label: "About Valnex", href: "/about" },
+  { label: "Our story", href: "/about#story" },
+  { label: "Founders & crew", href: "/about#team" },
+  { label: "Vision", href: "/about#vision" },
 ];
 
 export const NAV_ITEMS: NavItem[] = [
@@ -44,10 +44,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Home", href: "/" },
   { label: "Products", href: "/#products", children: PRODUCT_LINKS },
   { label: "Industries", href: "/#industries" },
-  { label: "Company Profile", href: "/#company", children: COMPANY_LINKS },
-  /* Was "/#news", an anchor to a section that never existed, so the link went
-     nowhere. It is a real page now. */
-  { label: "News", href: "/news" },
+  { label: "About", href: "/about", children: COMPANY_LINKS },
 ];
 
 export const UTILITY_LINKS: NavChild[] = [

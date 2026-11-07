@@ -10,6 +10,7 @@
 import {
   BUSINESS,
   CONTACT,
+  FOUNDING_DATE,
   SITE_DESCRIPTION,
   SITE_NAME,
   siteUrl,
@@ -42,6 +43,7 @@ export function organizationSchema() {
     url: siteUrl("/"),
     description: SITE_DESCRIPTION,
     slogan: "Precision That Powers Progress",
+    foundingDate: FOUNDING_DATE,
     email: CONTACT.email,
     telephone: CONTACT.phones[0],
     /* Google wants an image on a LocalBusiness; the generated OG card is a
@@ -159,3 +161,24 @@ export function productListSchema(products: Product[]) {
     })),
   };
 }
+
+/** /about, tied to the same company node every other page describes. */
+export function aboutPageSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "@id": siteUrl("/about#webpage"),
+    url: siteUrl("/about"),
+    name: `About ${SITE_NAME}`,
+    about: { "@id": ORGANIZATION_ID },
+    mainEntity: { "@id": ORGANIZATION_ID },
+    primaryImageOfPage: {
+      "@type": "ImageObject",
+      url: siteUrl("/assets/about/team-group.webp"),
+      width: 1600,
+      height: 1062,
+      caption: "The Valnex Industries team in Ahmedabad",
+    },
+  };
+}
+
