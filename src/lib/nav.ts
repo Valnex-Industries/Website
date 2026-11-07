@@ -31,6 +31,7 @@ export const PRODUCT_LINKS: ProductLink[] = PRODUCTS.map((product) => ({
 }));
 
 export const COMPANY_LINKS: NavChild[] = [
+  { label: "Company profile", href: "/#company" },
   { label: "About Valnex", href: "/about" },
   { label: "Our story", href: "/about#story" },
   { label: "Founders & crew", href: "/about#team" },
@@ -44,7 +45,8 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Home", href: "/" },
   { label: "Products", href: "/#products", children: PRODUCT_LINKS },
   { label: "Industries", href: "/#industries" },
-  { label: "About", href: "/about", children: COMPANY_LINKS },
+  { label: "Company Profile", href: "/#company" },
+  { label: "About", href: "/about" },
 ];
 
 export const UTILITY_LINKS: NavChild[] = [

@@ -183,7 +183,7 @@ export function Navbar() {
           {NAV_ITEMS.map((link) => (
             <div
               key={link.label}
-              className="relative h-full flex items-center"
+              className="h-full flex items-center"
               onMouseEnter={() => {
                 if (!canHover) return;
                 setActiveDropdown(link.children ? link.label : null);
@@ -211,36 +211,6 @@ export function Navbar() {
                   />
                 )}
               </Link>
-
-              {link.label === "About" && link.children && activeDropdown === "About" && (
-                <motion.div
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 6 }}
-                  transition={{ duration: 0.15, ease: "easeOut" }}
-                  className="absolute left-0 top-full -mt-1 w-52 rounded-xl border border-[color:var(--brand-blue)]/10 bg-white p-2 shadow-xl"
-                >
-                  <div className="flex flex-col gap-0.5">
-                    {link.children.map((child) => (
-                      <Link
-                        key={child.label}
-                        href={child.href}
-                        onClick={(e) =>
-                          navigate(e, child.href, () => setActiveDropdown(null))
-                        }
-                        className="group flex items-center justify-between rounded-lg px-3 py-2 text-xs font-semibold text-[color:var(--brand-ink)]/80 transition-colors hover:bg-slate-50 hover:text-[#f97316]"
-                      >
-                        {child.label}
-                        <ArrowRight
-                          size={11}
-                          strokeWidth={2.5}
-                          className="text-[#f97316] opacity-0 transition-opacity group-hover:opacity-100"
-                        />
-                      </Link>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
             </div>
           ))}
         </nav>

@@ -175,6 +175,12 @@ try {
       expression: `document.querySelector('#products button[aria-label="Next product"]')?.click()`,
     });
     await sleep(Number(options.delay || 550));
+  } else if (options.action?.startsWith("product-")) {
+    const productIndex = Number(options.action.replace("product-", ""));
+    await client.send("Runtime.evaluate", {
+      expression: `document.querySelectorAll("#products [data-orbit-node]")[${productIndex}]?.click()`,
+    });
+    await sleep(Number(options.delay || 550));
   }
 
   const boundsResult = await client.send("Runtime.evaluate", {
@@ -190,6 +196,41 @@ try {
     returnByValue: true,
   });
   const bounds = boundsResult.result.value;
+  const diagnosticsResult = await client.send("Runtime.evaluate", {
+    expression: `(() => {
+      const stage = document.querySelector("[data-orbit-stage]").getBoundingClientRect();
+      const center = document.querySelector("[data-orbit-center]").getBoundingClientRect();
+      const nodes = [...document.querySelectorAll("[data-orbit-node]")]
+        .filter((node) => Number(getComputedStyle(node).opacity) > 0.1)
+        .map((node) => {
+          const rect = node.getBoundingClientRect();
+          const distance = Math.hypot(
+            rect.left + rect.width / 2 - (center.left + center.width / 2),
+            rect.top + rect.height / 2 - (center.top + center.height / 2)
+          );
+          return {
+            clipped:
+              rect.left < stage.left - 0.5 ||
+              rect.right > stage.right + 0.5 ||
+              rect.top < stage.top - 0.5 ||
+              rect.bottom > stage.bottom + 0.5,
+            clearance: distance - center.width / 2 - rect.width / 2,
+          };
+        });
+
+      return {
+        clippedNodes: nodes.filter((node) => node.clipped).length,
+        minCenterClearance: Math.min(...nodes.map((node) => node.clearance)),
+        visibleNodes: nodes.length,
+      };
+    })()`,
+    returnByValue: true,
+  });
+  const diagnostics = diagnosticsResult.result.value;
+  if (diagnostics.clippedNodes > 0 || diagnostics.minCenterClearance < 0) {
+    throw new Error(`Orbit geometry failed: ${JSON.stringify(diagnostics)}`);
+  }
+
   const screenshot = await client.send("Page.captureScreenshot", {
     format: "png",
     fromSurface: true,
@@ -199,6 +240,9 @@ try {
 
   await writeFile(output, Buffer.from(screenshot.data, "base64"));
   console.log(`Captured ${Math.round(bounds.width)}x${Math.round(bounds.height)} to ${output}`);
+  console.log(
+    `Orbit geometry: ${diagnostics.visibleNodes} visible nodes, ${diagnostics.clippedNodes} clipped, ${diagnostics.minCenterClearance.toFixed(1)}px minimum clearance`
+  );
 } finally {
   if (client) {
     try {

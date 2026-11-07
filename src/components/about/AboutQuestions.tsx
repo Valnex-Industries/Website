@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
 import { ABOUT_QUESTIONS_HEADING } from "@/lib/about";
 import type { Product } from "@/lib/products";
@@ -54,6 +55,18 @@ export function AboutQuestions({ products }: { products: Product[] }) {
             >
               {ABOUT_QUESTIONS_HEADING}
             </h2>
+            <div className="mt-6">
+              <Link
+                href="/#company"
+                className="group inline-flex items-center gap-2 text-sm font-bold text-[#f97316] transition-colors hover:text-orange-400"
+              >
+                <span>Company profile</span>
+                <ArrowRight
+                  size={14}
+                  className="transition-transform group-hover:translate-x-1"
+                />
+              </Link>
+            </div>
           </Reveal>
 
           <Reveal delay={0.08} className="lg:col-span-8">

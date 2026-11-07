@@ -930,6 +930,7 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
 
           <div
             ref={stageRef}
+            data-orbit-stage
             role="group"
             tabIndex={0}
             aria-label="Interactive clockwise product orbit. Use left and right arrow keys to change the showcased product."
@@ -1030,19 +1031,20 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
 
             <div
               ref={centerRef}
+              data-orbit-center
               className="relative z-30 flex h-[180px] w-[180px] shrink-0 items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-white shadow-[0_26px_70px_-22px_rgba(2,16,46,0.3),0_0_0_6px_rgba(255,255,255,0.72)] sm:h-[230px] sm:w-[230px] md:h-[280px] md:w-[280px] xl:h-[340px] xl:w-[340px] 2xl:h-[365px] 2xl:w-[365px]"
             >
               <span className="pointer-events-none absolute left-[15%] top-[14%] z-20 font-orbitron text-[8px] font-bold tracking-[0.2em] text-slate-400 sm:text-[9px]">
                 VX / {activeProduct.index}
               </span>
-              <div className="relative h-[86%] w-[86%]">
+              <div className="relative h-full w-full">
                 <CdnImage
                   src={activeProduct.image}
                   alt={`${activeProduct.title} product view`}
                   fill
                   sizes="(max-width: 640px) 150px, (max-width: 1280px) 240px, 310px"
                   priority
-                  className="object-contain drop-shadow-[0_18px_24px_rgba(2,16,46,0.16)]"
+                  className="object-contain"
                 />
               </div>
             </div>
@@ -1053,6 +1055,7 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
                 return (
                   <button
                     key={prod.slug}
+                    data-orbit-node
                     ref={(el) => {
                       nodeRefs.current[idx] = el;
                     }}
@@ -1077,8 +1080,15 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
                         src={prod.image}
                         alt={prod.title}
                         fill
-                        sizes="(max-width: 640px) 150px, (max-width: 1280px) 240px, 310px"
+                        sizes="80px"
                         className="object-contain drop-shadow-[0_2px_4px_rgba(2,16,46,0.1)]"
+                      />
+                      <CdnImage
+                        src={prod.image}
+                        alt=""
+                        fill
+                        sizes="(max-width: 640px) 150px, (max-width: 1280px) 240px, 310px"
+                        className="object-contain"
                       />
                     </div>
                   </button>
@@ -1092,13 +1102,13 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
                   ref={outgoingPodRef}
                   className="invisible absolute left-0 top-0 flex h-[180px] w-[180px] items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-white opacity-0 shadow-[0_26px_70px_-22px_rgba(2,16,46,0.3),0_0_0_6px_rgba(255,255,255,0.72)] will-change-transform sm:h-[230px] sm:w-[230px] md:h-[280px] md:w-[280px] xl:h-[340px] xl:w-[340px] 2xl:h-[365px] 2xl:w-[365px]"
                 >
-                  <div className="relative h-[86%] w-[86%]">
+                  <div className="relative h-full w-full">
                     <CdnImage
                       src={items[transition.from].image}
                       alt=""
                       fill
                       sizes="(max-width: 640px) 150px, (max-width: 1280px) 240px, 310px"
-                      className="object-contain drop-shadow-[0_18px_24px_rgba(2,16,46,0.16)]"
+                      className="object-contain"
                     />
                   </div>
                 </div>
@@ -1106,13 +1116,20 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
                   ref={incomingPodRef}
                   className="invisible absolute left-0 top-0 flex h-[180px] w-[180px] items-center justify-center overflow-hidden rounded-full border border-[#f97316] bg-white opacity-0 shadow-[0_26px_70px_-22px_rgba(249,115,22,0.38),0_0_0_5px_rgba(249,115,22,0.12)] will-change-transform sm:h-[230px] sm:w-[230px] md:h-[280px] md:w-[280px] xl:h-[340px] xl:w-[340px] 2xl:h-[365px] 2xl:w-[365px]"
                 >
-                  <div className="relative h-[86%] w-[86%]">
+                  <div className="relative h-full w-full">
+                    <CdnImage
+                      src={items[transition.to].image}
+                      alt=""
+                      fill
+                      sizes="80px"
+                      className="object-contain"
+                    />
                     <CdnImage
                       src={items[transition.to].image}
                       alt=""
                       fill
                       sizes="(max-width: 640px) 150px, (max-width: 1280px) 240px, 310px"
-                      className="object-contain drop-shadow-[0_18px_24px_rgba(2,16,46,0.16)]"
+                      className="object-contain"
                     />
                   </div>
                 </div>

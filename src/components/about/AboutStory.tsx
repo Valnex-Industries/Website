@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
 import { ABOUT_STORY } from "@/lib/about";
 
@@ -40,6 +42,19 @@ export function AboutStory({ productCount }: { productCount: number }) {
               </div>
             ))}
           </dl>
+
+          <div className="mt-8 border-t border-white/12 pt-6">
+            <Link
+              href="/#company"
+              className="group inline-flex items-center gap-2 text-sm font-bold text-[#f97316] transition-colors hover:text-orange-400"
+            >
+              <span>View company profile</span>
+              <ArrowRight
+                size={14}
+                className="transition-transform group-hover:translate-x-1"
+              />
+            </Link>
+          </div>
         </Reveal>
 
         <Reveal delay={0.1} className="lg:col-span-6 lg:col-start-7 lg:pt-6">
