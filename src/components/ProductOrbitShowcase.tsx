@@ -914,7 +914,7 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
       ref={sectionRef}
       id="products"
       aria-labelledby="product-showcase-title"
-      className="relative overflow-hidden bg-[#fbfcfe] text-slate-900 scroll-mt-0 pt-20 pb-8 sm:pt-24 sm:pb-12 lg:pt-20 lg:pb-6 xl:pt-20 xl:pb-8 lg:min-h-screen flex flex-col justify-center"
+      className="relative overflow-hidden bg-[#fbfcfe] text-slate-900 scroll-mt-0 pt-16 pb-8 sm:pt-20 sm:pb-12 lg:pt-20 lg:pb-6 xl:pt-20 xl:pb-8 lg:min-h-screen flex flex-col justify-center"
     >
       <div
         aria-hidden="true"
@@ -929,50 +929,44 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
         <div className="grid grid-cols-1 items-center gap-4 sm:gap-6 lg:grid-cols-12 lg:gap-8 xl:gap-12">
           <article className="flex flex-col justify-between lg:col-span-5">
             <div>
-              {/* Desktop Eyebrow */}
-              <div className="hidden lg:flex items-center gap-2.5">
-                <span className="h-0.5 w-7 rounded-full bg-[#f97316]" />
-                <span className="font-orbitron text-[11px] font-bold uppercase tracking-[0.24em] text-[#02102e] sm:text-xs">
+              {/* Eyebrow Tag: visible on both mobile and desktop */}
+              <div className="flex items-center gap-2.5">
+                <span className="h-0.5 w-6 rounded-full bg-[#f97316] sm:w-7" />
+                <span className="font-orbitron text-[10px] font-bold uppercase tracking-[0.24em] text-[#02102e] sm:text-xs">
                   Our Products
                 </span>
               </div>
 
               <div ref={copyRef} aria-live="polite" aria-atomic="true">
-                {/* Desktop H2 Title and Subtitle */}
-                <div className="hidden lg:block">
-                  <div className="relative mt-2 min-h-[46px] lg:mt-3 lg:min-h-[58px] xl:mt-4 xl:min-h-[72px]">
-                    <h2
-                      id="product-showcase-title"
-                      data-product-copy
-                      className="font-orbitron max-w-[15ch] text-[1.85rem] font-black leading-[1.05] tracking-[-0.035em] text-[#02102e] lg:text-[2.05rem] xl:text-[2.45rem] 2xl:text-[2.8rem]"
-                    >
-                      {activeProduct.title}
-                    </h2>
-                  </div>
-
-                  <div className="relative mt-1.5 min-h-[36px] lg:mt-2 lg:min-h-[42px] xl:min-h-[48px]">
-                    <p
-                      data-product-copy
-                      className="max-w-[58ch] text-xs font-normal leading-relaxed text-slate-600 lg:text-[13px] xl:text-[14.5px]"
-                    >
-                      {activeProduct.subtitle}
-                    </p>
-                  </div>
-
-                  <div className="mt-3 lg:mt-4 xl:mt-5">
-                    <span className="font-orbitron text-[10px] font-extrabold uppercase tracking-[0.22em] text-slate-400 sm:text-[11px]">
-                      Key Specifications
-                    </span>
-                  </div>
+                {/* Product Title: visible on both mobile and desktop */}
+                <div className="relative mt-2 min-h-[38px] xs:min-h-[44px] sm:min-h-[54px] lg:mt-3 lg:min-h-[58px] xl:mt-4 xl:min-h-[72px]">
+                  <h2
+                    id="product-showcase-title"
+                    data-product-copy
+                    className="font-orbitron max-w-[15ch] text-[1.65rem] xs:text-[1.85rem] sm:text-[2.2rem] lg:text-[2.1rem] xl:text-[2.5rem] 2xl:text-[2.8rem] font-black leading-[1.06] tracking-[-0.035em] text-[#02102e]"
+                  >
+                    {activeProduct.title}
+                  </h2>
                 </div>
 
-                {/* Mobile screen-reader accessible title */}
-                <h2 id="product-showcase-title-mobile" className="sr-only lg:hidden">
-                  {activeProduct.title}
-                </h2>
+                {/* One-Liner Subtitle: visible on both mobile and desktop */}
+                <div className="relative mt-1 min-h-[32px] sm:min-h-[38px] lg:mt-2 lg:min-h-[42px] xl:min-h-[48px]">
+                  <p
+                    data-product-copy
+                    className="max-w-[58ch] text-[11.5px] xs:text-xs sm:text-sm font-normal leading-relaxed text-slate-600 line-clamp-2 sm:line-clamp-none lg:text-[13px] xl:text-[14.5px]"
+                  >
+                    {activeProduct.subtitle}
+                  </p>
+                </div>
+
+                <div className="hidden lg:block mt-3 lg:mt-4 xl:mt-5">
+                  <span className="font-orbitron text-[10px] font-extrabold uppercase tracking-[0.22em] text-slate-400 sm:text-[11px]">
+                    Key Specifications
+                  </span>
+                </div>
 
                 {/* The Four Technical Characteristics (TCs) */}
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-2.5 lg:grid-cols-1 lg:mt-2.5 lg:gap-2 xl:mt-3.5 xl:gap-2.5">
+                <div className="mt-2.5 grid grid-cols-1 gap-2 sm:mt-3 sm:grid-cols-2 sm:gap-2.5 lg:grid-cols-1 lg:mt-2.5 lg:gap-2 xl:mt-3.5 xl:gap-2.5">
                   {activeProduct.specs.map((spec) => {
                     const Icon = spec.icon;
                     return (
