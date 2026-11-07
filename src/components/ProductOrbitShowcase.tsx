@@ -115,29 +115,29 @@ const CURATED_SHOWCASE_DATA: Record<
     ],
   },
   "hopper-loader": {
-    titleOverride: "Vacuum Hopper Loader",
+    titleOverride: "Hot Air Hopper Loader",
     subtitle:
-      "Automated plastic granule conveying from 30 to 1200 kg/h with zero material loss.",
+      "Integrated drying and conveying system engineered for automated, moisture-free plastic resin handling.",
     specs: [
       {
         icon: Activity,
-        label: "Conveying Throughput",
+        label: "Throughput Capacity",
         value: "30 – 1200 kg/h",
       },
       {
         icon: Box,
-        label: "Receiver Volume",
-        value: "6 – 85 Litres",
+        label: "Hopper Volume",
+        value: "60 – 800 Litres",
       },
       {
         icon: Zap,
-        label: "Vacuum Blower",
-        value: "0.9 – 7.5 kW",
+        label: "Heating Power",
+        value: "2.7 – 18 kW",
       },
       {
         icon: Plug,
         label: "Power Supply",
-        value: "230 V (1Φ) / 415 V (3Φ)",
+        value: "415 V (3Φ), 50 Hz",
       },
     ],
   },
@@ -276,17 +276,6 @@ const CURATED_SHOWCASE_DATA: Record<
       },
     ],
   },
-};
-
-const CUTOUT_PHOTOS: Record<string, string> = {
-  "mould-temp": "/catalog/photos/2025/mould-temperature-controller.webp",
-  chillers: "/catalog/photos/2025/air-cooled-chiller.webp",
-  "hopper-loader": "/catalog/photos/2025/hopper-loader.webp",
-  dehumidifier: "/catalog/photos/2025/dehumidifier.webp",
-  "volumetric-feeder": "/catalog/photos/2025/volumetric-feeder-single.webp",
-  "hot-air-dryer": "/catalog/photos/2025/hot-air-dryer.webp",
-  "flake-cutter": "/catalog/photos/2025/flake-cutter.webp",
-  "laser-marking": "/catalog/photos/2025/laser-marking-machine.webp",
 };
 
 interface ProductOrbitShowcaseProps {
@@ -460,14 +449,13 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
 
     return catalogue.map((prod, idx) => {
       const curated = CURATED_SHOWCASE_DATA[prod.slug];
-      const cutout = CUTOUT_PHOTOS[prod.slug] || prod.image;
       return {
         slug: prod.slug as ProductSlug,
         index: String(idx + 1).padStart(2, "0"),
         title: curated?.titleOverride || prod.title,
         subtitle: curated?.subtitle || prod.summary,
         summary: prod.summary,
-        image: cutout,
+        image: prod.image,
         specs: curated?.specs || [
           { icon: Zap, label: "Capacity", value: prod.specs[0]?.value || "Industrial Grade" },
           { icon: Activity, label: "Operation", value: prod.specs[1]?.value || "Continuous" },
@@ -1085,7 +1073,7 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
                   fill
                   sizes="(max-width: 640px) 150px, (max-width: 1280px) 240px, 310px"
                   priority
-                  className="object-contain"
+                  className="object-cover"
                 />
               </div>
             </div>
@@ -1110,10 +1098,10 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
                     aria-pressed={isSelected}
                     tabIndex={isSelected ? -1 : 0}
                     className={cn(
-                      "group pointer-events-auto absolute left-1/2 top-1/2 flex h-10 w-10 xs:h-11 xs:w-11 cursor-pointer items-center justify-center rounded-full border bg-white p-1.5 shadow-[0_6px_16px_-6px_rgba(2,16,46,0.25)] transition-[border-color,box-shadow,opacity] duration-300 will-change-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f97316] focus-visible:ring-offset-2 sm:h-12 sm:w-12 sm:p-2 lg:h-11 lg:w-11 xl:h-13 xl:w-13 2xl:h-15 2xl:w-15",
+                      "group pointer-events-auto absolute left-1/2 top-1/2 flex h-10 w-10 xs:h-11 xs:w-11 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-transparent p-0 shadow-[0_6px_18px_-5px_rgba(2,16,46,0.42)] transition-[box-shadow,opacity] duration-300 will-change-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f97316] focus-visible:ring-offset-2 sm:h-12 sm:w-12 lg:h-11 lg:w-11 xl:h-13 xl:w-13 2xl:h-15 2xl:w-15",
                       isSelected
                         ? "pointer-events-none opacity-0"
-                        : "border-slate-200/90 opacity-100 hover:border-[#f97316] hover:shadow-[0_10px_24px_-8px_rgba(249,115,22,0.42)]"
+                        : "opacity-100 hover:shadow-[0_0_0_2px_rgba(249,115,22,0.72),0_10px_24px_-7px_rgba(2,16,46,0.45)]"
                     )}
                   >
                     <div className="relative h-full w-full overflow-hidden rounded-full transition-transform duration-300 group-hover:scale-110">
@@ -1122,7 +1110,7 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
                         alt={prod.title}
                         fill
                         sizes="80px"
-                        className="object-contain drop-shadow-[0_2px_4px_rgba(2,16,46,0.1)]"
+                        className="object-cover drop-shadow-[0_2px_4px_rgba(2,16,46,0.1)]"
                       />
                     </div>
                   </button>
@@ -1142,7 +1130,7 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
                       alt=""
                       fill
                       sizes="(max-width: 640px) 150px, (max-width: 1280px) 240px, 310px"
-                      className="object-contain"
+                      className="object-cover"
                     />
                   </div>
                 </div>
@@ -1156,7 +1144,7 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
                       alt=""
                       fill
                       sizes="(max-width: 640px) 150px, (max-width: 1280px) 240px, 310px"
-                      className="object-contain"
+                      className="object-cover"
                     />
                   </div>
                 </div>

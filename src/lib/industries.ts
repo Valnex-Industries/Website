@@ -46,7 +46,6 @@ export const PROCESSES: readonly Process[] = [
     products: [
       "chillers",
       "mould-temp",
-      "hot-air-dryer",
       "dehumidifier",
       "hopper-loader",
       "volumetric-feeder",
@@ -58,7 +57,6 @@ export const PROCESSES: readonly Process[] = [
     summary: "Cooling, drying, loading, dosing and regrind for blow moulding lines.",
     products: [
       "chillers",
-      "hot-air-dryer",
       "hopper-loader",
       "volumetric-feeder",
       "flake-cutter",
@@ -70,7 +68,6 @@ export const PROCESSES: readonly Process[] = [
       "Process cooling and material handling, with on-the-fly laser marking on the line.",
     products: [
       "chillers",
-      "hot-air-dryer",
       "hopper-loader",
       "volumetric-feeder",
       "laser-marking",
@@ -79,6 +76,6 @@ export const PROCESSES: readonly Process[] = [
   {
     name: "Plastic recycling",
     summary: "Size reduction, drying and conveying for reprocessing scrap.",
-    products: ["flake-cutter", "hot-air-dryer", "hopper-loader"],
+    products: ["flake-cutter", "hopper-loader"],
   },
 ];

@@ -161,7 +161,7 @@ export default async function ProductPage({
         <section className="relative mx-auto w-full max-w-[1280px] px-5 pb-20 sm:px-6 md:pb-28 lg:px-10 lg:pb-32">
           <div className="grid gap-10 md:gap-12 lg:grid-cols-12 lg:gap-16">
             <Reveal className="lg:col-span-7">
-              <div className="relative aspect-4/3 w-full overflow-hidden border border-white/12">
+              <div className="relative aspect-square w-full overflow-hidden border border-white/12">
                 <CdnImage
                   src={product.image}
                   alt={product.title}
@@ -172,29 +172,6 @@ export default async function ProductPage({
                 />
                 <div className="absolute inset-0 bg-linear-to-t from-[#02102e] via-transparent to-transparent" />
               </div>
-
-              {product.gallery.length > 0 && (
-                <div className="mt-4 grid grid-cols-3 gap-4">
-                  {product.gallery.map((src, index) => (
-                    <div
-                      key={src}
-                      className="relative aspect-4/3 overflow-hidden border border-white/12"
-                    >
-                      <CdnImage
-                        src={src}
-                        /* Real alt text once the image comes from the media
-                           library, which stores a description against the
-                           photograph. Empty stays the honest answer for the
-                           legacy public-folder images, which have none. */
-                        alt={product.galleryAssets?.[index]?.alt ?? ""}
-                        fill
-                        sizes="(max-width: 1024px) 30vw, 18vw"
-                        className="object-cover"
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
             </Reveal>
 
             <div className="flex flex-col gap-6 lg:col-span-5">
@@ -398,7 +375,7 @@ export default async function ProductPage({
                     aria-hidden="true"
                     className="absolute inset-x-0 top-0 z-10 h-1 origin-left scale-x-0 bg-[#f97316] transition-transform duration-500 group-hover:scale-x-100"
                   />
-                  <div className="relative aspect-4/3 overflow-hidden bg-[#08131f]">
+                  <div className="relative aspect-square overflow-hidden bg-[#08131f]">
                     <CdnImage
                       src={item.image}
                       alt={item.title}

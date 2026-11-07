@@ -78,31 +78,26 @@ export function ProductsMegaMenu({
             </Link>
           </motion.div>
 
-          {/* Grid */}
-          <div className="col-span-9 grid grid-cols-3 gap-5 xl:grid-cols-4 xl:gap-6">
+          {/* Compact square thumbnails keep the full machine visible while the
+              surrounding link remains the larger click target. */}
+          <div className="col-span-9 grid grid-cols-4 gap-x-4 gap-y-3">
             {PRODUCT_LINKS.map((product) => (
               <motion.div variants={itemVariants} key={product.label}>
                 <Link
                   href={product.href}
                   onClick={(e) => navigate(e, product.href, onClose)}
-                  className="group flex flex-col gap-3"
+                  className="group flex min-h-20 items-center gap-3 rounded-xl p-2 transition-colors duration-300 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f97316] focus-visible:ring-offset-2"
                 >
-                  {/* Contain, not cover: product images are square studio
-                      shots, and a 16:9 cover crop cut the top and feet off
-                      every machine. The tile is filled with the renders'
-                      own backdrop colour so the side bands read as more
-                      studio rather than as letterboxing. */}
-                  <div className="relative w-full overflow-hidden rounded-lg bg-[#08131f] aspect-video">
+                  <div className="relative aspect-square w-16 shrink-0 overflow-hidden rounded-lg bg-[#08131f]">
                     <Image
                       src={product.image}
                       alt={product.label}
                       fill
-                      className="object-contain transition-transform duration-500 group-hover:scale-105"
-                      sizes="(max-width: 1280px) 20vw, 16vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      sizes="64px"
                     />
-                    <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/5" />
                   </div>
-                  <h3 className="text-xs font-bold leading-tight tracking-wide text-[color:var(--brand-ink)] transition-colors group-hover:text-[#f97316]">
+                  <h3 className="text-xs font-bold leading-snug tracking-wide text-[color:var(--brand-ink)] transition-colors group-hover:text-[#f97316]">
                     {product.label}
                   </h3>
                 </Link>

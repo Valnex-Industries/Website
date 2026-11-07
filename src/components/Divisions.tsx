@@ -65,13 +65,7 @@ function ProductCard({
       href={productHref(product.slug)}
       style={style}
       className={cn(
-        /* The max-height is a guard, not a look. Height here is 1.25x width,
-           so on anything wider than 2.5:1 — an ultrawide, a half-tiled 32:9 —
-           a 32vw card is taller than the viewport it is pinned inside, and its
-           own title scrolls out of sight with no way to reach it. Past that
-           ratio the card simply stops being 4:5; the image is object-cover, so
-           it crops rather than distorts. */
-        "group relative flex aspect-4/5 max-h-[78svh] flex-col justify-end overflow-hidden rounded-2xl",
+        "group relative flex aspect-square max-h-[78svh] flex-col justify-end overflow-hidden rounded-2xl",
         className
       )}
     >

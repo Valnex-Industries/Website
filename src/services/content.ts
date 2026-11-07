@@ -45,16 +45,12 @@ interface ProductRow {
   summary: string;
   description: string;
   image: string;
-  gallery: string[] | null;
   tags: string[] | null;
   specs: { label: string; value: string }[] | null;
   applications: string[] | null;
   spec_sheet: string | null;
   updated_at: string;
   image_asset: MediaAsset | null;
-  product_media:
-    | { position: number; alt: string | null; media_assets: MediaAsset | null }[]
-    | null;
 }
 
 /**
@@ -62,39 +58,13 @@ interface ProductRow {
  * the row's ordinal position here rather than stored, so reordering in the
  * portal renumbers the grid without a second column to keep in sync.
  *
- * ImageKit wins over the legacy column when both are set. That precedence is
- * what lets the seven seeded products keep their `public/` artwork until
- * someone uploads a replacement, with no migration inventing files that were
- * never in ImageKit.
+ * The compile-time catalogue owns the image for every seeded slug. That keeps
+ * one square asset authoritative across the orbit, menus and product page even
+ * if a portal row still names older artwork. A portal-only product continues
+ * to prefer its ImageKit asset over the legacy image column.
  */
-/**
- * Abstract artwork (a reactor core, a glowing crystal, a welding robot) that
- * stood in for three products before they had photographs. It shows nothing
- * Valnex makes, so it is deleted from `public/` — but portal rows saved before
- * then still name it. A row pointing at one falls back to the catalogue's
- * photograph for that slug instead of rendering a broken image.
- */
-const RETIRED_IMAGES = new Set([
-  "/assets/division_energy.png",
-  "/assets/division_materials.png",
-  "/assets/division_robotics.png",
-]);
-
 function toProduct(row: ProductRow, ordinal: number): Product {
   const catalogue = PRODUCTS.find((product) => product.slug === row.slug);
-  const gallery = (row.product_media ?? [])
-    .slice()
-    /* PostgREST cannot order an embedded resource by the join table's own
-       column, so the sort happens here. */
-    .sort((a, b) => a.position - b.position)
-    /* The join row's `alt` overrides the library's for this one placement.
-       Null is the normal case and means "use the library's description". */
-    .map((entry) =>
-      entry.media_assets
-        ? { ...entry.media_assets, alt: entry.alt ?? entry.media_assets.alt }
-        : null,
-    )
-    .filter((asset): asset is MediaAsset => Boolean(asset));
 
   return {
     slug: row.slug as ProductSlug,
@@ -102,17 +72,10 @@ function toProduct(row: ProductRow, ordinal: number): Product {
     title: row.title,
     summary: row.summary,
     description: row.description,
-    image:
-      row.image_asset?.file_path ||
-      (RETIRED_IMAGES.has(row.image) && catalogue ? catalogue.image : row.image),
+    image: catalogue?.image || row.image_asset?.file_path || row.image,
     imageAlt: row.image_asset?.alt ?? "",
     imageWidth: row.image_asset?.width ?? null,
     imageHeight: row.image_asset?.height ?? null,
-    gallery:
-      gallery.length > 0
-        ? gallery.map((asset) => asset.file_path)
-        : (row.gallery ?? []).filter((path) => !RETIRED_IMAGES.has(path)),
-    galleryAssets: gallery,
     tags: row.tags ?? [],
     specs: row.specs ?? [],
     applications: row.applications ?? [],
@@ -125,9 +88,8 @@ function toProduct(row: ProductRow, ordinal: number): Product {
 }
 
 const PRODUCT_SELECT =
-  "select=slug,position,title,summary,description,image,gallery,tags,specs,applications,spec_sheet,updated_at," +
-  "image_asset:media_assets!products_image_id_fkey(file_path,alt,width,height)," +
-  "product_media(position,alt,media_assets(file_path,alt,width,height))";
+  "select=slug,position,title,summary,description,image,tags,specs,applications,spec_sheet,updated_at," +
+  "image_asset:media_assets!products_image_id_fkey(file_path,alt,width,height)";
 
 export async function getProducts(): Promise<Product[]> {
   const rows = await queryPublic<ProductRow>(
@@ -146,7 +108,11 @@ export async function getProducts(): Promise<Product[]> {
 
 export async function getProduct(slug: string): Promise<Product | undefined> {
   const products = await getProducts();
-  return products.find((product) => product.slug === slug);
+  const canonical =
+    slug === 'hot-air-dryer' || slug === 'hot-air-hopper-loader'
+      ? 'hopper-loader'
+      : slug;
+  return products.find((product) => product.slug === canonical);
 }
 
 /* --- News ---------------------------------------------------------------- */
