@@ -20,9 +20,9 @@ export type NavItem = {
   children?: NavChild[];
 };
 
-/** How far the smooth anchor scroll stops short of a section, so the fixed
- *  header never covers the heading it just jumped to. */
-export const HEADER_OFFSET = 72;
+/** Smooth anchor scroll aligns section top flush with the window top,
+ *  with the fixed navbar resting over the section's top padding. */
+export const HEADER_OFFSET = 0;
 
 export const PRODUCT_LINKS: ProductLink[] = PRODUCTS.map((product) => ({
   label: product.title,

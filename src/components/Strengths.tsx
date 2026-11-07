@@ -102,7 +102,7 @@ export function Strengths({
   }, []);
 
   return (
-    <section id="strengths" className="relative overflow-clip bg-white">
+    <section id="strengths" className="relative overflow-clip bg-white scroll-mt-0">
       {/* Spans the full section (however tall the card stack makes it), so the
           sticky child below stays pinned for the section's entire scroll
           distance rather than releasing after one screen. */}
@@ -157,7 +157,7 @@ export function Strengths({
       {/* Own sticky region, exactly one screen tall. It pins independently of
           the backdrop above and releases on schedule, so card 01 arrives
           already overlapping it rather than waiting out a hand-tuned delay. */}
-      <div className="relative sticky top-0 flex h-svh flex-col items-center justify-center px-5 text-center sm:px-6 lg:px-10">
+      <div className="relative sticky top-0 flex h-svh flex-col items-center justify-center px-5 pt-16 text-center sm:px-6 lg:px-10">
         <h2 className="font-orbitron text-[clamp(2.88rem,min(12.8vw,14vh),4.25rem)] font-bold leading-[1.05] tracking-tight text-[color:var(--brand-blue)]">
           Our
           <br />
@@ -176,9 +176,8 @@ export function Strengths({
         </p>
       </div>
 
-      {/* Normal flow from here down. Nothing is pinned for a fixed number of
-          screens — the section is exactly as tall as four cards make it. */}
-      <ul className="relative flex flex-col px-5 pb-24 sm:px-6 md:px-12 md:pb-32 lg:px-10">
+      {/* Normal flow from here down. Held within a max-width container so it adapts to desktop viewports. */}
+      <ul className="relative mx-auto flex w-full max-w-[1240px] flex-col px-5 pb-20 sm:px-6 md:px-10 md:pb-24 lg:px-10 lg:pb-28">
         <div ref={sentinelRef} aria-hidden="true" className="h-px w-full" />
 
         {CARDS.map((card, i) => {
@@ -187,48 +186,25 @@ export function Strengths({
             <li
               key={card.n}
               className={cn(
-                /* mx-auto centres the card below md, where the alternating
-                   cascade drops out and every card sits in one column —
-                   without it, a phone wider than the 340px cap left the
-                   leftover space stacked entirely on the right, since a flex
-                   column's default cross-axis alignment is stretch-then-pin-
-                   to-start once a max-width caps the item. */
-                "mx-auto w-full max-w-[340px] lg:max-w-[360px]",
-                /* Right, left, right, left — a fixed diagonal cascade, not a
-                   scroll-linked one. Below md there is no room for two columns,
-                   so this drops out entirely in favour of the sticky stack.
-                   Both sides are set explicitly (not just the auto side): the
-                   base mx-auto above still applies at md+ unless overridden,
-                   so leaving the opposite margin unset would centre the card
-                   instead of pushing it to the edge the cascade needs. */
+                "mx-auto w-full max-w-[340px] sm:max-w-[350px] lg:max-w-[370px]",
                 fromRight ? "md:mr-0 md:ml-auto" : "md:ml-0 md:mr-auto",
-                /* The two md:mt-* values are mutually exclusive per card
-                   (never both present on one element), so there is no cascade
-                   order for twMerge to get wrong — the overlap on cards 2-4
-                   cannot be silently cancelled by a reset meant only for
-                   card 1. */
-                i === 0 ? "md:mt-0" : "md:-mt-[220px]",
-                /* Mobile only: each card pins at the same offset, so the next
-                   one simply covers the last as it scrolls up — the same
-                   negative-space problem the desktop cascade solves with
-                   overlap, solved here with a stack instead. Cleared past the
-                   fixed header, with a little air beneath it. */
+                i === 0 ? "md:mt-0" : "md:-mt-[clamp(140px,20vh,210px)] lg:-mt-[clamp(160px,22vh,220px)]",
                 "sticky top-20 mt-6 first:mt-0 md:static md:top-auto"
               )}
             >
               <article className="overflow-hidden rounded-lg bg-[linear-gradient(180deg,#000_0%,#444_60%)] shadow-[0_40px_90px_-30px_rgba(2,16,46,0.6)]">
-                <div className="p-6 sm:p-7">
+                <div className="p-5 sm:p-6 lg:p-6">
                   <div className="flex items-center gap-3">
                     <span className="eyebrow text-white/45">( {card.n} )</span>
                     <span aria-hidden="true" className="h-px w-8 bg-white/25" />
                     <span className="eyebrow text-white/70">Strengths</span>
                   </div>
 
-                  <h3 className="mt-6 text-[clamp(1.3rem,2.1vw,1.75rem)] font-black leading-[1.25] tracking-tight text-white">
+                  <h3 className="mt-4 text-[clamp(1.15rem,1.8vw,1.5rem)] font-black leading-[1.25] tracking-tight text-white lg:mt-5">
                     {card.title}
                   </h3>
 
-                  <p className="mt-4 text-sm font-light leading-relaxed text-white/60">
+                  <p className="mt-2.5 text-xs font-light leading-relaxed text-white/60 sm:text-sm">
                     {card.body}
                   </p>
                 </div>

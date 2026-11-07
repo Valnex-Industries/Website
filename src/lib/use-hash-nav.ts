@@ -70,7 +70,7 @@ export function useHashNav() {
           lenis.start();
           lenis.scrollTo(target as HTMLElement, {
             offset: -HEADER_OFFSET,
-            duration: 1.2,
+            duration: 0.85,
           });
         } else {
           target.scrollIntoView({ behavior: "smooth" });

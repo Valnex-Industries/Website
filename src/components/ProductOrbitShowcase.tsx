@@ -914,7 +914,7 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
       ref={sectionRef}
       id="products"
       aria-labelledby="product-showcase-title"
-      className="relative overflow-hidden bg-[#fbfcfe] py-6 sm:py-10 md:py-14 xl:py-24 text-slate-900"
+      className="relative overflow-hidden bg-[#fbfcfe] text-slate-900 scroll-mt-0 pt-20 pb-8 sm:pt-24 sm:pb-12 lg:pt-20 lg:pb-6 xl:pt-20 xl:pb-8 lg:min-h-screen flex flex-col justify-center"
     >
       <div
         aria-hidden="true"
@@ -925,12 +925,12 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
         className="pointer-events-none absolute -right-48 top-0 h-[780px] w-[780px] rounded-full bg-[radial-gradient(circle,rgba(0,71,225,0.065)_0%,rgba(249,115,22,0.035)_42%,transparent_72%)] blur-3xl"
       />
 
-      <div className="relative mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12">
-        <div className="grid grid-cols-1 items-center gap-4 sm:gap-6 xl:grid-cols-12 xl:gap-12">
-          <article className="flex flex-col justify-between xl:col-span-5">
+      <div className="relative mx-auto w-full max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-12">
+        <div className="grid grid-cols-1 items-center gap-4 sm:gap-6 lg:grid-cols-12 lg:gap-8 xl:gap-12">
+          <article className="flex flex-col justify-between lg:col-span-5">
             <div>
               {/* Desktop Eyebrow */}
-              <div className="hidden xl:flex items-center gap-2.5">
+              <div className="hidden lg:flex items-center gap-2.5">
                 <span className="h-0.5 w-7 rounded-full bg-[#f97316]" />
                 <span className="font-orbitron text-[11px] font-bold uppercase tracking-[0.24em] text-[#02102e] sm:text-xs">
                   Our Products
@@ -939,27 +939,27 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
 
               <div ref={copyRef} aria-live="polite" aria-atomic="true">
                 {/* Desktop H2 Title and Subtitle */}
-                <div className="hidden xl:block">
-                  <div className="relative mt-5 min-h-[72px] sm:min-h-[88px]">
+                <div className="hidden lg:block">
+                  <div className="relative mt-2 min-h-[46px] lg:mt-3 lg:min-h-[58px] xl:mt-4 xl:min-h-[72px]">
                     <h2
                       id="product-showcase-title"
                       data-product-copy
-                      className="font-orbitron max-w-[15ch] text-[2rem] font-black leading-[1.04] tracking-[-0.035em] text-[#02102e] sm:text-[2.65rem] xl:text-[2.8rem]"
+                      className="font-orbitron max-w-[15ch] text-[1.85rem] font-black leading-[1.05] tracking-[-0.035em] text-[#02102e] lg:text-[2.05rem] xl:text-[2.45rem] 2xl:text-[2.8rem]"
                     >
                       {activeProduct.title}
                     </h2>
                   </div>
 
-                  <div className="relative mt-2 min-h-[48px] sm:min-h-[54px]">
+                  <div className="relative mt-1.5 min-h-[36px] lg:mt-2 lg:min-h-[42px] xl:min-h-[48px]">
                     <p
                       data-product-copy
-                      className="max-w-[58ch] text-sm font-normal leading-relaxed text-slate-600 sm:text-[15px]"
+                      className="max-w-[58ch] text-xs font-normal leading-relaxed text-slate-600 lg:text-[13px] xl:text-[14.5px]"
                     >
                       {activeProduct.subtitle}
                     </p>
                   </div>
 
-                  <div className="mt-7">
+                  <div className="mt-3 lg:mt-4 xl:mt-5">
                     <span className="font-orbitron text-[10px] font-extrabold uppercase tracking-[0.22em] text-slate-400 sm:text-[11px]">
                       Key Specifications
                     </span>
@@ -967,28 +967,28 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
                 </div>
 
                 {/* Mobile screen-reader accessible title */}
-                <h2 id="product-showcase-title-mobile" className="sr-only xl:hidden">
+                <h2 id="product-showcase-title-mobile" className="sr-only lg:hidden">
                   {activeProduct.title}
                 </h2>
 
                 {/* The Four Technical Characteristics (TCs) */}
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-2.5 xl:grid-cols-1 xl:mt-3.5 xl:gap-2.5">
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-2.5 lg:grid-cols-1 lg:mt-2.5 lg:gap-2 xl:mt-3.5 xl:gap-2.5">
                   {activeProduct.specs.map((spec) => {
                     const Icon = spec.icon;
                     return (
                       <div
                         key={spec.label}
                         data-product-copy
-                        className="group relative flex items-center gap-3 overflow-hidden rounded-2xl border border-slate-200/75 bg-white/95 px-3 py-2 shadow-[0_2px_8px_rgba(2,16,46,0.05)] backdrop-blur-sm transition-all duration-300 hover:border-orange-200 hover:bg-white sm:px-3.5 sm:py-2.5 xl:min-h-[66px] xl:grid xl:grid-cols-[42px_1fr] xl:p-3 xl:before:absolute xl:before:inset-y-3 xl:before:left-0 xl:before:w-0.5 xl:before:bg-[#f97316] xl:before:opacity-0 xl:before:transition-opacity xl:hover:before:opacity-100"
+                        className="group relative flex items-center gap-3 overflow-hidden rounded-2xl border border-slate-200/75 bg-white/95 px-3 py-2 shadow-[0_2px_8px_rgba(2,16,46,0.05)] backdrop-blur-sm transition-all duration-300 hover:border-slate-300 hover:bg-white hover:shadow-md sm:px-3.5 sm:py-2.5 lg:grid lg:grid-cols-[38px_1fr] lg:p-2 xl:p-2.5 xl:grid-cols-[42px_1fr] 2xl:p-3 xl:min-h-[58px] 2xl:min-h-[64px]"
                       >
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-100 bg-[#f8fafc] text-[#233557] shadow-sm transition-colors duration-300 group-hover:border-orange-200 group-hover:text-[#f97316] sm:h-10 sm:w-10 xl:h-10 xl:w-10 xl:rounded-[0.7rem] xl:border-slate-200">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-100 bg-[#f8fafc] text-[#233557] shadow-sm transition-colors duration-300 group-hover:border-orange-200 group-hover:text-[#f97316] sm:h-10 sm:w-10 lg:h-9 lg:w-9 xl:h-10 xl:w-10 xl:rounded-[0.7rem] xl:border-slate-200">
                           <Icon size={18} strokeWidth={2.1} className="sm:h-[19px] sm:w-[19px]" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <span className="block text-[10px] font-medium tracking-wide text-slate-500 sm:text-[11px]">
+                          <span className="block text-[10px] font-medium tracking-wide text-slate-500 sm:text-[11px] lg:text-[10px] xl:text-[11px]">
                             {spec.label}
                           </span>
-                          <span className="font-orbitron block text-[11px] font-bold leading-snug text-slate-900 sm:text-xs">
+                          <span className="font-orbitron block text-[11px] font-bold leading-snug text-slate-900 sm:text-xs lg:text-xs xl:text-xs 2xl:text-sm">
                             {spec.value}
                           </span>
                         </div>
@@ -1000,7 +1000,7 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
             </div>
 
             {/* Counter and Specifications Link */}
-            <div className="mt-2.5 flex flex-col gap-1 sm:mt-3 sm:gap-1.5 xl:mt-7 xl:flex-row xl:items-center xl:justify-between xl:border-t xl:border-slate-200/80 xl:pt-5">
+            <div className="mt-2.5 flex flex-col gap-1 sm:mt-3 sm:gap-1.5 lg:mt-3 lg:flex-row lg:items-center lg:justify-between lg:border-t lg:border-slate-200/80 lg:pt-3 xl:mt-5 xl:pt-4 2xl:mt-7 2xl:pt-5">
               <div className="flex items-center gap-3">
                 <span className="font-orbitron text-xs font-bold tabular-nums tracking-wider text-slate-800">
                   {activeProduct.index}{" "}
@@ -1008,7 +1008,7 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
                     / {String(items.length).padStart(2, "0")}
                   </span>
                 </span>
-                <div className="relative h-1 w-24 overflow-hidden rounded-full bg-slate-200 sm:w-28 xl:w-32">
+                <div className="relative h-1 w-20 overflow-hidden rounded-full bg-slate-200 sm:w-28 xl:w-32">
                   <span
                     ref={progressRef}
                     className="absolute inset-0 block rounded-full bg-[#f97316]"
@@ -1038,7 +1038,7 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
             onKeyDown={handleKeyDown}
             onFocusCapture={() => setIsFocusWithin(true)}
             onBlurCapture={handleBlurCapture}
-            className="relative isolate flex h-[360px] xs:h-[390px] sm:h-[450px] md:h-[520px] xl:col-span-7 xl:h-[680px] w-full select-none items-center justify-center overflow-hidden rounded-[1.75rem] sm:rounded-3xl border border-slate-200/80 bg-[radial-gradient(circle_at_50%_48%,rgba(255,255,255,0.98)_0%,rgba(246,248,252,0.94)_46%,rgba(238,243,250,0.9)_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f97316] focus-visible:ring-offset-4"
+            className="relative isolate flex h-[350px] xs:h-[380px] sm:h-[440px] md:h-[480px] lg:col-span-7 lg:h-[min(500px,60vh)] xl:h-[min(580px,68vh)] 2xl:h-[660px] w-full select-none items-center justify-center overflow-hidden rounded-[1.75rem] sm:rounded-3xl border border-slate-200/80 bg-[radial-gradient(circle_at_50%_48%,rgba(255,255,255,0.98)_0%,rgba(246,248,252,0.94)_46%,rgba(238,243,250,0.9)_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f97316] focus-visible:ring-offset-4"
           >
             <div
               aria-hidden="true"
@@ -1076,13 +1076,13 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
 
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute h-[180px] w-[180px] rounded-full bg-[radial-gradient(circle,rgba(249,115,22,0.13)_0%,rgba(0,71,225,0.055)_48%,transparent_72%)] blur-xl sm:h-[250px] sm:w-[250px] md:h-[320px] md:w-[320px] xl:h-[405px] xl:w-[405px]"
+              className="pointer-events-none absolute h-[170px] w-[170px] rounded-full bg-[radial-gradient(circle,rgba(249,115,22,0.13)_0%,rgba(0,71,225,0.055)_48%,transparent_72%)] blur-xl sm:h-[230px] sm:w-[230px] lg:h-[260px] lg:w-[260px] xl:h-[320px] xl:w-[320px] 2xl:h-[380px] 2xl:w-[380px]"
             />
 
             <div
               ref={centerRef}
               data-orbit-center
-              className="relative z-30 flex h-[145px] w-[145px] xs:h-[160px] xs:w-[160px] shrink-0 items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-white shadow-[0_26px_70px_-22px_rgba(2,16,46,0.3),0_0_0_5px_rgba(255,255,255,0.72)] sm:h-[210px] sm:w-[210px] sm:shadow-[0_26px_70px_-22px_rgba(2,16,46,0.3),0_0_0_6px_rgba(255,255,255,0.72)] md:h-[260px] md:w-[260px] xl:h-[340px] xl:w-[340px] 2xl:h-[365px] 2xl:w-[365px]"
+              className="relative z-30 flex h-[140px] w-[140px] xs:h-[155px] xs:w-[155px] shrink-0 items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-white shadow-[0_26px_70px_-22px_rgba(2,16,46,0.3),0_0_0_5px_rgba(255,255,255,0.72)] sm:h-[190px] sm:w-[190px] sm:shadow-[0_26px_70px_-22px_rgba(2,16,46,0.3),0_0_0_6px_rgba(255,255,255,0.72)] md:h-[230px] md:w-[230px] lg:h-[240px] lg:w-[240px] xl:h-[290px] xl:w-[290px] 2xl:h-[340px] 2xl:w-[340px]"
             >
               <div className="relative h-full w-full">
                 <CdnImage
@@ -1116,7 +1116,7 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
                     aria-pressed={isSelected}
                     tabIndex={isSelected ? -1 : 0}
                     className={cn(
-                      "group pointer-events-auto absolute left-1/2 top-1/2 flex h-10 w-10 xs:h-11 xs:w-11 cursor-pointer items-center justify-center rounded-full border bg-white p-1.5 shadow-[0_6px_16px_-6px_rgba(2,16,46,0.25)] transition-[border-color,box-shadow,opacity] duration-300 will-change-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f97316] focus-visible:ring-offset-2 sm:h-12 sm:w-12 sm:p-2 md:h-14 md:w-14 xl:h-16 xl:w-16 2xl:h-[66px] 2xl:w-[66px]",
+                      "group pointer-events-auto absolute left-1/2 top-1/2 flex h-10 w-10 xs:h-11 xs:w-11 cursor-pointer items-center justify-center rounded-full border bg-white p-1.5 shadow-[0_6px_16px_-6px_rgba(2,16,46,0.25)] transition-[border-color,box-shadow,opacity] duration-300 will-change-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f97316] focus-visible:ring-offset-2 sm:h-12 sm:w-12 sm:p-2 lg:h-11 lg:w-11 xl:h-13 xl:w-13 2xl:h-15 2xl:w-15",
                       isSelected
                         ? "pointer-events-none opacity-0"
                         : "border-slate-200/90 opacity-100 hover:border-[#f97316] hover:shadow-[0_10px_24px_-8px_rgba(249,115,22,0.42)]"
@@ -1140,7 +1140,7 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
               <div className="pointer-events-none absolute inset-0 z-50" aria-hidden="true">
                 <div
                   ref={outgoingPodRef}
-                  className="invisible absolute left-0 top-0 flex h-[145px] w-[145px] xs:h-[160px] xs:w-[160px] items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-white opacity-0 shadow-[0_26px_70px_-22px_rgba(2,16,46,0.3),0_0_0_5px_rgba(255,255,255,0.72)] will-change-transform sm:h-[210px] sm:w-[210px] sm:shadow-[0_26px_70px_-22px_rgba(2,16,46,0.3),0_0_0_6px_rgba(255,255,255,0.72)] md:h-[260px] md:w-[260px] xl:h-[340px] xl:w-[340px] 2xl:h-[365px] 2xl:w-[365px]"
+                  className="invisible absolute left-0 top-0 flex h-[140px] w-[140px] xs:h-[155px] xs:w-[155px] items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-white opacity-0 shadow-[0_26px_70px_-22px_rgba(2,16,46,0.3),0_0_0_5px_rgba(255,255,255,0.72)] will-change-transform sm:h-[190px] sm:w-[190px] sm:shadow-[0_26px_70px_-22px_rgba(2,16,46,0.3),0_0_0_6px_rgba(255,255,255,0.72)] md:h-[230px] md:w-[230px] lg:h-[240px] lg:w-[240px] xl:h-[290px] xl:w-[290px] 2xl:h-[340px] 2xl:w-[340px]"
                 >
                   <div className="relative h-full w-full">
                     <CdnImage
@@ -1154,7 +1154,7 @@ export function ProductOrbitShowcase({ products = PRODUCTS }: ProductOrbitShowca
                 </div>
                 <div
                   ref={incomingPodRef}
-                  className="invisible absolute left-0 top-0 flex h-[145px] w-[145px] xs:h-[160px] xs:w-[160px] items-center justify-center overflow-hidden rounded-full border border-[#f97316] bg-white opacity-0 shadow-[0_26px_70px_-22px_rgba(249,115,22,0.38),0_0_0_5px_rgba(249,115,22,0.12)] will-change-transform sm:h-[210px] sm:w-[210px] md:h-[260px] md:w-[260px] xl:h-[340px] xl:w-[340px] 2xl:h-[365px] 2xl:w-[365px]"
+                  className="invisible absolute left-0 top-0 flex h-[140px] w-[140px] xs:h-[155px] xs:w-[155px] items-center justify-center overflow-hidden rounded-full border border-[#f97316] bg-white opacity-0 shadow-[0_26px_70px_-22px_rgba(249,115,22,0.38),0_0_0_5px_rgba(249,115,22,0.12)] will-change-transform sm:h-[190px] sm:w-[190px] md:h-[230px] md:w-[230px] lg:h-[240px] lg:w-[240px] xl:h-[290px] xl:w-[290px] 2xl:h-[340px] 2xl:w-[340px]"
                 >
                   <div className="relative h-full w-full">
                     <CdnImage
