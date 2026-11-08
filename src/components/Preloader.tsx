@@ -93,7 +93,7 @@ export function Preloader() {
                 it, which meant the gap was guesswork and the text overlapped the
                 mark on short screens. Stacking them makes the spacing real. */}
             <div className="flex flex-col items-center pointer-events-none">
-              <div className="w-[min(56vw,240px)] aspect-[1.1/1]">
+              <div className="w-[min(52vw,220px)] aspect-square">
                 <LogoAnimation
                   logoColor="#F6F7F9"
                   background="#0B32C4"

@@ -1,7 +1,10 @@
-import React, { useCallback, useRef, type CSSProperties, type RefObject } from "react";
+"use client";
+
+import React, { useCallback, useRef, type RefObject } from "react";
+import Image from "next/image";
 
 export interface LogoAnimationProps {
-  /** Stroke + fill color of the mark. */
+  /** Stroke + fill color of the mark (preserved for API compatibility). */
   logoColor?: string;
   /** Stage background color. */
   background?: string;
@@ -17,27 +20,29 @@ export interface LogoAnimationProps {
 }
 
 /**
- * Animated "V" logo — outline draws in, then both shapes fill.
+ * Animated 3D Valnex Emblem loading animation —
+ * Scales up smoothly with an ambient back-glow and metallic light shine reflection.
  * Click anywhere on the stage to replay.
  */
 export default function LogoAnimation({
-  logoColor = "#F6F7F9",
   background = "#0B32C4",
-  duration = 4.4,
+  duration = 1.6,
   loop = true,
   showHint = false,
   size = "min(52vh, 46vw)",
 }: LogoAnimationProps) {
-  const mainRef = useRef<SVGPathElement>(null);
-  const arrowRef = useRef<SVGPathElement>(null);
-  const settleRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLDivElement>(null);
+  const shineRef = useRef<HTMLDivElement>(null);
+  const glowRef = useRef<HTMLDivElement>(null);
   const labelRef = useRef<HTMLDivElement>(null);
 
   const replay = useCallback(() => {
-    const refs: RefObject<SVGElement | HTMLElement | null>[] = [
-      settleRef,
-      mainRef,
-      arrowRef,
+    const refs: RefObject<HTMLElement | null>[] = [
+      containerRef,
+      imageRef,
+      shineRef,
+      glowRef,
       labelRef,
     ];
     refs.forEach((r) => {
@@ -53,62 +58,97 @@ export default function LogoAnimation({
   const anim = (name: string, ease: string): string =>
     `${name} ${duration}s ${ease} ${loop ? "infinite" : "1"} both`;
 
-  const pathBase: CSSProperties = {
-    fill: logoColor,
-    fillOpacity: 0,
-    stroke: logoColor,
-    strokeWidth: 9,
-    strokeLinejoin: "round",
-    strokeDasharray: "1 1",
-    strokeDashoffset: 1,
-  };
-
   return (
     <div
       onClick={replay}
       style={{
-        /* Fills its parent rather than the viewport, so the mark can sit in
-           normal flow above other content instead of needing an overlay. */
         height: "100%",
         width: "100%",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        gap: 40,
+        gap: 20,
         background,
         cursor: "pointer",
         userSelect: "none",
         overflow: "hidden",
+        position: "relative",
       }}
     >
       <style>{KEYFRAMES}</style>
 
       <div
-        ref={settleRef}
+        ref={containerRef}
         style={{
           width: size,
-          aspectRatio: "1.1 / 1",
-          animation: anim("vSettle", "cubic-bezier(0.22,1,0.36,1)"),
+          aspectRatio: "1 / 1",
+          position: "relative",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
-        <svg
-          viewBox="330 380 1280 1165"
-          style={{ width: "100%", height: "100%", display: "block", overflow: "visible" }}
+        {/* Soft atmospheric aura glow behind the 3D chrome emblem */}
+        <div
+          ref={glowRef}
+          style={{
+            position: "absolute",
+            inset: "-14%",
+            borderRadius: "50%",
+            background:
+              "radial-gradient(circle, rgba(0, 162, 255, 0.45) 0%, rgba(0, 71, 225, 0.2) 48%, transparent 72%)",
+            filter: "blur(22px)",
+            pointerEvents: "none",
+            animation: anim("vAura", "ease-in-out"),
+          }}
+        />
+
+        {/* 3D Emblem Image with Scale & Shine Reveal */}
+        <div
+          ref={imageRef}
+          style={{
+            position: "relative",
+            width: "100%",
+            height: "100%",
+            animation: anim("vScaleIn", "cubic-bezier(0.16, 1, 0.3, 1)"),
+          }}
         >
-          <path
-            ref={mainRef}
-            d="M385,433 L782,433 L1170,1140 L975,1492 Z"
-            pathLength={1}
-            style={{ ...pathBase, animation: anim("vInkMain", "cubic-bezier(0.65,0,0.35,1)") }}
+          <Image
+            src="/assets/valnex-logo.webp"
+            alt="Valnex Emblem"
+            fill
+            sizes="300px"
+            priority
+            className="object-contain drop-shadow-[0_12px_28px_rgba(0,0,0,0.35)]"
           />
-          <path
-            ref={arrowRef}
-            d="M1055,433 L1560,433 L1295,895 L1295,600 Z"
-            pathLength={1}
-            style={{ ...pathBase, animation: anim("vInkArrow", "cubic-bezier(0.65,0,0.35,1)") }}
-          />
-        </svg>
+
+          {/* Sweeping metallic specular light bar */}
+          <div
+            ref={shineRef}
+            style={{
+              position: "absolute",
+              inset: 0,
+              overflow: "hidden",
+              pointerEvents: "none",
+              borderRadius: "16px",
+            }}
+          >
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: "-120%",
+                width: "100%",
+                height: "100%",
+                background:
+                  "linear-gradient(115deg, transparent 20%, rgba(255,255,255,0.2) 40%, rgba(255,255,255,0.75) 50%, rgba(255,255,255,0.2) 60%, transparent 80%)",
+                transform: "skewX(-20deg)",
+                animation: anim("vShine", "cubic-bezier(0.4, 0, 0.2, 1)"),
+              }}
+            />
+          </div>
+        </div>
       </div>
 
       {showHint && (
@@ -131,27 +171,67 @@ export default function LogoAnimation({
 }
 
 const KEYFRAMES = `
-@keyframes vInkMain {
-  0%   { opacity: 1; stroke-dashoffset: 1; fill-opacity: 0; }
-  34%  { stroke-dashoffset: 0; fill-opacity: 0; }
-  56%  { fill-opacity: 0; }
-  76%  { fill-opacity: 1; }
-  100% { opacity: 1; fill-opacity: 1; stroke-dashoffset: 0; }
+@keyframes vScaleIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.65) translateY(10px);
+    filter: brightness(0.6);
+  }
+  35% {
+    opacity: 1;
+    filter: brightness(1.15);
+  }
+  75% {
+    transform: scale(1.02) translateY(0);
+    filter: brightness(1);
+  }
+  90% {
+    transform: scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: brightness(1);
+  }
 }
-@keyframes vInkArrow {
-  0%   { opacity: 1; stroke-dashoffset: 1; fill-opacity: 0; }
-  24%  { stroke-dashoffset: 1; fill-opacity: 0; }
-  50%  { stroke-dashoffset: 0; fill-opacity: 0; }
-  56%  { fill-opacity: 0; }
-  76%  { fill-opacity: 1; }
-  100% { opacity: 1; fill-opacity: 1; stroke-dashoffset: 0; }
+
+@keyframes vAura {
+  0% {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+  45% {
+    opacity: 0.85;
+    transform: scale(1.1);
+  }
+  75% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0.65;
+    transform: scale(1);
+  }
 }
-@keyframes vSettle {
-  0%, 74% { transform: scale(1); }
-  80%     { transform: scale(1.008); }
-  90%     { transform: scale(1); }
-  100%    { transform: scale(1); }
+
+@keyframes vShine {
+  0%, 25% {
+    left: "-120%";
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  75% {
+    left: "140%";
+    opacity: 1;
+  }
+  85%, 100% {
+    left: "140%";
+    opacity: 0;
+  }
 }
+
 @keyframes vLabel {
   0%, 84% { opacity: 0; }
   100% { opacity: 1; }

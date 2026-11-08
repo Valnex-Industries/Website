@@ -60,11 +60,11 @@ export function SiteFooter() {
           <div className="col-span-2 min-w-0 pb-7 md:col-span-3 md:pb-0 xl:col-span-3">
             <div className="flex items-center gap-3">
               <Image
-                src="/assets/blue-valnex-logo.webp"
-                alt=""
+                src="/assets/valnex-logo.webp"
+                alt="Valnex Industries"
                 width={128}
                 height={128}
-                className="h-10 w-10 shrink-0 object-contain"
+                className="h-10 w-10 shrink-0 object-contain transition-transform duration-300 hover:scale-105"
               />
               <span className="font-orbitron text-sm font-extrabold uppercase tracking-[0.2em] text-[color:var(--brand-blue)]">
                 Valnex Industries

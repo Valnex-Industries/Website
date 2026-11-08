@@ -141,40 +141,15 @@ export function Navbar() {
                 : `text-white delay-0 ${tone}`
           )}
         >
-          {/* White logo: visible unless we're open on mobile, or in desktop light mode */}
+          {/* New 3D Emblem Logo */}
           <Image
-            src="/assets/white-valnex-logo.webp"
-            alt=""
+            src="/assets/valnex-logo.webp"
+            alt="Valnex Industries"
             width={128}
             height={128}
             priority
-            className={cn(
-              "absolute left-0 top-1/2 -translate-y-1/2 h-9 w-9 shrink-0 object-contain sm:h-10 sm:w-10 md:h-12 md:w-12 lg:h-10 lg:w-10 transition-opacity",
-              open
-                ? "opacity-0 sm:opacity-100 duration-150 delay-[250ms] sm:delay-0 sm:duration-500"
-                : isLightMode
-                  ? `opacity-0 delay-0 ${tone}`
-                  : `opacity-100 delay-0 ${tone}`
-            )}
+            className="h-8 w-8 shrink-0 object-contain sm:h-9 sm:w-9 md:h-10 md:w-10 transition-transform duration-300 group-hover:scale-105 drop-shadow-sm"
           />
-          {/* Blue logo: visible when open on mobile, or in desktop light mode */}
-          <Image
-            src="/assets/blue-valnex-logo.webp"
-            alt=""
-            width={128}
-            height={128}
-            priority
-            className={cn(
-              "absolute left-0 top-1/2 -translate-y-1/2 h-9 w-9 shrink-0 object-contain sm:h-10 sm:w-10 md:h-12 md:w-12 lg:h-10 lg:w-10 transition-opacity",
-              open
-                ? "opacity-100 sm:opacity-0 duration-150 delay-[250ms] sm:delay-0 sm:duration-500"
-                : isLightMode
-                  ? `opacity-100 delay-0 ${tone}`
-                  : `opacity-0 delay-0 ${tone}`
-            )}
-          />
-          {/* Spacer to reserve layout space for the absolute images */}
-          <div className="h-9 w-9 shrink-0 sm:h-10 sm:w-10 md:h-12 md:w-12 lg:h-10 lg:w-10" />
           Valnex Industries
         </Link>
 
