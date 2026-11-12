@@ -5,6 +5,14 @@ const nextConfig: NextConfig = {
      bundler cannot trace. Left to be bundled it breaks on the server action
      that sends inquiry notifications. */
   serverExternalPackages: ["nodemailer"],
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "ik.imagekit.io",
+      },
+    ],
+  },
 };
 
 export default nextConfig;

@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { CdnImage } from "@/components/CdnImage";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { motion, Variants } from "framer-motion";
@@ -89,7 +89,7 @@ export function ProductsMegaMenu({
                   className="group flex min-h-20 items-center gap-3 rounded-xl p-2 transition-colors duration-300 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f97316] focus-visible:ring-offset-2"
                 >
                   <div className="relative aspect-square w-16 shrink-0 overflow-hidden rounded-lg bg-[#08131f]">
-                    <Image
+                    <CdnImage
                       src={product.image}
                       alt={product.label}
                       fill

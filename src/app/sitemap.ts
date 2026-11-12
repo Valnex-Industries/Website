@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getProducts } from "@/services/content";
+import { absoluteImageUrl } from "@/lib/imagekit";
 import { productHref } from "@/lib/products";
 import { siteUrl } from "@/lib/site";
 
@@ -23,10 +24,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: siteUrl("/") },
     { url: siteUrl("/about") },
     { url: siteUrl("/inquiry") },
-    ...products.map((product) => ({
-      url: siteUrl(productHref(product.slug)),
-      ...(product.updatedAt && { lastModified: new Date(product.updatedAt) }),
-    })),
+    ...products.map((product) => {
+      const imageUrl = absoluteImageUrl(product.image);
+      return {
+        url: siteUrl(productHref(product.slug)),
+        ...(product.updatedAt && { lastModified: new Date(product.updatedAt) }),
+        ...(imageUrl && { images: [imageUrl] }),
+      };
+    }),
   ];
 }
 

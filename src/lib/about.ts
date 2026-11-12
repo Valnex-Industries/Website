@@ -56,15 +56,15 @@ export const ABOUT_PHOTOS: {
       alt: "Valnex machines lined up on the shop floor",
     },
     {
-      src: "/assets/strength-4.webp",
+      src: "/strength-section/strength-4.webp",
       alt: "An engineer marking up a machine drawing",
     },
     {
-      src: "/assets/strength-3.webp",
+      src: "/strength-section/strength-3.webp",
       alt: "The Valnex product range on the factory floor",
     },
     {
-      src: "/assets/strength-2.webp",
+      src: "/strength-section/strength-2.webp",
       alt: "A technician fitting the pipework on a chiller",
     },
   ],

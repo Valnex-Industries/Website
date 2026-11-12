@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import Image from "next/image";
+import { CdnImage } from "@/components/CdnImage";
 import { useLenis } from "lenis/react";
 import { gsap, MOTION_OK, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { ABOUT_PEOPLE, ABOUT_PHOTOS } from "@/lib/about";
@@ -165,7 +165,7 @@ export function PeopleCollage() {
               className={cn("machine-card absolute", slot.className)}
             >
               <div className="relative h-full w-full overflow-hidden rounded-2xl border border-white/15 shadow-[0_24px_60px_-20px_rgba(0,8,30,0.8)]">
-                <Image
+                <CdnImage
                   src={photo.src}
                   alt={photo.alt}
                   fill
@@ -186,7 +186,7 @@ export function PeopleCollage() {
           className="group-card pointer-events-auto w-full max-w-[46rem] md:w-[84vw] lg:w-[46vw]"
         >
           <div className="relative aspect-[3/2] overflow-hidden rounded-2xl border-[6px] border-white bg-white shadow-[0_40px_90px_-24px_rgba(0,8,30,0.95)] md:border-8">
-            <Image
+            <CdnImage
               src={group.src}
               alt={group.alt}
               fill

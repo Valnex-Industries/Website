@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import Image from "next/image";
+import { CdnImage } from "@/components/CdnImage";
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion, type Variants } from "framer-motion";
 import { ArrowRight, ChevronRight, Minus, Plus } from "lucide-react";
@@ -395,7 +395,7 @@ function DrawerRow({
                     {child.image ? (
                       <>
                         <span className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-[#08131f]">
-                          <Image
+                          <CdnImage
                             src={child.image}
                             alt=""
                             fill

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
+import { CdnImage } from "@/components/CdnImage";
 import { PRODUCTS } from "@/lib/products";
 import { cn } from "@/utils/cn";
 
@@ -18,28 +18,28 @@ function cards(productCount: number) {
     n: "01",
     title: "Thermal, materials and automation under one roof",
     body: "Chillers, feeders and the automation around them are engineered by the same people, in the same building.",
-    image: "/assets/strength-1.webp",
+    image: "/strength-section/strength-1.webp",
     alt: "A chiller, hopper loader and control cabinet installed together on a plant floor",
   },
   {
     n: "02",
     title: "Validated before it reaches your line",
     body: "Every system is proven against its duty cycle here, so the first time it runs is not the first time it has run.",
-    image: "/assets/strength-2.webp",
+    image: "/strength-section/strength-2.webp",
     alt: "A gloved hand adjusting a valve on insulated chiller pipework with pressure gauges",
   },
   {
     n: "03",
     title: `${productCount} lines of production equipment`,
     body: "Chillers, flake cutters, hopper loaders, laser marking, volumetric feeders, mould temperature controllers, dehumidifiers and hot air dryers.",
-    image: "/assets/strength-3.webp",
+    image: "/strength-section/strength-3.webp",
     alt: "A row of plastics auxiliary machines lined up on a showroom floor",
   },
   {
     n: "04",
     title: "An engineer reads every inquiry",
     body: "Send a drawing, a duty cycle, or just the problem. It reaches a person who can answer it, not a queue.",
-    image: "/assets/strength-4.webp",
+    image: "/strength-section/strength-4.webp",
     alt: "An engineer marking up a machine drawing beside a laptop",
   },
   ] as const;
@@ -115,7 +115,7 @@ export function Strengths({
               runs at 2x, lg (1024–1279, landscape) at 1.5x, xl is the desktop
               size — width alone separates them since a landscape tablet is
               never below 1024 and a desktop is rarely below 1280. */}
-          <Image
+          <CdnImage
             src="/assets/sketch-hopper-loader.webp"
             alt=""
             width={1536}
@@ -123,7 +123,7 @@ export function Strengths({
             sizes="(max-width: 767px) 105vw, (max-width: 1023px) 50vw, (max-width: 1279px) 79vw, (max-width: 1440px) 52.5vw, 763px"
             className="absolute top-0 left-1/2 h-auto w-[105vw] max-w-none -translate-x-1/2 -translate-y-[8%] opacity-40 md:left-auto md:right-0 md:w-[50vw] md:translate-x-0 md:translate-y-0 md:opacity-50 lg:w-[79vw] lg:translate-x-[20%] lg:-translate-y-[7%] lg:opacity-55 xl:w-[clamp(271px,52.5vw,763px)]"
           />
-          <Image
+          <CdnImage
             src="/assets/sketch-chiller.webp"
             alt=""
             width={1024}
@@ -210,7 +210,7 @@ export function Strengths({
                 </div>
 
                 <div className="relative mx-2.5 mb-2.5 aspect-9/7 overflow-hidden rounded">
-                  <Image
+                  <CdnImage
                     src={card.image}
                     alt={card.alt}
                     fill

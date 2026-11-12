@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="public/assets/blue-valnex-logo.webp" alt="Valnex Industries" width="72" />
+  <img src="public/assets/valnex-logo.webp" alt="Valnex Industries" width="72" />
 </p>
 
 <h1 align="center">Valnex Industries: Marketing Site</h1>

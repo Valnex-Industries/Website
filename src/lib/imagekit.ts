@@ -22,12 +22,46 @@ export function imagekitEndpoint(): string {
  * two are told apart by the folders the portal uploads into. Anything else --
  * `/assets/...`, a full external URL — goes through Next's own optimiser.
  */
-const IMAGEKIT_FOLDERS = ["/products/", "/news/", "/media/"];
+const IMAGEKIT_FOLDERS = ["/products/", "/news/", "/media/", "/strength-section/"];
+const IMAGEKIT_HOST_PREFIX = "https://ik.imagekit.io/";
 
 export function isImagekitPath(src: string): boolean {
-  if (!src || !imagekitEndpoint()) return false;
-  if (src.startsWith(imagekitEndpoint())) return true;
+  if (!src) return false;
+  if (src.startsWith(IMAGEKIT_HOST_PREFIX)) return true;
+  const endpoint = imagekitEndpoint();
+  if (!endpoint) return false;
+  if (src.startsWith(endpoint)) return true;
   return IMAGEKIT_FOLDERS.some((folder) => src.startsWith(folder));
+}
+
+/**
+ * Normalises an ImageKit source (relative path or full `ik.imagekit.io` URL)
+ * into `{ endpoint, path }`, stripping any existing `/tr:...` segment so
+ * callers never emit duplicate transformation chains.
+ */
+function splitImagekitSource(src: string): { endpoint: string; path: string } {
+  const configured = imagekitEndpoint();
+
+  if (src.startsWith(IMAGEKIT_HOST_PREFIX)) {
+    const rest = src.slice(IMAGEKIT_HOST_PREFIX.length);
+    const slashIndex = rest.indexOf("/");
+    const endpoint =
+      slashIndex === -1
+        ? src.replace(/\/$/, "")
+        : `${IMAGEKIT_HOST_PREFIX}${rest.slice(0, slashIndex)}`;
+    const rawPath = slashIndex === -1 ? "/" : rest.slice(slashIndex);
+    return {
+      endpoint,
+      path: rawPath.replace(/^\/tr:[^/]+/, "") || "/",
+    };
+  }
+
+  const stripped = configured && src.startsWith(configured) ? src.slice(configured.length) : src;
+  const withLeadingSlash = stripped.startsWith("/") ? stripped : `/${stripped}`;
+  return {
+    endpoint: configured,
+    path: withLeadingSlash.replace(/^\/tr:[^/]+/, "") || "/",
+  };
 }
 
 /**
@@ -42,15 +76,11 @@ export function isImagekitPath(src: string): boolean {
  * on our side.
  */
 export function imagekitLoader({ src, width, quality }: ImageLoaderProps): string {
-  const endpoint = imagekitEndpoint();
-
-  /* Already absolute — strip the endpoint back off so the transformation can be
-     inserted in the right place rather than appended to a finished URL. */
-  const path = src.startsWith(endpoint) ? src.slice(endpoint.length) : src;
-  const clean = path.startsWith("/") ? path : `/${path}`;
+  const { endpoint, path } = splitImagekitSource(src);
+  if (!endpoint) return src;
 
   const transforms = [`w-${width}`, "f-auto", `q-${quality ?? 80}`];
-  return `${endpoint}/tr:${transforms.join(",")}${clean}`;
+  return `${endpoint}/tr:${transforms.join(",")}${path}`;
 }
 
 /** A URL built by hand, for the few places that are not a Next <Image>:
@@ -60,15 +90,17 @@ export function imagekitUrl(
   options: { w?: number; h?: number; q?: number } = {},
 ): string {
   if (!path) return "";
-  if (/^https?:\/\//i.test(path)) return path;
   if (!isImagekitPath(path)) return path;
+
+  const { endpoint, path: cleanPath } = splitImagekitSource(path);
+  if (!endpoint) return path;
 
   const transforms = ["f-auto"];
   if (options.w) transforms.push(`w-${Math.round(options.w)}`);
   if (options.h) transforms.push(`h-${Math.round(options.h)}`);
   if (options.q) transforms.push(`q-${Math.round(options.q)}`);
 
-  return `${imagekitEndpoint()}/tr:${transforms.join(",")}${path}`;
+  return `${endpoint}/tr:${transforms.join(",")}${cleanPath}`;
 }
 
 /**
@@ -95,11 +127,12 @@ export function absoluteImageUrl(
   options: { w?: number } = { w: 1200 },
 ): string | undefined {
   if (!path) return undefined;
-  if (/^https?:\/\//i.test(path)) return path;
 
   if (isImagekitPath(path)) {
     return imagekitUrl(path, { w: options.w ?? 1200 });
   }
+
+  if (/^https?:\/\//i.test(path)) return path;
 
   const origin = (
     process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.valnexindustries.com"

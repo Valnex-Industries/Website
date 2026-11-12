@@ -112,7 +112,7 @@ export const PRODUCTS: Product[] = [
       "Industrial cooling systems designed for precision temperature control and maximum uptime.",
     description:
       "Two fourteen-model series on one integral skidded design: air-cooled from 2 to 59 TR and water-cooled from 2.7 to 65.5 TR. Every unit pairs its compressor with an integrated process pump and water tank, so the machine arrives as one skid rather than as a chiller plus a pump set to be matched on site. Both series run on R-22, R-407C or R-410; the water-cooled models reject heat to a cooling tower of 5 to 85 TR.",
-    image: "/assets/product-chillers.webp",
+    image: "/products/product-chillers.webp",
     gallery: [],
     tags: ["Air Cooled", "Water Cooled", "Thermal"],
     specs: [
@@ -142,7 +142,7 @@ export const PRODUCTS: Product[] = [
       "High-performance size reduction equipment for consistent, clean flake processing.",
     description:
       "Ten models across two series: seven sized by grinding chamber, from a 230 × 200 mm beside-the-press unit to a 960 × 610 mm central granulator, and three rated by motor. Throughput runs from 100 to 1000 kg/h against a 8 – 12 mm screen, so runners and rejects come back as regrind at a size the machine that made them can take.",
-    image: "/assets/product-flake-cutter.webp",
+    image: "/products/product-flake-cutter.webp",
     gallery: [],
     tags: ["Size Reduction", "Processing"],
     specs: [
@@ -169,7 +169,7 @@ export const PRODUCTS: Product[] = [
       "Vacuum hopper loaders from 30 to 1200 kg/h for conveying granules straight to the machine.",
     description:
       "Six vacuum loaders, from a 6-litre single-phase unit conveying 30 kg/h to an 85-litre receiver conveying 1200 kg/h. The VAL-02 runs on 230 V single phase; every other model runs on 415 V three phase, with the vacuum blower sized from 0.9 to 7.5 kW. Automatic filter cleaning, a ratio valve, positive discharge, a common line valve, a photo-electric material sensor and an intermediate hopper are available as options.",
-    image: "/assets/product-vacuum-hopper-loader.webp",
+    image: "/products/product-vacuum-hopper-loader.webp",
     gallery: [],
     tags: ["Material Handling", "Automation"],
     specs: [
@@ -195,7 +195,7 @@ export const PRODUCTS: Product[] = [
       "High-speed, precision marking systems for permanent part identification and traceability.",
     description:
       "A 30 W or 50 W pulsed fibre laser on a floor-standing cabinet, built to mark product moving past it rather than parts placed under it. Air-cooled with no consumables, a touch control system and a centrifugal fume extractor; the two models are identical apart from laser power.",
-    image: "/assets/product-laser-marking.webp",
+    image: "/products/product-laser-marking.webp",
     gallery: [],
     tags: ["Marking", "Traceability"],
     specs: [
@@ -223,7 +223,7 @@ export const PRODUCTS: Product[] = [
       "Volumetric masterbatch dosing from 0.004 to 73 kg/h, in five screw sizes.",
     description:
       "A screw-driven volumetric doser for masterbatch and additives. Five screw sizes cover 0.004 to 73 kg/h, from a 3/8 × 1/4 screw for the lightest additions to a 1 × 1 screw at the top of the range, all fed from a 20-litre hopper. The feeder weighs 19 kg, and its separate control panel runs on 230 V AC at 1 A.",
-    image: "/assets/product-volumetric-feeder.webp",
+    image: "/products/product-volumetric-feeder.webp",
     gallery: [],
     tags: ["Dosing", "Feeding"],
     specs: [
@@ -245,7 +245,7 @@ export const PRODUCTS: Product[] = [
       "Critical thermal regulation units to maintain precise mould conditions.",
     description:
       "Two series on one frame: five oil-circulating models reaching 180 °C and four water-circulating models reaching 95 °C. Choice of medium is set by the temperature the process needs rather than by unit size — a water model and an oil model of the same heating capacity share their pump, flow and tank.",
-    image: "/assets/product-temperature-control-unit.webp",
+    image: "/products/product-temperature-control-unit.webp",
     gallery: [],
     tags: ["Thermal", "Regulation"],
     specs: [
@@ -270,7 +270,7 @@ export const PRODUCTS: Product[] = [
       "SS 304 industrial dehumidifiers extracting 200 to 500 litres of moisture a day.",
     description:
       "Three floor-standing models on an SS 304 structure, rated at 200, 300 and 500 litres a day at 30 °C and 80 % RH, and sized for 1600 to 3000 sq ft of non-air-conditioned floor. Each runs a reciprocating three-phase compressor on R22 or R407, moves 2500 to 5400 m³/h of air through a 20-micron filter, and collects condensate in its own stainless tank with a drain connection.",
-    image: "/assets/product-dehumidifier.webp",
+    image: "/products/product-dehumidifier.webp",
     gallery: [],
     tags: ["Moisture Control", "Drying"],
     specs: [
@@ -297,7 +297,7 @@ export const PRODUCTS: Product[] = [
       "Hopper dryers from 60 to 800 litres for consistent pre-drying ahead of the press.",
     description:
       "Eight insulated hopper dryers, 60 to 800 litres, each with its own heater bank and blower sized to the hopper. They drive surface moisture off granules before processing, which is what keeps splay and voids out of the part. All models run on a 415 V three-phase supply.",
-    image: "/assets/product-hot-air-hopper-loader.webp",
+    image: "/products/product-hot-air-hopper-loader.webp",
     gallery: [],
     tags: ["Drying", "Material Preparation"],
     specs: [

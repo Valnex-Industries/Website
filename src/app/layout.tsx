@@ -133,6 +133,10 @@ export default function RootLayout({
       className={`${exo2.variable} ${orbitron.variable} ${bitcount.variable} h-full antialiased`}
       suppressHydrationWarning
     >
+      <head>
+        <link rel="preconnect" href="https://ik.imagekit.io" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://ik.imagekit.io" />
+      </head>
       <body className="min-h-full flex flex-col">
         {/* Site-wide identity, carried on every route so any page can be the
             one a crawler or answer engine lands on first. */}
