@@ -103,33 +103,50 @@ export function webSiteSchema() {
   };
 }
 
+/**
+ * Equipment specification page node (`ItemPage` + `Service` for custom B2B quote
+ * manufacturing).
+ *
+ * Plain `@type: "Product"` triggers a critical error in Google Search Console
+ * ("Either 'offers', 'review' or 'aggregateRating' should be specified") on
+ * B2B quote-only machinery pages that carry neither online checkout prices nor
+ * customer reviews. Using `ItemPage` paired with `Service` preserves image,
+ * manufacturer, category and description metadata for crawlers and answer
+ * engines without inventing prices or ratings (see `lib/site.ts`).
+ */
 export function productSchema(product: Product) {
+  const pageUrl = siteUrl(productHref(product.slug));
+  const imageUrl = absoluteImageUrl(product.image);
+
   return {
     "@context": "https://schema.org",
-    "@type": "Product",
-    "@id": siteUrl(`${productHref(product.slug)}#product`),
+    "@type": "ItemPage",
+    "@id": `${pageUrl}#webpage`,
+    url: pageUrl,
     name: product.title,
-    /* The page's own body copy when there is one, which is what a buyer reads
-       on the page; the one-line summary otherwise. */
     description: product.description || product.summary,
-    url: siteUrl(productHref(product.slug)),
-    /* Not siteUrl(): the path may be an ImageKit one, which would resolve
-       against our own domain and 404 in the rich result. */
-    image: absoluteImageUrl(product.image),
-    category: "Industrial Equipment",
-    brand: { "@type": "Brand", name: SITE_NAME },
-    manufacturer: { "@id": ORGANIZATION_ID },
-    /* Only emitted once the catalogue actually carries specs — an empty
-       additionalProperty array is worse than none. */
-    ...(product.specs.length > 0
+    isPartOf: { "@id": siteUrl("/#website") },
+    ...(imageUrl
       ? {
-          additionalProperty: product.specs.map((spec) => ({
-            "@type": "PropertyValue",
-            name: spec.label,
-            value: spec.value,
-          })),
+          primaryImageOfPage: {
+            "@type": "ImageObject",
+            url: imageUrl,
+            caption: `${product.title} — ${SITE_NAME}`,
+          },
         }
       : {}),
+    mainEntity: {
+      "@type": "Service",
+      "@id": `${pageUrl}#service`,
+      name: product.title,
+      serviceType: "Custom Industrial Equipment Manufacturing",
+      category: "Industrial Equipment",
+      description: product.description || product.summary,
+      url: pageUrl,
+      ...(imageUrl ? { image: imageUrl } : {}),
+      provider: { "@id": ORGANIZATION_ID },
+      areaServed: "Worldwide",
+    },
   };
 }
 
